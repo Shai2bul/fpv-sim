@@ -1897,7 +1897,7 @@ html:not(.ltr) .track .tph.col i{transform:rotate(180deg)}html.ltr .track .tph.c
 /* propeller health */
 .simview .so.pdmini{position:absolute;top:146px;left:12px;right:auto;bottom:auto;display:flex;align-items:center;gap:6px;width:auto!important;padding:5px 9px 5px 7px;border-radius:12px;background:rgba(8,12,10,.55);border:1px solid rgba(255,255,255,.1);color:var(--fg);cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);font:inherit}
 .simview .so.pdmini:hover{border-color:var(--acc)}.simview .so.pdmini.dmg{border-color:color-mix(in srgb,#f08a24 60%,transparent)}
-.pdsm{width:36px;height:36px;display:block}.pdmini em{font:700 12px var(--mono,monospace);font-style:normal}
+.pdsm{width:64px;height:64px;display:block}.pdmini em{font:700 12px var(--mono,monospace);font-style:normal}
 html.free:not(.phone) .simview .so.pdmini{top:130px}
 .pdov{position:absolute;inset:0;z-index:70;display:grid;place-items:center;background:rgba(4,8,6,.74);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);animation:fadein .18s ease-out;padding:16px}
 .pdbox{position:relative;width:min(560px,100%);max-height:100%;overflow:auto;display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px 22px 16px;border-radius:20px;background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line2);box-shadow:0 30px 90px rgba(0,0,0,.6);color:var(--fg)}
@@ -9976,6 +9976,9 @@ function vgFar(g,x,z,h,R,kind,ye=0){if(g.nv)return null;const F=g.F,conifer=kind
    const ax=x-dx*w/2,az=z-dz*w/2,bx=x+dx*w/2,bz=z+dz*w/2;
    if(conifer)F.quadX([ax,y0,az],[bx,y0,bz],[bx,h,bz],[ax,h,az],[cb,cb,c,c],vgK('c','fir'),[[0,1,0,0],[1,1,0,0],[1,0,.5,.1],[0,0,.5,.1]],[N,N,N,N]);
    else F.quadX([ax,y0,az],[bx,y0,bz],[bx,h,bz],[ax,h,az],[cb,cb,c,c],k,[[0,1,0,0],[1,1,0,0],[1,0,.5,.1],[0,0,.5,.1]],[N,N,N,N])}
+  /* a real trunk up into the crown, so the tree does not float on its cards; and a collision entry for the plane */
+  if(!shrub){const r0=.05+h*.026,r1=.03+h*.012,yt=ye+y0+hh*.35,tc=[.26,.18,.11],tn=[.19,.13,.08];for(let i=0;i<5;i++){const a0=i/5*6.2832,a1=(i+1)/5*6.2832,c0=Math.cos(a0),s0=Math.sin(a0),c1=Math.cos(a1),s1=Math.sin(a1);g.quad([x+c0*r0,ye,z+s0*r0],[x+c1*r0,ye,z+s1*r0],[x+c1*r1,yt,z+s1*r1],[x+c0*r1,yt,z+s0*r1],i%2?tc:tn,0)}}
+  if(g.cT&&h-ye>=4)g.cT.push([x,z,w*.4,h]);
   return null}
 /* a ring of far trees in stands (clusters), with gaps; kinds by biome */
 function vgRim(g,R,o={}){const n=o.n||110,kinds=o.kinds||['oak','fir'],r0=o.r0||108,r1=o.r1||175,cz=o.cz??-40,seed=R()*50;
@@ -9997,14 +10000,14 @@ const VGSCN={field:{bio:'meadow',gt:'grass',rim:'temperate'},forest:{bio:'grass'
 VGSCN.night=VGSCN.race;
 
 /* the horizon of the real look: two ridges of hills with a gradient of colour and, on the nearer one, a crest of trees; then a ring of far trees in stands */
-function vgHorizon(g,seed,rim){const G=g.R,R=srnd(Math.floor(seed*97)+11),N=170,hf=(a,k)=>(14+9*Math.sin(a*3+seed*k)+7*Math.sin(a*7.3+seed*2.1*k)+5*Math.sin(a*13.1+1.7*k)+(k===1&&Math.cos(a)>.92?16*Math.pow((Math.cos(a)-.92)/.08,2):0))*(k===1?1:.5);
+function vgHorizon(g,seed,rim,flat){const G=g.R,R=srnd(Math.floor(seed*97)+11),N=170,hf=(a,k)=>(14+9*Math.sin(a*3+seed*k)+7*Math.sin(a*7.3+seed*2.1*k)+5*Math.sin(a*13.1+1.7*k)+(k===1&&Math.cos(a)>.92?16*Math.pow((Math.cos(a)-.92)/.08,2):0))*(k===1?1:.5);
   const ridge=(r0,r1,k,lo,hi,hs)=>{const nm=a=>[-Math.sin(a)*.8,.55,Math.cos(a)*.8];for(let i=0;i<N;i++){const a0=i/N*6.2832,a1=(i+1)/N*6.2832,h0=Math.max(3,hf(a0,k))*hs,h1=Math.max(3,hf(a1,k))*hs,P=(a,r,y)=>[Math.sin(a)*r,y,-Math.cos(a)*r],m0=vgMix(lo,hi,.45),m1=vgMix(lo,hi,.7),sh=1+(vgNoise(i*.3+seed,k)-.5)*.2,n0=nm(a0),n1=nm(a1),rm=(r0+r1)/2;
     G.quadX(P(a0,r0,-1),P(a1,r0,-1),P(a1,rm,h1*.55),P(a0,rm,h0*.55),[vgSc(lo,sh),vgSc(lo,sh),vgSc(m0,sh),vgSc(m0,sh)],0,[[0,0],[0,0],[0,0],[0,0]],[n0,n1,n1,n0]);
     G.quadX(P(a0,rm,h0*.55),P(a1,rm,h1*.55),P(a1,r1,h1),P(a0,r1,h0),[vgSc(m0,sh),vgSc(m0,sh),vgSc(hi,sh),vgSc(hi,sh)],0,[[0,0],[0,0],[0,0],[0,0]],[n0,n1,n1,n0])}};
   const PL=rim==='dry'||rim==='rock'?[[.3,.24,.17],[.52,.42,.3],[.26,.2,.13],[.45,.35,.24]]:rim==='urban'?[[.22,.24,.28],[.34,.36,.4],[.2,.22,.25],[.3,.32,.36]]:[[.13,.2,.19],[.22,.3,.27],[.09,.15,.09],[.17,.25,.13]];
-  ridge(296,318,1,PL[0],PL[1],1.1);
-  ridge(214,236,2,PL[2],PL[3],.9);
-  if(rim&&rim!=='rock'&&rim!=='urban'||rim==='rock'||rim==='urban'){const nT=rim==='dry'||rim==='rock'||rim==='urban'?0:70,conif=rim==='conifer';for(let i=0;i<nT;i++){const a=R()*6.2832,rr=224+R()*8,h=Math.max(3,hf(a,2)*.9);if(vgNoise(Math.cos(a)*3+seed,Math.sin(a)*3)<.3)continue;vgFar(g,Math.sin(a)*rr,-Math.cos(a)*rr,(conif||R()<.4?11:8)+R()*7,R,conif||R()<.4?'fir':'oak',h*.7)}
+  if(!flat){ridge(296,318,1,PL[0],PL[1],1.1);
+  ridge(214,236,2,PL[2],PL[3],.9)}
+  if(rim&&rim!=='rock'&&rim!=='urban'||rim==='rock'||rim==='urban'){const nT=rim==='dry'||rim==='rock'||rim==='urban'?0:70,conif=rim==='conifer';for(let i=0;i<nT;i++){const a=R()*6.2832,rr=224+R()*8,h=flat?0:Math.max(3,hf(a,2)*.9);if(vgNoise(Math.cos(a)*3+seed,Math.sin(a)*3)<.3)continue;vgFar(g,Math.sin(a)*rr,-Math.cos(a)*rr,(conif||R()<.4?11:8)+R()*7,R,conif||R()<.4?'fir':'oak',h*.7)}
    vgRim(g,R,{kinds:rim==='conifer'?['fir']:rim==='dry'?['shrub']:['oak','fir'],n:rim==='conifer'?150:rim==='dry'?40:rim==='temperate'?100:0,r0:rim==='dry'?70:108})}}
 
 /* stands of trees with bushes and a stone: [cx,cz,count,mix] -> collision entries pushed on T */
@@ -10268,7 +10271,7 @@ function engBuild(c,out,kind,onDead){
   const pr=osc('triangle',100),pl=fl('lowpass',420,.5),gp=gn(.15);pr.connect(pl).connect(gp).connect(m);
   const wn=nz(.8),wf=fl('bandpass',500,.5),wg=gn(0);wn.connect(wf).connect(wg).connect(m);
   cf={idle:2800,max:12800,up:.1,dn:.28,pw:.85,sp:14,g0:.11,g1:.162,lv:1};
-  let nxD=0,dpD=0;upd=(rpm,thr,sp,t)=>{const f=rpm/60*(1+(Math.random()-.5)*.05*(1.15-thr)),k=Math.min(1,sp/30);
+  let nxD=0,dpD=0,jw=0;upd=(rpm,thr,sp,t)=>{jw+=((Math.random()-.5)-jw)*.06;const f=rpm/60*(1+jw*.05*(1.15-thr)),k=Math.min(1,sp/30);
    /* v153: a glow engine at idle fires unevenly: now and then a cycle is weak (four-stroking), and it fades out as the throttle opens */
    const id=Math.max(0,1-thr*4);if(t>=nxD){dpD=t+.04+.06*Math.random();nxD=t+.2+.55*Math.random()}const mf=t<dpD?1-.7*id:1;
    T(a.frequency,f,t,.02);T(b.frequency,f*2,t,.02);T(x.p.frequency,f,t,.02);T(pr.frequency,f*2,t,.03);
@@ -10283,7 +10286,7 @@ function engBuild(c,out,kind,onDead){
   const pr=osc('sawtooth',40),pl=fl('lowpass',260,.6),gp=gn(.28);pr.connect(pl).connect(gp).connect(m);
   const wn=nz(.7),wf=fl('bandpass',420,.5),wg=gn(0);wn.connect(wf).connect(wg).connect(m);
   cf={idle:1500,max:6800,up:.14,dn:.3,pw:.9,sp:18,g0:.026,g1:.051,lv:1};
-  upd=(rpm,thr,sp,t)=>{const rev=rpm/60,f=rev/2*(1+(Math.random()-.5)*.035*(1.15-thr)),k=Math.min(1,sp/30);
+  let jw2=0;upd=(rpm,thr,sp,t)=>{jw2+=((Math.random()-.5)-jw2)*.06;const rev=rpm/60,f=rev/2*(1+jw2*.035*(1.15-thr)),k=Math.min(1,sp/30);
    T(a.frequency,f,t,.02);T(sub.frequency,rev*.5,t,.05);T(x.p.frequency,f,t,.02);T(pr.frequency,rev*2,t,.04);
    T(lp.frequency,450+thr*1000,t,.06);T(ga.gain,.8+.4*thr,t,.05);T(gs.gain,.3+.2*thr,t,.06);
    T(x.dg.gain,.4+.4*thr+(Math.random()-.5)*.3*(1-thr),t,.03);T(x.b.frequency,600+thr*800,t,.06);
@@ -10297,7 +10300,7 @@ function engBuild(c,out,kind,onDead){
   upd=(s,thr,sp,t)=>{const f=700+3600*s,fz=1+(Math.random()-.5)*.02;
    T(w1.frequency,f*fz,t,.05);T(w2.frequency,f*2.01*fz,t,.05);T(w3.frequency,250+1100*s,t,.08);
    T(g1.gain,.03+.5*s*s,t,.1);T(g2.gain,.01+.3*s*s*s,t,.1);T(g3.gain,.04+.16*s,t,.1);
-   T(rb.frequency,900+1800*s,t,.1);T(rg.gain,(.1+.9*Math.pow(s,1.4))*(1+(Math.random()-.5)*.12),t,.05);
+   T(rb.frequency,900+1800*s,t,.1);T(rg.gain,(.1+.9*Math.pow(s,1.4)),t,.05);
    T(rmg.gain,.35+.5*s,t,.1);T(hg.gain,.01+.1*s*s,t,.1)}
  }else{
   const lp=fl('lowpass',2000,.9),mo=[0,1,2,3].map(i=>{const bf=osc('sawtooth',300),wh=osc('square',900),gb=gn(.5),gw=gn(.05);bf.connect(gb).connect(lp);wh.connect(gw).connect(lp);return {bf,wh,d:1+(i-1.5)*.011}});lp.connect(m);
@@ -10305,8 +10308,8 @@ function engBuild(c,out,kind,onDead){
   const fo=osc('sine',11),fg=gn(0);fo.connect(fg).connect(ng.gain);
   const tn=nz(.6),tf=fl('lowpass',700,.6),tg=gn(.2);tn.connect(tf).connect(tg).connect(m);
   cf={idle:5200,max:31000,up:.045,dn:.12,pw:.85,sp:0,g0:.035,g1:.076,lv:1};
-  upd=(rpm,thr,sp,t,pn)=>{const rev=rpm/60;mo.forEach(o=>{const j=1+(Math.random()-.5)*.012;T(o.bf.frequency,rev*3*o.d*j,t,.025);T(o.wh.frequency,rev*7*o.d*j,t,.025)});
-   T(lp.frequency,1100+thr*4200+pn*1500,t,.05);T(nb.frequency,1800+thr*2200+pn*1200,t,.06);T(ng.gain,.05+.45*thr+pn*.35,t,.05);T(fg.gain,.03+.1*thr,t,.1);T(tg.gain,.1+.5*thr,t,.08)}
+  const jm=[0,0,0,0];upd=(rpm,thr,sp,t,pn)=>{const rev=rpm/60;mo.forEach((o,i)=>{jm[i]+=((Math.random()-.5)-jm[i])*.05;const j=1+jm[i]*.01;T(o.bf.frequency,rev*3*o.d*j,t,.025);T(o.wh.frequency,rev*7*o.d*j,t,.025)});
+   T(lp.frequency,1100+thr*4200+pn*1500,t,.05);T(nb.frequency,1800+thr*2200+pn*1200,t,.06);T(ng.gain,.05+.45*thr+pn*.35,t,.05);T(fg.gain,.04+.02*thr,t,.1);T(tg.gain,.1+.5*thr,t,.08)}
  }
  const E={kind,cf,get dead(){return S.dead},
   set(thr,sp,t,vol){if(S.dead)return;clearTimeout(S.to);if(!S.run){S.run=true;S.r=0;S.t=t-.016}
@@ -10331,11 +10334,11 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)MOTOR.stop(
    the original compact layout is kept for the advanced phases. admin can switch it off per course. */
 /* distant landmarks for orientation: a ridge of hills around the horizon (unique silhouette per bearing)
    and a tall tower due north (-Z), so the pilot always has a reference even over an empty field */
-function landmarks(g,seed=7,rim){const N=120,R0=290,R1=305,c=[.16,.22,.21],c2=[.12,.17,.16],hf=a=>14+9*Math.sin(a*3+seed)+7*Math.sin(a*7.3+seed*2.1)+5*Math.sin(a*13.1+1.7)+(Math.cos(a)>.92?16*Math.pow((Math.cos(a)-.92)/.08,2):0);
-  vgTacOnly(g,()=>{for(let i=0;i<N;i++){const a0=i/N*Math.PI*2,a1=(i+1)/N*Math.PI*2,h0=Math.max(4,hf(a0)),h1=Math.max(4,hf(a1)),P=(a,r,y)=>[Math.sin(a)*r,y,-Math.cos(a)*r];
+function landmarks(g,seed=7,rim,flat){const N=120,R0=290,R1=305,c=[.16,.22,.21],c2=[.12,.17,.16],hf=a=>14+9*Math.sin(a*3+seed)+7*Math.sin(a*7.3+seed*2.1)+5*Math.sin(a*13.1+1.7)+(Math.cos(a)>.92?16*Math.pow((Math.cos(a)-.92)/.08,2):0);
+  if(!flat)vgTacOnly(g,()=>{for(let i=0;i<N;i++){const a0=i/N*Math.PI*2,a1=(i+1)/N*Math.PI*2,h0=Math.max(4,hf(a0)),h1=Math.max(4,hf(a1)),P=(a,r,y)=>[Math.sin(a)*r,y,-Math.cos(a)*r];
    g.quad(P(a0,R0,0),P(a1,R0,0),P(a1,R1,h1),P(a0,R1,h0),i%2?c:c2)}});
   g.cyl(0,-235,1.4,58,0,[.32,.36,.36],8,.5);g.cyl(0,-235,2.6,3,58,[.85,.22,.16],8,0);
-  if(!g.nv)vgHorizon(g,seed,rim)}
+  if(!g.nv)vgHorizon(g,seed,rim,flat)}
 const MISK={1:2.6,2:2.3,3:2.0,4:1.55,5:1.2};
 /* difficulty shown to the learner: follows the course phase (basic drills = 1, final = 5) */
 const DIFN=['','מתחיל','בסיסי','בינוני','מתקדם','מומחה'];
@@ -10515,12 +10518,12 @@ class FPVSim{
   const M=misGeo(l,K,{realTrees:!this.att&&SIM.gfx==='high'&&!I.plane}),BG=l.cx&&SIMSCN[l.cx.bg],g=Object.assign(new Geo(),{nv:!!this.att,lod:SIM.gfx==='high'?0:1}),fc=BG?(BG.gc||[.3,.42,.24]):l.cx?(CX_GROUND[l.cx.ground]||CX_GROUND.grass).c:sceneFor(l)==='forest'?[.24,.33,.2]:[.3,.42,.24];const GN=I.plane?(I.free?22:14):16,GS=I.plane?20:10;for(let i=-GN;i<GN;i++)for(let k=-GN;k<GN;k++){const sz=GS,x=i*sz+3.7,z=k*sz+3.3;g.quad([x,0,z+sz],[x+sz,0,z+sz],[x+sz,0,z],[x,0,z],fc,-1)}
   if(I.plane){const RW_=I.free?RWYF:RWY;g.skip=(x,z)=>Math.abs(x-RW_.x)<RW_.w/2+26&&z<RW_.z0+46&&z>RW_.z1-46;rwBuild(g,I.free?RWYF:RWY,!!I.free);g.cyl(-14,36,.06,4,0,[.6,.62,.6]);g.box(-14,4.1,36.6,.06,.5,1.2,[.95,.5,.15])}
   const bgS=new Geo();if(BG){try{BG.build.call(BG,g,srnd(BG.seed||13),bgS)}catch(e){console.warn('bg',e)}}
-  this.trees=[];{const TT=null;if(TT?.img&&!I.plane){const G=TERR.get(TT.img);if(G){const cp0=misPath(I,K);this.trees=terrBuild(g,TT,G,(x,z)=>cp0.some(q=>Math.hypot(q[0]-x,q[2]-z)<4.5))}else if(!this.att){const me=this;terrGrid(TT.img).then(()=>{if(me.cv.__owner===me&&me.mis===l)me.loadMis(l.id)}).catch(()=>{})}}}landmarks(g,(l.no||1)*1.7,I.plane?'temperate':(BG&&VGSCN[l.cx.bg]||{}).rim);this.world=gl.mesh(g);this.grassM=null;
+  this.trees=[];g.cT=I.plane?[]:null;{const TT=null;if(TT?.img&&!I.plane){const G=TERR.get(TT.img);if(G){const cp0=misPath(I,K);this.trees=terrBuild(g,TT,G,(x,z)=>cp0.some(q=>Math.hypot(q[0]-x,q[2]-z)<4.5))}else if(!this.att){const me=this;terrGrid(TT.img).then(()=>{if(me.cv.__owner===me&&me.mis===l)me.loadMis(l.id)}).catch(()=>{})}}}landmarks(g,(l.no||1)*1.7,I.plane?'temperate':(BG&&VGSCN[l.cx.bg]||{}).rim,!!I.plane);this.world=gl.mesh(g);this.grassM=null;
    {const st=pts[0],VS1=(BG&&VGSCN[l.cx.bg])||{};this.gLay=VS1.gt!=null?TXY[VS1.gt]:vgGroundLayer(fc);this.padU=null;
     const gd=l.cx?.ground,bio=I.plane?'airfield':BG?VS1.bio:(gd==='asphalt'||gd==='snow')?null:(gd==='sand'||gd==='dry')?'dry':'grass';
     if(!this.att&&bio&&SIM.gfx==='high'&&!l.cx?.terrain?.img){const RW_=I.free?RWYF:RWY;vgDress(g,{bio,cx:I.plane?0:st[0],cz:I.plane?(I.free?-115:-10):st[2]-8,R:srnd((l.no||1)*3+5),base:fc,pad:I.plane?null:[st[0],st[2],2.6],skip:I.plane?(x,z)=>Math.abs(x-RW_.x)<RW_.w/2+.6&&z<RW_.z0+1&&z>RW_.z1-1:null})}
     if(!this.att&&SIM.gfx==='high'&&M.trees.length){const rt=srnd((l.no||1)*7+3);M.trees.forEach(([tx,tz,th])=>vgTree(g,tx,tz,th*1.175,rt,'fir',{w:.235,t0:.33}))}this.vg=this.att?null:vgMesh(gl,g)}const sky=new Geo();sky.sphere(380,[1,1,1],24);this.sky=gl.mesh(sky);
-  if(bgS.p.length||bgS.L.length){bgS.padU();M.solid.padU();['p','n','c','k','u','L','LC'].forEach(f=>{for(const v of bgS[f])M.solid[f].push(v)})}this._sg=M.solid;{let ct=M.col.length?colCarve(M.col,misPath(I,K),.38):[];if(bgS.p.length){const P=bgS.p;for(let i=0;i+8<P.length;i+=9)ct.push([[P[i],P[i+1],P[i+2]],[P[i+3],P[i+4],P[i+5]],[P[i+6],P[i+7],P[i+8]]])}this.col=ct.length?colBuild(ct,Math.max(1,K)):null}if(I.plane){this.col=null;this.trees=[];M.solid=new Geo();M.glass=new Geo()}this.mSolid=M.solid.p.length||M.solid.L.length?gl.mesh(M.solid):null;this.mGlass=M.glass.p.length?gl.mesh(M.glass):null;
+  if(bgS.p.length||bgS.L.length){bgS.padU();M.solid.padU();['p','n','c','k','u','L','LC'].forEach(f=>{for(const v of bgS[f])M.solid[f].push(v)})}this._sg=M.solid;{let ct=M.col.length?colCarve(M.col,misPath(I,K),.38):[];if(bgS.p.length){const P=bgS.p;for(let i=0;i+8<P.length;i+=9)ct.push([[P[i],P[i+1],P[i+2]],[P[i+3],P[i+4],P[i+5]],[P[i+6],P[i+7],P[i+8]]])}this.col=ct.length?colBuild(ct,Math.max(1,K)):null}if(I.plane){this.col=null;this.trees=(g.cT||[]).concat([[-14,36,0,4]]);M.solid=new Geo();M.glass=new Geo()}this.mSolid=M.solid.p.length||M.solid.L.length?gl.mesh(M.solid):null;this.mGlass=M.glass.p.length?gl.mesh(M.glass):null;
   const rg=new Geo(),cp=I.free?[]:misPath(I,K),ac=[.89,.64,.23];this.cpath=I.free?null:cp;this.cpi=0;this.route=null;
   this.gates=l.basic?[]:I.ck.filter(c=>c.i>0&&pts[c.i]).map(c=>{const p=pts[c.i],q=pts[Math.min(pts.length-1,c.i+1)],pr=pts[Math.max(0,c.i-1)];let N=[q[0]-pr[0],q[1]-pr[1],q[2]-pr[2]];if(V.len(N)<1e-3)N=[0,0,-1];N=V.norm(N);
    let U=V.cross(N,[0,1,0]);if(V.len(U)<.2)U=[1,0,0];U=V.norm(U);const Wv=V.norm(V.cross(U,N)),G=new Geo();
@@ -10724,7 +10727,7 @@ class FPVSim{
   /* drag: clean airframe + wheels and legs (more while the doors are open) + flaps + a stopped or idling propeller + induced drag */
   const gd=A.gear,CDx=(P.rg?(P.gcd||0)*(gd+(gd>.03&&gd<.97?.5:0)):0)+(P.fcd||0)*(.15*fl+.85*fl*fl)+(jet?0:(P.cdp||0)*(1-this.rpm));
   const qd=.5*1.225*V2,CD=P.cd0+CDx+P.k*(1+.35*fl)*ge*CL*CL+(stall?.18:0),vh=Va>.3?V.mul(vb,1/Va):[0,0,-1];let lf=V.cross([1,0,0],vh);const ll=V.len(lf);lf=ll>.01?V.mul(lf,1/ll):[0,1,0];
-  const Th=P.tmax*this.mt*Math.max(0,1-Math.max(0,u)/(P.vprop*(jet?1:Math.max(.12,this.rpm))));
+  const Th=P.tmax*this.mt*Math.max(0,1-Math.max(0,u)/(P.vprop*(jet?1:Math.max(.12,this.rpm))))*cl((190-this.p[1])/70,0,1);
   let Fb=V.add(V.mul(lf,qd*P.S*CL),V.mul(vh,-qd*P.S*CD));Fb[0]+=qd*P.S*P.cyb*be;Fb[2]-=Th;
   const F=V.add(Q.rot(this.q,Fb),[0,-g*P.m,0]);
   /* moments. A propeller adds a rolling reaction to its own torque (rolls the airframe the other way) and, slow and at high power, a yaw to the left from the swirling slipstream and P-factor */
@@ -10755,7 +10758,12 @@ class FPVSim{
    /* stopped on the ground with the engine idling for a few seconds: the ground crew tops up the tank */
    if(!bel&&alive&&Math.hypot(this.v[0],this.v[2])<.4&&thr<.05&&(this.bat??100)<99){this.refT=(this.refT||0)+dt;if(this.refT>2.5){this.bat=100;this.dry=false;this.lowF=false;this.refT=0;this.flash('תודלק · מוכן להמראה',1600);SFX.play('select')}}else this.refT=0}
   this.gTouch=this.p[1]<=GH+1e-6;this.gl=0;
-  if(this.p[1]>80)this.v[1]=Math.min(this.v[1],0);
+  /* a soft ceiling: the thin air takes the engine's power away above 120 m (zero at 190 m) and the plane simply stops climbing, with no invisible hand holding its vertical speed while the nose rises into a stall */
+  if(this.p[1]>135&&!this.ceilF){this.ceilF=true;this.flash('גובה מרבי · האוויר דליל והמנוע מאבד כוח',1800)}else if(this.p[1]<110)this.ceilF=false;
+  if(alive&&this.trees&&this.trees.length){const spd=V.len(this.v),b2=(P.b||1.8)*.5,y=this.p[1];for(const [tx,tz,cr,th] of this.trees){const d=Math.hypot(this.p[0]-tx,this.p[2]-tz);if(d>cr+b2+1.2||y>=th)continue;
+   const trunk=d<.3+b2*.5,crown=y>th*.35&&d<cr*(1-Math.max(0,y-th*.35)/(th*.75))*.9+.2;
+   if(trunk||crown){if(this.hit(trunk?'פגיעה בגזע או בעמוד':'פגיעה בענפי עץ',(trunk?28:10)+spd*(trunk?3:1.5),spd>(trunk?9:15)))return;
+    const nx=(this.p[0]-tx)/(d||1),nz=(this.p[2]-tz)/(d||1),vn=this.v[0]*nx+this.v[2]*nz;if(vn<0){this.v[0]-=nx*vn*1.6;this.v[2]-=nz*vn*1.6}this.v=V.mul(this.v,trunk?.35:.7);this.p[0]+=nx*.2;this.p[2]+=nz*.2;this.flash(trunk?'פגיעה בגזע או בעמוד':'פגיעה בענפי עץ',900);SFX.play('fail')}}}
   const FLD=this.mis&&this.mis.free?420:255;for(const ax2 of [0,2])if(Math.abs(this.p[ax2])>FLD){this.p[ax2]=Math.sign(this.p[ax2])*FLD;this.v[ax2]*=-.2;this.flash('קצה השדה · פנה חזרה',1200)}
   this.stepTail(dt,V.len(this.v),0,g,py0)}
  /* ---- game feel: particles, speed streaks and camera shake, drawn on a light 2D layer over the 3D view ---- */
@@ -10868,11 +10876,11 @@ class FPVSim{
      /* control surfaces follow the sticks through a servo lag, on the ground and in the air */
      const IN=this.I||{rol:0,pit:0,yaw:0},AX=this.auxA||{gear:1,flap:0},dd=this.csd||(this.csd={ail:0,ele:0,rud:0,flp:0,gear:0}),kf=1-Math.exp(-pdt2/.07),tg={ail:(IN.rol||0)*.4,ele:(IN.pit||0)*.4,rud:(IN.yaw||0)*.45,flp:AX.flap,gear:1-AX.gear};for(const c in tg)dd[c]=(dd[c]||0)+(tg[c]-(dd[c]||0))*kf;
      (this.planeCS||[]).forEach(c=>{const th=c.sgn*Math.max(-c.max,Math.min(c.max,(dd[c.ch]||0)*c.k));const qq=Q.axis(c.ax,th);let LM=M4.fromQT(qq,V.sub(c.a,Q.rot(qq,c.a)));if(c.h2){const t2=c.h2.sgn*c.h2.k*(dd.gear||0),q2=Q.axis(c.h2.ax,t2);LM=M4.mul(M4.fromQT(q2,V.sub(c.h2.a,Q.rot(q2,c.h2.a))),LM)}R.draw(c.m,M4.mul(M,LM),{lines:false})});
-     const rp=this.rpm||0;this.pa2=((this.pa2||0)+(this.armed&&!this.crash?(9+80*rp):0)*pdt2)%(Math.PI*2);const AM=this.AM;
+     const rp=this.rpm||0;this.pa2=((this.pa2||0)+(this.armed&&!this.crash?Math.min(9+80*rp,38):0)*pdt2)%(Math.PI*2);const AM=this.AM;
      if(this.planeP&&AM){const c=Math.cos(this.pa2),sn=Math.sin(this.pa2),PM=M4.mul(M,[c,sn,0,0,-sn,c,0,0,0,0,1,0,0,AM.propY,AM.propZ-.004,1]);R.draw(this.planeP,PM,{lines:false});
       if(this.planeD&&rp>.12&&this.armed&&!this.crash){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);R.draw(this.planeD,PM,{alpha:Math.min(.22,.06+rp*.18),lines:false});gl.depthMask(true);gl.disable(gl.BLEND)}}}else R.draw(this.dm,Sc,{lines:false});
    /* props: still while disarmed, idle spin once armed, faster and blurrier with throttle */
-   if(!BALL&&!this.plane){const now=t,pdt=Math.min(.05,Math.max(0,(now-(this.pt||now))/1000));this.pt=now;const w=this.armed&&!this.crash?24+170*Math.min(1,Math.max(0,this.rpm||0)):0;this.pw=(this.pw||0)+(w-(this.pw||0))*(1-Math.exp(-pdt/(w>this.pw?.08:.35)));this.pa=((this.pa||0)+this.pw*pdt)%(Math.PI*2);
+   if(!BALL&&!this.plane){const now=t,pdt=Math.min(.05,Math.max(0,(now-(this.pt||now))/1000));this.pt=now;const w=this.armed&&!this.crash?24+170*Math.min(1,Math.max(0,this.rpm||0)):0;this.pw=(this.pw||0)+(w-(this.pw||0))*(1-Math.exp(-pdt/(w>this.pw?.08:.35)));this.pa=((this.pa||0)+Math.min(this.pw,46)*pdt)%(Math.PI*2);
     const bl=Math.min(1,Math.max(0,(this.pw-40)/110)),ba=1-bl*.75,da=bl*.42;
     motorPos(qk).forEach(([x,z,d])=>{const a=this.pa*d,c=Math.cos(a),sn=Math.sin(a),L=M4.mul(Sc,[c,0,-sn,0,0,1,0,0,sn,0,c,0,x,0,z,1]);R.draw(this.bm,L,{alpha:ba,lines:false});if(da>.02)R.draw(this.pm,M4.mul(Sc,[1,0,0,0,0,1,0,0,0,0,1,0,x,0,z,1]),{alpha:da,lines:false})})}
    if(NT){if(!this.lm||this.lmk!==qk){const D=droneLights(qk);this.lm={m:this.r.mesh(D.m),h:this.r.mesh(D.h)};this.lmk=qk}const bk=(t%1200)<90?1:.55;R.draw(this.lm.m,Sc,{lines:false});gl.blendFunc(gl.SRC_ALPHA,gl.ONE);gl.depthMask(false);R.draw(this.lm.h,Sc,{alpha:.3*bk,lines:false});gl.depthMask(true);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA)}gl.disable(gl.BLEND)}}
@@ -12066,20 +12074,20 @@ const P47K={OD:[.27,.285,.16],NG:[.6,.615,.61],RED:[.78,.1,.09],WHT:[.92,.92,.89
 const P47S=[[.6,1.3,.65,-.65],[.85,1.38,.69,-.69],[1.4,1.46,.73,-.73],[1.95,1.42,.71,-.76],[2.3,1.36,.7,-.88],[3,1.3,.66,-1],[3.8,1.3,.6,-1.08],[4.6,1.2,.55,-1.08],[5.6,1.02,.48,-.95],[6.6,.86,.4,-.78],[7.6,.7,.32,-.62],[8.6,.54,.26,-.42],[9.6,.38,.2,-.2],[10.5,.22,.18,-.04],[10.95,.14,.15,.04]]
  .map(([x,w,t,b])=>[(x-4)*.1333,w*.1333,(t-b)*.1333,(t+b)/2*.1333+.02]);
 const p47L=(v,j)=>{const i=Math.min(P47S.length-2,Math.max(0,Math.floor(v))),f=Math.min(1,Math.max(0,v-i));return P47S[i][j]+(P47S[i+1][j]-P47S[i][j])*f};
-function p47Mark(x,y,z){const w=acN(x*3.3+5,y*3.3,z*3.3+1)-.5;return .94+.1*acF(x*17+w,y*17,z*17,2)}
+function p47Mark(x,y,z){const w=acN(x*3.3+5,y*3.3,z*3.3+1)-.5;return .97+.05*acF(x*9+w,y*9,z*9,2)}
 /* olive drab over neutral grey: the demarcation runs along the middle of the fuselage; a red ring round the front of the cowling */
-function p47Fus(p,u,v){const x=p[0],y=p[1],z=p[2],yc=p47L(v,3),h=p47L(v,2),yd=yc-h*.06+.006*Math.sin(z*14),up=acSS(-.006,.006,y-yd);
+function p47Fus(p,u,v){const x=p[0],y=p[1],z=p[2],yc=p47L(v,3),h=p47L(v,2),yd=yc-h*.06,up=acSS(-.02,.02,y-yd);
  const m=p47Mark(x,y,z);let c=acMix(P47K.NG,P47K.OD,up);c=[c[0]*m,c[1]*m,c[2]*m];
  if(z<-.405){const f=acSS(-.46,-.45,z);c=acMix(c,[P47K.RED[0]*m,P47K.RED[1]*m,P47K.RED[2]*m],f)}
  /* cowl flaps: a ring of slightly darker segments at the rear of the cowling */
- if(z>-.38&&z<-.27){const s=Math.abs(Math.sin(Math.atan2(x,y-.02)*14));c=c.map(q=>q*(.92+.08*s))}
+ if(z>-.38&&z<-.27){const s=Math.abs(Math.sin(Math.atan2(x,y-.02)*14));c=c.map(q=>q*(.97+.03*s))}
  /* a dark band for the oil and turbo-charger scoop under the cowl, blended into the belly */
- const so=Math.exp(-Math.pow((y-.06)/.03,2))*acSS(-.5,-.45,z)*(1-acSS(-.3,-.15,z))*acSS(.03,.07,Math.abs(x));return [c[0]*(1-.3*so),c[1]*(1-.3*so),c[2]*(1-.28*so)]}
+ const so=Math.exp(-Math.pow((y-.06)/.03,2))*acSS(-.5,-.45,z)*(1-acSS(-.3,-.15,z))*acSS(.03,.07,Math.abs(x));return [c[0]*(1-.1*so),c[1]*(1-.1*so),c[2]*(1-.1*so)]}
 const P47C=[[-.2,.05,.02,.088,.086],[-.16,.115,.07,.1,.088],[-.1,.138,.12,.128,.088],[-.04,.142,.146,.138,.088],[.04,.136,.15,.142,.086],[.12,.116,.11,.124,.08],[.2,.075,.06,.1,.07],[.28,.034,.026,.08,.062]];
 function p47Can(p,u,v){const fr=Math.abs(v-1.1)<.16||Math.abs(v-3.3)<.1||Math.abs(v-4.9)<.1||v>6.3||(v<2&&Math.abs(p[0])<.004);return fr?[P47K.OD[0]*.9,P47K.OD[1]*.9,P47K.OD[2]*.9]:WB.GL}
 function geoP47(){const g=new Geo(),K=acKit2(g),cs=[],CM=WB.CM,OD=P47K.OD,NG=P47K.NG,BK=WB.BK,AL=[.62,.63,.66];
  /* fuselage and cowling, one smooth loft; the dark mouth of the cowling behind the propeller hub */
- const F=P47S.map(a=>K.ring(a[0],a[1],a[2],a[3],2.15,30));loftS(g,F,{sub:3,col:p47Fus});K.cap(F[F.length-1],[0,.036,p47L(14,0)+.004],NG);K.cap(F[0],[0,.02,-.47],[.05,.05,.055]);
+ const F=P47S.map(a=>K.ring(a[0],a[1],a[2],a[3],2.15,40));loftS(g,F,{sub:5,col:p47Fus});K.cap(F[F.length-1],[0,.036,p47L(14,0)+.004],NG);K.cap(F[0],[0,.02,-.47],[.05,.05,.055]);
  /* the dome of the propeller hub and a short spinner */
  loftS(g,[[-.452,.088,.088],[-.468,.082,.082],[-.495,.066,.066],[-.52,.04,.04],[-.532,.014,.014]].map(a=>K.ring(a[0],a[1],a[2],.02,2,22)),{sub:2,col:P47K.RED});
  /* the deep chin scoop under the cowling (oil cooler and the turbo-charger intercooler air) */
@@ -12107,7 +12115,7 @@ function geoP47(){const g=new Geo(),K=acKit2(g),cs=[],CM=WB.CM,OD=P47K.OD,NG=P47
 ACFIN.p47={gloss:6,refine:.032,soft:56,
  paint:(x,y,z,r,g,b,nx,ny)=>{if(r>.45&&g<.14&&Math.abs(r-b)<.06){const m=p47Mark(x,y,z);if(ny<-.3)return P47K.NG.map(v=>v*m);return acMix(P47K.NG,P47K.OD,acSS(-.4,.1,ny)).map(v=>v*m)}},
  kind:(x,y,z,r,g,b)=>(b>r+.04&&b>g&&r<.2)?9:null,
- decals:(M)=>{const G=M.g,rd=(c,d,u,parts)=>acDecal(G,{c,d,u,H:.34,parts,step:.011});
+ decals:(M)=>{const G=M.g,rd=(c,d,u,parts)=>acDecal(G,{c,d,u,H:.34,parts,step:.005});
   const SB=(r)=>[{rect:[-r*2.5,-r*.31,r*2.5,r*.31],col:[.1,.2,.5],lay:0},{ring:[0,r],col:[.1,.2,.5],lay:1},{rect:[r*.98,-r*.17,r*2.3,r*.17],col:WB.WHT,lay:1},{rect:[-r*2.3,-r*.17,-r*.98,r*.17],col:WB.WHT,lay:1},{poly:wbStar(r*.82),col:WB.WHT,lay:2}];
   const S=SB(.05);rd([0,.0,.47],[-1,0,0],[0,0,-1],S);rd([0,.0,.47],[1,0,0],[0,0,1],S);
   const W=SB(.055);rd([-.5,.3,-.05],[0,-1,0],[1,0,0],W);rd([.5,-.3,-.05],[0,1,0],[-1,0,0],W);
@@ -12120,22 +12128,19 @@ const BFK={U74:[.30,.33,.29],U75:[.40,.42,.46],B76:[.66,.72,.75],YEL:[.9,.76,.12
 const BFS=[[.55,.66,.36,-.36],[1.0,.76,.42,-.42],[1.9,.86,.5,-.5],[2.8,.88,.56,-.55],[3.6,.86,.68,-.6],[4.5,.8,.62,-.62],[5.5,.66,.5,-.58],[6.5,.52,.4,-.46],[7.5,.38,.3,-.32],[8.4,.24,.24,-.2],[8.95,.12,.2,-.12]]
  .map(([x,w,t,b])=>[(x-3)*.144,w*.144,(t-b)*.144,(t+b)/2*.144+.02]);
 const bfL=(v,j)=>{const i=Math.min(BFS.length-2,Math.max(0,Math.floor(v))),f=Math.min(1,Math.max(0,v-i));return BFS[i][j]+(BFS[i+1][j]-BFS[i][j])*f};
-function bfCam(x,y,z,sd){/* RLM 74/75 splinter-and-mottle on the upper surfaces */
- const w=acN(x*4.1+2,y*4.1,z*4.1+7)-.5,m=acN(x*11+w,y*11,z*11)-.5,f=acSS(-.02,.02,Math.sin((x*9+z*14)+w*5)+ m*.8);
- const c=acMix(BFK.U74,BFK.U75,f),k=.96+.08*acF(x*19,y*19,z*19,2);return [c[0]*k,c[1]*k,c[2]*k]}
-function bfFus(p,u,v){const x=p[0],y=p[1],z=p[2],yc=bfL(v,3),h=bfL(v,2),yd=yc-h*.12+.01*Math.sin(z*13+x*5);
- let c;const dn=acSS(-.012,.012,y-yd);
- if(dn<.5)c=BFK.B76;else c=bfCam(x,y,z);
- if(dn>.05&&dn<.95){const mt=acN(x*20,y*20,z*20);c=acMix(BFK.B76,bfCam(x,y,z),acSS(.3,.7,dn+(mt-.5)*.6))}
+function bfCam(x,y,z,sd){/* RLM 74/75: two close greys in big soft patches, with a faint mottle */
+ const f=acSS(.3,.7,acN(x*3.2+2,y*3.2,z*3.2+7)),c=acMix(BFK.U74,BFK.U75,f*.8),k=.97+.05*acF(x*9,y*9,z*9,2);return [c[0]*k,c[1]*k,c[2]*k]}
+function bfFus(p,u,v){const x=p[0],y=p[1],z=p[2],yc=bfL(v,3),h=bfL(v,2),yd=yc-h*.12;
+ let c;const dn=acSS(-.025,.025,y-yd);
+ c=acMix(BFK.B76,bfCam(x,y,z),dn);
  /* the yellow lower cowling of the Mediterranean and Eastern fronts */
  if(z<-.2&&y<yc+.004){c=acMix(c,BFK.YEL,acSS(-.2,-.215,z)*acSS(.012,-.004,y-yc))}
  /* the dark exhaust stain and the cowl gun troughs */
- if(z>-.3&&z<-.13){const t=acSS(.02,.0,Math.abs(y-(yc+h*.5-.02)))*acSS(.02,.04,Math.abs(x));c=c.map(q=>q*(1-.25*t))}
  return c}
 const BFC=[[-.07,.06,.03,.115,.112],[-.03,.11,.08,.13,.11],[.03,.125,.13,.15,.11],[.1,.12,.125,.145,.11],[.17,.09,.07,.13,.11],[.24,.04,.025,.12,.11]];
 function bfCan(p,u,v){const fr=Math.abs(v-1.4)<.14||Math.abs(v-2.6)<.1||Math.abs(v-3.7)<.1||Math.abs(v-4.7)<.1||v>4.9||(v<2&&Math.abs(p[0])<.004);return fr?bfCam(p[0],p[1],p[2]):WB.GL}
 function geoBf109(){const g=new Geo(),K=acKit2(g),cs=[],CM=WB.CM,AL=[.5,.52,.55],y0=-.05,dh=5.5*Math.PI/180;
- const F=BFS.map(a=>K.ring(a[0],a[1],a[2],a[3],2.2,28));loftS(g,F,{sub:3,col:bfFus});
+ const F=BFS.map(a=>K.ring(a[0],a[1],a[2],a[3],2.2,36));loftS(g,F,{sub:5,col:bfFus});
  K.cap(F[F.length-1],[0,.025,bfL(10,0)+.004],BFK.U74);K.cap(F[0],[0,.02,-.38],[.05,.05,.055]);
  /* the pointed spinner, black-green */
  loftS(g,[[-.40,.07,.07],[-.43,.068,.068],[-.47,.058,.058],[-.51,.038,.038],[-.53,.012,.012]].map(a=>K.ring(a[0],a[1],a[2],.02,2,20)),{sub:2,col:BFK.SPN});
@@ -12162,7 +12167,7 @@ function geoBf109(){const g=new Geo(),K=acKit2(g),cs=[],CM=WB.CM,AL=[.5,.52,.55]
 ACFIN.bf109={gloss:6,refine:.03,soft:56,
  paint:(x,y,z,r,g,b,nx,ny)=>{if(r>.45&&g<.14&&Math.abs(r-b)<.06){if(ny<-.3)return BFK.B76;return bfCam(x,y,z)}},
  kind:(x,y,z,r,g,b)=>(b>r+.04&&b>g&&r<.2)?9:null,
- decals:(M)=>{const G=M.g,rd=(c,d,u,parts)=>acDecal(G,{c,d,u,H:.34,parts,step:.011});
+ decals:(M)=>{const G=M.g,rd=(c,d,u,parts)=>acDecal(G,{c,d,u,H:.34,parts,step:.005});
   const BK=(r)=>[{rect:[-r*1.12,-r*.38,r*1.12,r*.38],col:WB.WHT,lay:0},{rect:[-r*.38,-r*1.12,r*.38,r*1.12],col:WB.WHT,lay:0},{rect:[-r,-r*.28,r,r*.28],col:BFK.BK,lay:1},{rect:[-r*.28,-r,r*.28,r],col:BFK.BK,lay:1}];
   const S=BK(.055);rd([0,.0,.38],[-1,0,0],[0,0,-1],S);rd([0,.0,.38],[1,0,0],[0,0,1],S);
   const W=BK(.05);rd([-.45,.3,.17],[0,-1,0],[1,0,0],W);rd([.45,.3,.17],[0,-1,0],[1,0,0],W);rd([-.45,-.3,.17],[0,1,0],[1,0,0],W);rd([.45,-.3,.17],[0,1,0],[1,0,0],W);
@@ -12446,13 +12451,15 @@ function pdArr(s){const n=s.plane?1:4;if(!s.pd||s.pd.length!==n)s.pd=Array(n).fi
 function pdHit(s,lost,hard){const d=pdArr(s),M=motorPos(quadKey()),vb=Q.rot(Q.conj(s.q),s.v),vl=Math.hypot(vb[0],vb[2]);
  const w=M.map(([x,z])=>{const l=Math.hypot(x,z)||1,al=vl>.6?Math.max(0,(x*vb[0]+z*vb[2])/(l*vl)):.5;return .12+al*al*1.1+Math.random()*.45}),sw=w.reduce((a,b)=>a+b,0);
  w.forEach((q,i)=>{d[i]=Math.min(100,d[i]+lost*4*q/sw*(hard?1.15:.85))})}
+/* a prop as a ring gauge: the coloured arc is the share of health left, the number sits in the middle */
+function pdRing(r,hp,c,sw,txt){const C=2*Math.PI*r,a=Math.max(0,Math.min(100,hp))/100*C;return `<circle r="${r}" fill="${c}" fill-opacity=".12" stroke="currentColor" stroke-opacity=".22" stroke-width="${sw}"/>${hp>0?`<circle r="${r}" fill="none" stroke="${c}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${a.toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90)"/>`:`<path d="M${-r*.5} ${-r*.5}L${r*.5} ${r*.5}M${r*.5} ${-r*.5}L${-r*.5} ${r*.5}" stroke="${c}" stroke-width="${sw}" stroke-linecap="round"/>`}${hp>0&&txt?`<text y="${r*.3}" text-anchor="middle" font-size="${(r*.78).toFixed(1)}" font-weight="800" fill="${c}" font-family="JetBrains Mono,monospace">${hp}</text>`:''}`}
 function pdSvg(s,big){const d=pdArr(s),pl=!!s.plane,hp=d.map(x=>Math.round(100-x));let b='';
- if(!pl){const M=motorPos(quadKey()),sc=big?44:30;
+ if(!pl){const M=motorPos(quadKey()),sc=big?46:34;
   b+=`<g stroke="currentColor" stroke-width="${big?5:4}" stroke-linecap="round" opacity=".55">${M.map(([x,z])=>`<path d="M0 0L${(x/M[0][0]*sc).toFixed(1)} ${(z/M[0][0]*sc).toFixed(1)}"/>`).join('')}</g><rect x="${-sc*.34}" y="${-sc*.5}" width="${sc*.68}" height="${sc}" rx="${sc*.2}" fill="var(--panel2)" stroke="currentColor" stroke-width="1.6" opacity=".95"/><path d="M0 ${-sc*.5}v${-sc*.28}M${-sc*.12} ${-sc*.62}L0 ${-sc*.78}L${sc*.12} ${-sc*.62}" stroke="currentColor" stroke-width="1.6" fill="none" opacity=".7" stroke-linecap="round"/>`;
-  M.forEach(([x,z],i)=>{const px=x/M[0][0]*sc,pz=z/M[0][0]*sc,c=PDC(hp[i]),r=sc*.5;b+=`<g transform="translate(${px.toFixed(1)} ${pz.toFixed(1)})"><circle r="${r}" fill="${c}" fill-opacity=".22" stroke="${c}" stroke-width="${big?3:2.4}"/>${hp[i]<=0?`<path d="M${-r*.55} ${-r*.55}L${r*.55} ${r*.55}M${r*.55} ${-r*.55}L${-r*.55} ${r*.55}" stroke="${c}" stroke-width="${big?4:3}" stroke-linecap="round"/>`:`<circle r="${r*.16}" fill="${c}"/><path d="M${-r*.9} 0H${r*.9}" stroke="${c}" stroke-width="${big?2.4:2}" stroke-linecap="round" opacity="${hp[i]<70?.45:.8}" transform="rotate(${(i*47)%180})"/>`}${big?`<text y="${z<0?-(r+8):r+17}" text-anchor="middle" font-size="15" font-weight="800" fill="${c}" font-family="JetBrains Mono,monospace">${hp[i]}%</text>`:''}</g>`})}
+  M.forEach(([x,z],i)=>{const px=x/M[0][0]*sc,pz=z/M[0][0]*sc,c=PDC(hp[i]),r=sc*.56;b+=`<g transform="translate(${px.toFixed(1)} ${pz.toFixed(1)})">${pdRing(r,hp[i],c,big?5:4.2,true)}</g>`})}
  else{const c=PDC(hp[0]),jet=PLANES[s.PK||planeKey()]?.jet;
-  b+=`<g fill="var(--panel2)" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" opacity=".95"><path d="M0 -30c3.200 0 5 4 5 9v9l33 15v8l-33-6.500v13l9.500 6.500v5.500L0 25l-14.500 3.500V23l9.500-6.500v-13L-38 10v-8l33-15v-9c0-5 1.800-9 5-9z"/></g><g transform="translate(0 -36)"><circle r="${jet?7:11}" fill="${c}" fill-opacity=".22" stroke="${c}" stroke-width="2.4"/>${hp[0]<=0?`<path d="M-6 -6L6 6M6 -6L-6 6" stroke="${c}" stroke-width="3" stroke-linecap="round"/>`:`<circle r="2.4" fill="${c}"/>`}${big?`<text x="0" y="${-((jet?7:11)+8)}" text-anchor="middle" font-size="15" font-weight="800" fill="${c}" font-family="JetBrains Mono,monospace">${hp[0]}%</text>`:''}</g>`}
- return `<svg viewBox="${pl?'-48 -66 96 112':'-78 -86 156 176'}" class="${big?'pdbig':'pdsm'}" aria-hidden="true">${b}</svg>`}
+  b+=`<g fill="var(--panel2)" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" opacity=".95"><path d="M0 -30c3.200 0 5 4 5 9v9l33 15v8l-33-6.500v13l9.500 6.500v5.500L0 25l-14.500 3.500V23l9.500-6.500v-13L-38 10v-8l33-15v-9c0-5 1.800-9 5-9z"/></g><g transform="translate(0 -36)">${pdRing(jet?9:13,hp[0],c,3.2,true)}</g>`}
+ return `<svg viewBox="${pl?'-48 -66 96 112':'-82 -82 164 164'}" class="${big?'pdbig':'pdsm'}" aria-hidden="true">${b}</svg>`}
 function pdHud(s){const host=document.getElementById('simView');if(!host||!s||s.att)return;
  let el=document.getElementById('soPd');if(!el){el=document.createElement('button');el.type='button';el.id='soPd';el.className='so pdmini';el.setAttribute('data-act','pd-toggle');host.appendChild(el)}
  const d=pdArr(s),key=d.map(x=>Math.round(x)).join(',')+(s.plane?'p':'q')+(s.crash?'x':'');
