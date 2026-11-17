@@ -1897,7 +1897,7 @@ html:not(.ltr) .track .tph.col i{transform:rotate(180deg)}html.ltr .track .tph.c
 /* propeller health */
 .simview .so.pdmini{position:absolute;top:146px;left:12px;right:auto;bottom:auto;display:flex;align-items:center;gap:6px;width:auto!important;padding:5px 9px 5px 7px;border-radius:12px;background:rgba(8,12,10,.55);border:1px solid rgba(255,255,255,.1);color:var(--fg);cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);font:inherit}
 .simview .so.pdmini:hover{border-color:var(--acc)}.simview .so.pdmini.dmg{border-color:color-mix(in srgb,#f08a24 60%,transparent)}
-.pdsm{width:64px;height:64px;display:block}.pdmini em{font:700 12px var(--mono,monospace);font-style:normal}
+.pdsm{width:92px;height:92px;display:block}.pdmini em{font:700 12px var(--mono,monospace);font-style:normal}
 html.free:not(.phone) .simview .so.pdmini{top:130px}
 .pdov{position:absolute;inset:0;z-index:70;display:grid;place-items:center;background:rgba(4,8,6,.74);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);animation:fadein .18s ease-out;padding:16px}
 .pdbox{position:relative;width:min(560px,100%);max-height:100%;overflow:auto;display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px 22px 16px;border-radius:20px;background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line2);box-shadow:0 30px 90px rgba(0,0,0,.6);color:var(--fg)}
@@ -3868,6 +3868,26 @@ nav.side .grp,nav.side a .k,.crit .idx,.stats .ci,.cslist .ci,.track .tph,.track
 .simview .so.pdmini .pdt{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1;text-align:start}
 .simview .so.pdmini .pdt small{font:700 9px var(--mono,monospace);letter-spacing:.06em;color:var(--dim)}
 .simview .so.pdmini .pdt em{font:800 14px var(--mono,monospace);font-style:normal;color:var(--pc)}
+
+.hgmain{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);gap:14px;align-items:stretch}
+@media(max-width:900px){.hgmain{grid-template-columns:1fr}}
+.hgstage{display:flex;flex-direction:column;overflow:hidden}
+.hgview{position:relative;flex:1;min-height:360px;height:min(56vh,520px);background:radial-gradient(ellipse at 50% 38%,#20252d,#0d1013 72%);cursor:grab;touch-action:none}
+.hgview:active{cursor:grabbing}.hgcv{position:absolute;inset:0;width:100%;height:100%;display:block;outline:none}
+.hghint{position:absolute;inset:auto 0 10px 0;text-align:center;font:600 11px var(--mono,monospace);letter-spacing:.04em;color:var(--dim);pointer-events:none;z-index:1}
+.hgtools{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;border-top:1px solid var(--line2)}
+.hgtools .btn[aria-pressed="true"]{border-color:var(--acc);color:var(--acc)}
+.hginfo{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.hgh h2{margin:2px 0 2px;font-size:22px}.hgh .hcls{display:inline-block;font-size:10px;letter-spacing:.08em;color:var(--acc)}
+.hgdesc{margin:0;line-height:1.6;color:var(--fg)}
+.hgcaps{display:flex;flex-wrap:wrap;gap:6px}
+.hgspec{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin:0}.hgspec>div{border-top:1px solid var(--line2);padding-top:6px}
+.hgspec dt{font-size:11px;color:var(--dim)}.hgspec dd{margin:2px 0 0;font-size:13px;font-weight:700}
+.hgstrip{display:flex;gap:10px;overflow-x:auto;padding:14px 2px 6px;scroll-snap-type:x proximity}
+.hgc{flex:0 0 auto;width:118px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 8px;border-radius:12px;border:1px solid var(--line2);background:var(--panel);color:var(--dim);cursor:pointer;position:relative;scroll-snap-align:start;font:inherit}
+.hgc b{font-size:12px;color:var(--fg);text-align:center;line-height:1.25}.hgc:hover{border-color:var(--acc)}
+.hgc.on{border-color:var(--acc);color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}
+.hgsil svg{width:92px;height:auto;display:block}.hgu{position:absolute;top:8px;inset-inline-start:8px;width:8px;height:8px;border-radius:50%;background:#3ecf7a}
 .simview .so.pdmini.hit{animation:pdhit 1.3s ease-out}
 @keyframes pdhit{0%{background:rgba(190,36,28,.78);box-shadow:0 0 0 0 rgba(229,72,61,.55)}35%{box-shadow:0 0 0 7px rgba(229,72,61,.28)}100%{background:rgba(8,12,10,.55);box-shadow:0 0 0 0 rgba(229,72,61,0)}}
 @media (prefers-reduced-motion:reduce){.simview .so.pdmini.hit{animation:none}}
@@ -7920,7 +7940,7 @@ function renderHud(){const h=$('#hud');if(!h)return;const u=S.role==='trainee'?c
  const nx=P.rank<5?RANKS[P.rank+1]:null,pct=nx?Math.round(P.toNext*100):100;
  h.style.setProperty('--pc',pl.C[3]);
  h.classList.toggle('grad',W);h.classList.add('ck');const R=(location.hash||'').slice(1),C=2*Math.PI*45;
- const mods=[['card','כרטיס מטיס'],['board','מובילים'],['history','יומן טיסות'],['squad','הטייסת']].filter(([k])=>(k!=='board'||cfg('board'))&&(k!=='squad'||cfg('squad'))),PLN=vehOf(u.course)==='plane',gear=cfg('gear')&&PLN?[['hangar','הטיסנים']]:[];
+ const mods=[['card','כרטיס מטיס'],['board','מובילים'],['history','יומן טיסות'],['squad','הטייסת']].filter(([k])=>(k!=='board'||cfg('board'))&&(k!=='squad'||cfg('squad'))),PLN=vehOf(u.course)==='plane',gear=cfg('gear')?[['hangar','ההאנגר']]:[];
  const it=([k,t])=>`<a class="hb" href="#${k}" ${R===k?'aria-current="page"':''} title="${t}">${(NAVICO[k]||'').replace('width="18" height="18"','width="19" height="19"')}<span>${t}</span></a>`;
  h.innerHTML=`<div class="ck-top">
   <a class="ck-av" href="#card" title="כרטיס מטיס">${cfg('badges')?`<svg class="ck-ring" viewBox="0 0 100 100" aria-hidden="true"><path d="M50.00 4.00 L77.04 12.79 L93.75 35.79 L93.75 64.21 L77.04 87.21 L50.00 96.00 L22.96 87.21 L6.25 64.21 L6.25 35.79 L22.96 12.79Z" pathLength="100"/><path class="v" d="M50.00 4.00 L77.04 12.79 L93.75 35.79 L93.75 64.21 L77.04 87.21 L50.00 96.00 L22.96 87.21 L6.25 64.21 L6.25 35.79 L22.96 12.79Z" pathLength="100" style="stroke-dasharray:${Math.max(.01,pct).toFixed(1)} 100"/></svg>`:''}${ava(u,76,false,true)}${cfg('badges')?`<span class="ck-ins" title="${esc(RANKS[P.rank].n)}">${insignia(P.rank,20)}</span>`:''}</a>
@@ -8099,7 +8119,7 @@ function tourPlace(){const h=$('#tour');if(!h)return;const st=TOUR.list[TOUR.i],
  x=Math.max(12,Math.min(innerWidth-cw-12,x));card.style.cssText=`left:${x}px;top:${y}px;width:${cw}px`}
 document.addEventListener('change',e=>{if(e.target.id==='tourNo')TOUR.no=e.target.checked});
 document.addEventListener('keydown',e=>{if(!$('#tour'))return;if(e.key==='Escape')tourEnd();if(e.key==='ArrowLeft')$('#tour [data-act="tour-n"]')?.click();if(e.key==='ArrowRight')$('#tour [data-act="tour-p"]')?.click()});
-function phNav(){const r=(location.hash||'').slice(1),mods=[['card','כרטיס מטיס'],['board','מובילים'],['history','יומן טיסות'],['squad','הטייסת']].filter(([h])=>(h!=='board'||cfg('board'))&&(h!=='squad'||cfg('squad'))),PLN=vehOf(curTrainee()?.course)==='plane',gear=cfg('gear')&&PLN?[['hangar','הטיסנים']]:[];
+function phNav(){const r=(location.hash||'').slice(1),mods=[['card','כרטיס מטיס'],['board','מובילים'],['history','יומן טיסות'],['squad','הטייסת']].filter(([h])=>(h!=='board'||cfg('board'))&&(h!=='squad'||cfg('squad'))),PLN=vehOf(curTrainee()?.course)==='plane',gear=cfg('gear')?[['hangar','ההאנגר']]:[];
  const b=([h,t])=>`<a class="phn" href="#${h}" title="${t}" ${r===h?'aria-current="page"':''}>${(NAVICO[h]||'').replace('width="18" height="18"','width="22" height="22"')}<span>${t}</span></a>`;
  return `<nav class="ph-nav" aria-label="מודולים וציוד">${mods.map(b).join('')}${gear.length?'<i class="phsep" aria-hidden="true"></i>'+gear.map(b).join(''):''}</nav>`}
 
@@ -10007,6 +10027,7 @@ function vgHorizon(g,seed,rim,flat){const G=g.R,R=srnd(Math.floor(seed*97)+11),N
   const PL=rim==='dry'||rim==='rock'?[[.3,.24,.17],[.52,.42,.3],[.26,.2,.13],[.45,.35,.24]]:rim==='urban'?[[.22,.24,.28],[.34,.36,.4],[.2,.22,.25],[.3,.32,.36]]:[[.13,.2,.19],[.22,.3,.27],[.09,.15,.09],[.17,.25,.13]];
   if(!flat){ridge(296,318,1,PL[0],PL[1],1.1);
   ridge(214,236,2,PL[2],PL[3],.9)}
+  else{const dry=rim==='dry',A=dry?[.62,.55,.4]:[.4,.5,.32],B=dry?[.74,.67,.5]:[.56,.64,.44],C=dry?[.55,.49,.36]:[.34,.44,.28],D=dry?[.68,.61,.46]:[.5,.58,.4];ridge(330,352,1,A,B,.62);ridge(262,282,2,C,D,.55)}
   if(rim&&rim!=='rock'&&rim!=='urban'||rim==='rock'||rim==='urban'){const nT=rim==='dry'||rim==='rock'||rim==='urban'?0:70,conif=rim==='conifer';for(let i=0;i<nT;i++){const a=R()*6.2832,rr=224+R()*8,h=flat?0:Math.max(3,hf(a,2)*.9);if(vgNoise(Math.cos(a)*3+seed,Math.sin(a)*3)<.3)continue;vgFar(g,Math.sin(a)*rr,-Math.cos(a)*rr,(conif||R()<.4?11:8)+R()*7,R,conif||R()<.4?'fir':'oak',h*.7)}
    vgRim(g,R,{kinds:rim==='conifer'?['fir']:rim==='dry'?['shrub']:['oak','fir'],n:rim==='conifer'?150:rim==='dry'?40:rim==='temperate'?100:0,r0:rim==='dry'?70:108})}}
 
@@ -10503,9 +10524,9 @@ class FPVSim{
  load(k){if(!this.att&&!String(k).startsWith('mis:')&&S.role==='trainee'&&vehOf(curTrainee()?.course)==='plane')return this.loadPlaneFree();this.objs=null;this.plane=false;this.scnKey=typeof k==='string'&&!k.startsWith('mis:')?k:'free';if(typeof k==='string'&&k.startsWith('mis:')){return this.loadMis(k.slice(4))}this.wx=!this.att&&MODE==='free'?wxNorm(PREF.wx):null;this.fwind=wxWind(this.wx);this._wxW?.remove();this._wxW=null;if(!this.att)wxAudio(this.wx?.r||0);this.neon=null;this.lm=null;this.mis=null;this.col=null;this.cpath=null;this.mSolid=this.mGlass=this.route=null;const S0=SIMSCN[k]||SIMSCN.field,R=srnd(S0.seed||(k==='forest'?77:13)),gl=this.r;this.scn=S0;this.night=!!S0.night;gl.free();this.path=null;
   const g=new Geo(),sg=new Geo();for(let i=-20;i<20;i++)for(let j=-20;j<20;j++){const s=10,x=i*s+3.7,z=j*s-36.7,c=S0.gc||(k==='forest'?[.24,.33,.2]:[.3,.42,.24]);g.quad([x,0,z+s],[x+s,0,z+s],[x+s,0,z],[x,0,z],c,-1)}
   const gc0=S0.gc||(k==='forest'?[.24,.33,.2]:[.3,.42,.24]),VS0=VGSCN[k]||{};g.nv=!!this.att;g.lod=SIM.gfx==='high'?0:1;this.gLay=VS0.gt!=null?TXY[VS0.gt]:vgGroundLayer(gc0);this.padU=this.gLay===TXY.grass?[S0.start[0],S0.start[2],1.7]:null;
-   vgTacOnly(g,()=>g.cyl(S0.start[0],S0.start[2],.5,.004,0,[.55,.4,.18],20,.5));this.trees=S0.build.call(S0,g,R,sg)||[];landmarks(g,S0.seed?S0.seed/10:(k==='forest'?3:7),VS0.rim);this.world=gl.mesh(g);this.grassM=null;
+   vgTacOnly(g,()=>g.cyl(S0.start[0],S0.start[2],.5,.004,0,[.55,.4,.18],20,.5));const cg=new Geo(),ocy=g.cyl;g.cyl=function(x,z,r,h,y0,col,seg,r2){if(h>.8&&this.kd!==7&&r>=.04)cg.cyl(x,z,r,h,y0,col,Math.min(seg||10,8),r2);return ocy.apply(this,arguments)};this.trees=S0.build.call(S0,g,R,sg)||[];delete g.cyl;this._cg=cg;landmarks(g,S0.seed?S0.seed/10:(k==='forest'?3:7),VS0.rim);this.world=gl.mesh(g);this.grassM=null;
    {const st=S0.start||[0,0,0];if(!this.att&&VS0.bio&&SIM.gfx==='high')vgDress(g,{bio:VS0.bio,cx:st[0],cz:st[2]-8,R:srnd((S0.seed||13)+5),base:gc0,pad:[st[0],st[2],2.6],skip:(x,z)=>(VS0.skip&&VS0.skip(x,z))||this.trees.some(t=>t&&Math.hypot((t.x??t[0])-x,(t.z??t[1])-z)<.7)});this.vg=this.att?null:vgMesh(gl,g)}
-  this._sg=sg;if(sg.p.length){const P=sg.p,T=[];for(let i=0;i+8<P.length;i+=9)T.push([[P[i],P[i+1],P[i+2]],[P[i+3],P[i+4],P[i+5]],[P[i+6],P[i+7],P[i+8]]]);this.col=colBuild(T,2);this.mSolid=gl.mesh(sg)}
+  this._sg=sg;{const T=[];for(const Gq of [sg,this._cg||{p:[]}]){const P=Gq.p;for(let i=0;i+8<P.length;i+=9)T.push([[P[i],P[i+1],P[i+2]],[P[i+3],P[i+4],P[i+5]],[P[i+6],P[i+7],P[i+8]]])}if(T.length)this.col=colBuild(T,2);if(sg.p.length)this.mSolid=gl.mesh(sg)}
   const sky=new Geo();sky.sphere(380,[1,1,1],24);this.sky=gl.mesh(sky);
   const GS=S0.gates;GS.forEach((G,i)=>{const pv=i?GS[i-1]:[S0.start[0],0,S0.start[2]],nx=GS[i+1]||[G[0]+(G[0]-pv[0]),0,G[2]+(G[2]-pv[2])],dx=nx[0]-pv[0],dz=nx[2]-pv[2];G[3]=Math.atan2(-dx,-dz)});
   this.gates=S0.gates.map(G=>{const gg=new Geo();gateGeo(gg,G,2.6,2,[.98,.55,.12]);return {G,m:gl.mesh(gg)}});
@@ -10515,15 +10536,15 @@ class FPVSim{
  loadMis(lid){const l=typeof lid==='object'?lid:S.lessons.find(x=>x.id===lid),I=l&&INTRO3[l.ico];this.wx=l?.free?(this.att?null:wxNorm(PREF.wx)):wxOf(l);this.fwind=wxWind(this.wx);this._wxW?.remove();this._wxW=null;if(!this.att)wxAudio(this.wx?.r||0);if(!I)return this.load('field');if(l.ball){this.plane=false;return this.loadBall(l)}const gl=this.r;gl.free();this.neon=null;this.lm=null;this.night=l.ico==='night'||!!l.night;this.path=null;this.mis=l;this.plane=!!I.plane;const K=misScale(l);this.misK=K;
   const pts=I.path().map(p=>p.map(x=>x*K)),s0=pts[0];let j=1;while(j<pts.length-1&&Math.hypot(pts[j][0]-s0[0],pts[j][2]-s0[2])<.3)j++;const dx=pts[j][0]-s0[0],dz=pts[j][2]-s0[2];
   this.scn={n:l.name,d:l.task,start:[s0[0],0,s0[2]],yaw:(dx||dz)?Math.atan2(-dx,-dz):0,gates:[],mis:true};
-  const M=misGeo(l,K,{realTrees:!this.att&&SIM.gfx==='high'&&!I.plane}),BG=l.cx&&SIMSCN[l.cx.bg],g=Object.assign(new Geo(),{nv:!!this.att,lod:SIM.gfx==='high'?0:1}),fc=BG?(BG.gc||[.3,.42,.24]):l.cx?(CX_GROUND[l.cx.ground]||CX_GROUND.grass).c:sceneFor(l)==='forest'?[.24,.33,.2]:[.3,.42,.24];const GN=I.plane?(I.free?22:14):16,GS=I.plane?20:10;for(let i=-GN;i<GN;i++)for(let k=-GN;k<GN;k++){const sz=GS,x=i*sz+3.7,z=k*sz+3.3;g.quad([x,0,z+sz],[x+sz,0,z+sz],[x+sz,0,z],[x,0,z],fc,-1)}
-  if(I.plane){const RW_=I.free?RWYF:RWY;g.skip=(x,z)=>Math.abs(x-RW_.x)<RW_.w/2+26&&z<RW_.z0+46&&z>RW_.z1-46;rwBuild(g,I.free?RWYF:RWY,!!I.free);g.cyl(-14,36,.06,4,0,[.6,.62,.6]);g.box(-14,4.1,36.6,.06,.5,1.2,[.95,.5,.15])}
+  const M=misGeo(l,K,{realTrees:!this.att&&SIM.gfx==='high'&&!I.plane}),BG=l.cx&&SIMSCN[l.cx.bg],g=Object.assign(new Geo(),{nv:!!this.att,lod:SIM.gfx==='high'?0:1,cT:I.plane?[]:null}),fc=(I.plane&&I.free&&SIM.plArea==='ruins')?[.6,.53,.37]:BG?(BG.gc||[.3,.42,.24]):l.cx?(CX_GROUND[l.cx.ground]||CX_GROUND.grass).c:sceneFor(l)==='forest'?[.24,.33,.2]:[.3,.42,.24];const GN=I.plane?(I.free?22:14):16,GS=I.plane?20:10;if(I.plane){const oc=g.cyl;g.cyl=function(x,z,r,h,y0,...a){if(h>1&&this.kd!==7&&this.cT)this.cT.push([x,z,0,(y0||0)+h]);return oc.call(this,x,z,r,h,y0,...a)}}for(let i=-GN;i<GN;i++)for(let k=-GN;k<GN;k++){const sz=GS,x=i*sz+3.7,z=k*sz+3.3;g.quad([x,0,z+sz],[x+sz,0,z+sz],[x+sz,0,z],[x,0,z],fc,-1)}
+  if(I.plane){const RW_=I.free?RWYF:RWY;g.skip=(x,z)=>Math.abs(x-RW_.x)<RW_.w/2+26&&z<RW_.z0+46&&z>RW_.z1-46;rwBuild(g,I.free?RWYF:RWY,!!I.free);if(I.free&&SIM.plArea==='ruins'){try{plRuins(g)}catch(e){console.warn('ruins',e)}}g.cyl(-14,36,.06,4,0,[.6,.62,.6]);g.box(-14,4.1,36.6,.06,.5,1.2,[.95,.5,.15])}
   const bgS=new Geo();if(BG){try{BG.build.call(BG,g,srnd(BG.seed||13),bgS)}catch(e){console.warn('bg',e)}}
-  this.trees=[];g.cT=I.plane?[]:null;{const TT=null;if(TT?.img&&!I.plane){const G=TERR.get(TT.img);if(G){const cp0=misPath(I,K);this.trees=terrBuild(g,TT,G,(x,z)=>cp0.some(q=>Math.hypot(q[0]-x,q[2]-z)<4.5))}else if(!this.att){const me=this;terrGrid(TT.img).then(()=>{if(me.cv.__owner===me&&me.mis===l)me.loadMis(l.id)}).catch(()=>{})}}}landmarks(g,(l.no||1)*1.7,I.plane?'temperate':(BG&&VGSCN[l.cx.bg]||{}).rim,!!I.plane);this.world=gl.mesh(g);this.grassM=null;
+  this.trees=[];{const TT=null;if(TT?.img&&!I.plane){const G=TERR.get(TT.img);if(G){const cp0=misPath(I,K);this.trees=terrBuild(g,TT,G,(x,z)=>cp0.some(q=>Math.hypot(q[0]-x,q[2]-z)<4.5))}else if(!this.att){const me=this;terrGrid(TT.img).then(()=>{if(me.cv.__owner===me&&me.mis===l)me.loadMis(l.id)}).catch(()=>{})}}}landmarks(g,(l.no||1)*1.7,I.plane?(I.free&&SIM.plArea==='ruins'?'dry':'temperate'):(BG&&VGSCN[l.cx.bg]||{}).rim,!!I.plane);this.world=gl.mesh(g);this.grassM=null;
    {const st=pts[0],VS1=(BG&&VGSCN[l.cx.bg])||{};this.gLay=VS1.gt!=null?TXY[VS1.gt]:vgGroundLayer(fc);this.padU=null;
-    const gd=l.cx?.ground,bio=I.plane?'airfield':BG?VS1.bio:(gd==='asphalt'||gd==='snow')?null:(gd==='sand'||gd==='dry')?'dry':'grass';
+    const gd=l.cx?.ground,bio=I.plane?(I.free&&SIM.plArea==='ruins'?'dry':'airfield'):BG?VS1.bio:(gd==='asphalt'||gd==='snow')?null:(gd==='sand'||gd==='dry')?'dry':'grass';
     if(!this.att&&bio&&SIM.gfx==='high'&&!l.cx?.terrain?.img){const RW_=I.free?RWYF:RWY;vgDress(g,{bio,cx:I.plane?0:st[0],cz:I.plane?(I.free?-115:-10):st[2]-8,R:srnd((l.no||1)*3+5),base:fc,pad:I.plane?null:[st[0],st[2],2.6],skip:I.plane?(x,z)=>Math.abs(x-RW_.x)<RW_.w/2+.6&&z<RW_.z0+1&&z>RW_.z1-1:null})}
     if(!this.att&&SIM.gfx==='high'&&M.trees.length){const rt=srnd((l.no||1)*7+3);M.trees.forEach(([tx,tz,th])=>vgTree(g,tx,tz,th*1.175,rt,'fir',{w:.235,t0:.33}))}this.vg=this.att?null:vgMesh(gl,g)}const sky=new Geo();sky.sphere(380,[1,1,1],24);this.sky=gl.mesh(sky);
-  if(bgS.p.length||bgS.L.length){bgS.padU();M.solid.padU();['p','n','c','k','u','L','LC'].forEach(f=>{for(const v of bgS[f])M.solid[f].push(v)})}this._sg=M.solid;{let ct=M.col.length?colCarve(M.col,misPath(I,K),.38):[];if(bgS.p.length){const P=bgS.p;for(let i=0;i+8<P.length;i+=9)ct.push([[P[i],P[i+1],P[i+2]],[P[i+3],P[i+4],P[i+5]],[P[i+6],P[i+7],P[i+8]]])}this.col=ct.length?colBuild(ct,Math.max(1,K)):null}if(I.plane){this.col=null;this.trees=(g.cT||[]).concat([[-14,36,0,4]]);M.solid=new Geo();M.glass=new Geo()}this.mSolid=M.solid.p.length||M.solid.L.length?gl.mesh(M.solid):null;this.mGlass=M.glass.p.length?gl.mesh(M.glass):null;
+  if(bgS.p.length||bgS.L.length){bgS.padU();M.solid.padU();['p','n','c','k','u','L','LC'].forEach(f=>{for(const v of bgS[f])M.solid[f].push(v)})}this._sg=M.solid;{let ct=M.col.length?colCarve(M.col,misPath(I,K),.38):[];if(bgS.p.length){const P=bgS.p;for(let i=0;i+8<P.length;i+=9)ct.push([[P[i],P[i+1],P[i+2]],[P[i+3],P[i+4],P[i+5]],[P[i+6],P[i+7],P[i+8]]])}this.col=ct.length?colBuild(ct,Math.max(1,K)):null}if(I.plane){this.col=null;delete g.cyl;this.trees=g.cT||[];M.solid=new Geo();M.glass=new Geo()}this.mSolid=M.solid.p.length||M.solid.L.length?gl.mesh(M.solid):null;this.mGlass=M.glass.p.length?gl.mesh(M.glass):null;
   const rg=new Geo(),cp=I.free?[]:misPath(I,K),ac=[.89,.64,.23];this.cpath=I.free?null:cp;this.cpi=0;this.route=null;
   this.gates=l.basic?[]:I.ck.filter(c=>c.i>0&&pts[c.i]).map(c=>{const p=pts[c.i],q=pts[Math.min(pts.length-1,c.i+1)],pr=pts[Math.max(0,c.i-1)];let N=[q[0]-pr[0],q[1]-pr[1],q[2]-pr[2]];if(V.len(N)<1e-3)N=[0,0,-1];N=V.norm(N);
    let U=V.cross(N,[0,1,0]);if(V.len(U)<.2)U=[1,0,0];U=V.norm(U);const Wv=V.norm(V.cross(U,N)),G=new Geo();
@@ -11160,6 +11181,7 @@ function simHud(s,I){{const f=document.getElementById('simFocus');if(f){const h=
 const CAMI={};
 function simBlocked(){return !!(document.getElementById('welcome')||document.getElementById('tour')||document.getElementById('acad')||document.querySelector('#modalHost > *')||document.documentElement.classList.contains('winopen'))}
 function simCycleCam(){SIM.cam={fpv:'chase',chase:'los',los:'fpv'}[SIM.cam];document.querySelectorAll('[data-act="sim-cam"]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===SIM.cam))}
+SIM.plArea=(()=>{try{return localStorage.getItem('fpv-sim-plarea')==='ruins'?'ruins':'field'}catch(e){return 'field'}})();
 function simSetMode(m){SIM.mode=m;try{localStorage.setItem('fpv-sim-mode',m)}catch(e){}document.querySelectorAll('[data-act="sim-mode"]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===m))}
 function vSim(STG){const sc=SIMSCN[SIM.scene],m=SIM.map,ch=[['thr','מצערת'],['yaw','סבסוב'],['pit','עלרוד'],['rol','גלגול']],FREE=MODE==='free',OV=FREE||STG;
  const seg=(act,cur,o)=>`<span class="seg sseg" role="group" style="--n:${o.length};--i:${Math.max(0,o.findIndex(([v])=>v===cur))}">${o.map(([v,t,ic])=>`<button data-act="${act}" data-v="${v}" aria-pressed="${cur===v}" title="${t}">${ic?(ic[0]==='<'?ic:si(ic,17)):''}<span>${t}</span></button>`).join('')}</span>`;
@@ -11180,7 +11202,7 @@ function vSim(STG){const sc=SIMSCN[SIM.scene],m=SIM.map,ch=[['thr','מצערת']
    ${touchUI()}${FREE?envSel():''}<div class="mapctl ${toolsOpen()?'open':''}" role="toolbar" aria-label="כלי סימולטור"><div class="mc mtog"><button class="mcb" data-act="tools" aria-expanded="${toolsOpen()}" aria-label="כלי הסימולטור"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h3M11 17h9"/><circle cx="16" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></button><span class="mtip">כלים · תצוגה, מצלמה, טיסה</span></div>${[
      ['view','tac','תצוגה',`${mrow('הכוונה לכיוון הטיסה',S_GD)}${mrow('עזרי התמצאות · מכ״ם, מצפן, אופק',S_OR)}${mrow('עולם',S_LK)}${mrow('פירוט גרפי',seg('sim-gfx',SIM.gfx,[['low','בסיסי · מהיר'],['high','מלא · דשא וטקסטורות']])+'<span class="hint qsub">מלא נראה טבעי יותר. במחשב חלש בחר בסיסי. חל על המראה הריאליסטי.</span>')}${mrow('נתונים על המסך',S_OSD)}${mrow('שידור וידאו',S_FD)}`],
      ['cam','fpv','מצלמה',`${mrow('נקודת מבט',S_CM)}${mrow('זווית מצלמה FPV',S_TL)}`],
-     ['flt','angle','טיסה',(S.role==='trainee'?vehOf(curTrainee()?.course)==='plane':!!SIM.inst?.plane)?mrow('טיסן',(cfg('planePick')!==false?seg('pl-pick',planeKey(),PLKEYS.map(k=>[k,PLANES[k].n.split(' · ')[0],plSil(k,44)])).replace('class="seg','class="seg qseg plseg'):`<span class="qlock">${esc(PLM().n)} · נקבע על ידי המנהל</span>`)+`<span class="hint qsub">${esc(PLM().sub)}</span>`)+mrow('האנגר',`<a class="btn sm" href="#hangar">כל הטיסנים והנתונים</a>`):`${mrow('רחפן',S_QD+`<span class="hint qsub" id="qSub">${esc(SIMQ().sub)}</span>`)}${mrow('מצב טיסה',S_MD)}${mrow('רגישות סטיקים',S_RT)}${mrow('עקומת מצערת',S_TC)}`],
+     ['flt','angle','טיסה',(S.role==='trainee'?vehOf(curTrainee()?.course)==='plane':!!SIM.inst?.plane)?mrow('טיסן',(cfg('planePick')!==false?seg('pl-pick',planeKey(),PLKEYS.map(k=>[k,PLANES[k].n.split(' · ')[0],plSil(k,44)])).replace('class="seg','class="seg qseg plseg'):`<span class="qlock">${esc(PLM().n)} · נקבע על ידי המנהל</span>`)+`<span class="hint qsub">${esc(PLM().sub)}</span>`)+mrow('אזור טיסה',seg('pl-area',SIM.plArea,[['field','שדה תעופה'],['ruins','אתר עתיק · חורבות']])+`<span class="hint qsub">חל על טיסה חופשית</span>`)+mrow('האנגר',`<a class="btn sm" href="#hangar">כל הטיסנים והנתונים</a>`):`${mrow('רחפן',S_QD+`<span class="hint qsub" id="qSub">${esc(SIMQ().sub)}</span>`)}${mrow('מצב טיסה',S_MD)}${mrow('רגישות סטיקים',S_RT)}${mrow('עקומת מצערת',S_TC)}`],
      ].map(([id,ic,lb,body])=>`<div class="mc" data-mc="${id}"><button class="mcb" data-act="mc" data-v="${id}" aria-expanded="false" aria-label="${lb}">${si(ic,20)}</button><span class="mtip">${lb}</span><div class="mpop" role="dialog" aria-label="${lb}"><span class="mph">${si(ic,15)}${lb}</span>${body}</div></div>`).join('')}
     ${MODE==='free'?`<div class="mc" data-mc="game"><button class="mcb" data-act="mc" data-v="game" aria-expanded="false" aria-label="משחקים">${si('balloon',20)}</button><span class="mtip">משחקי דיוק · בלונים ומטרה</span><div class="mpop" role="dialog" aria-label="משחקי דיוק"><span class="mph">${si('balloon',15)}משחקי דיוק</span>
      <div class="mrow rcrow"><span><b>בלונים באוויר</b><small>פגיעה בבלון: 10 נק׳, ועוד 5 לכל בלון ברצף</small></span><button class="tgl" data-act="game-bal" aria-pressed="${!!PREF.gbal}" aria-label="בלונים"><i></i></button></div>
@@ -11518,6 +11540,34 @@ function rwBuild(g,RW,free){const y=.012,x0=RW.x-RW.w/2,x1=RW.x+RW.w/2,c=[.16,.1
  if(free){for(let z=RW.z0-45;z>RW.z1+45;z-=30)[-1,1].forEach(sd=>{const xx=RW.x+sd*3.2;g.quad([xx-.3,y+.03,z],[xx+.3,y+.03,z],[xx+.3,y+.03,z-3],[xx-.3,y+.03,z-3],wt,0)});
   [RW.z0-80,RW.z1+80].forEach(z=>[-1,1].forEach(sd=>{const xx=RW.x+sd*4.6;g.quad([xx-.7,y+.03,z],[xx+.7,y+.03,z],[xx+.7,y+.03,z-14],[xx-.7,y+.03,z-14],wt,0)}));
   for(let z=RW.z0-4;z>RW.z1;z-=20)[x0-.6,x1+.6].forEach(x=>g.box(x,.1,z,.16,.2,.16,ye))}}
+/* ---- the ruins: a flying area for planes. A colonnaded temple on its steps with broken columns and fallen drums, an arch, tumbled walls and scattered blocks, in sun-bleached stone on dry ground
+   with a few cypress and olive trees. Every standing piece goes into g.cT, so the plane can hit it ---- */
+function plRuins(g){const R=srnd(2027),ST=[.76,.7,.56],ST2=[.68,.62,.5],DK=[.58,.52,.42],cT=g.cT||[],tone=(c,k=.1)=>{const f=1+(R()-.5)*k*2;return [c[0]*f,c[1]*f,c[2]*f]};
+ const col=(x,z,r,h,y0,c)=>{g.cyl(x,z,r,h,y0,c,12,r*.86)};
+ const wall=(x0,z0,x1,z1,h0,th)=>{const L=Math.hypot(x1-x0,z1-z0),n=Math.max(2,Math.round(L/1.2)),ang=Math.atan2(x1-x0,z1-z0);for(let i=0;i<n;i++){const f=(i+.5)/n,x=x0+(x1-x0)*f,z=z0+(z1-z0)*f,h=Math.max(.4,h0*(.35+.65*(vgNoise(x*.2,z*.2)))*(R()<.15?.4:1));
+   for(let y=0,hh=.6;y<h;y+=hh){g.box(x+(R()-.5)*.06,y+hh/2,z+(R()-.5)*.06,L/n*.96,hh*.96,th,tone(i%2?ST:ST2,.07),ang-Math.PI/2,0)}
+   if(h>1)cT.push([x,z,0,h])}};
+ /* the temple: three steps, a ring of columns, a cella wall */
+ const cx=-92,cz=-128,W=15,D=30,rot=0.18,cs=Math.cos(rot),sn=Math.sin(rot),P=(u,v)=>[cx+u*cs+v*sn,cz-u*sn+v*cs];
+ for(let i=0;i<3;i++){g.box(cx,.2+i*.4,cz,W+5-i*1.4,.4,D+5-i*1.4,tone(ST,.04),rot,0)}
+ const cols=[];for(let i=0;i<=5;i++)cols.push([-W/2+i*W/5,-D/2],[-W/2+i*W/5,D/2]);for(let j=1;j<10;j++)cols.push([-W/2,-D/2+j*D/10],[W/2,-D/2+j*D/10]);
+ cols.forEach(([u,v],idx)=>{const [x,z]=P(u,v),k=R();if(k<.55){const h=6.4;col(x,z,.55,h,1.2,tone(ST,.05));g.box(x,1.2+h+.18,z,1.5,.36,1.5,tone(ST2,.05),rot,0)}
+  else if(k<.82){const h=1.2+R()*4;col(x,z,.55,h,1.2,tone(ST,.05))}
+  else{/* fallen: drums lying on the stylobate and the ground */const a=R()*6.28;for(let d=0;d<3+(R()*3|0);d++){const px=x+Math.cos(a)*d*1.05,pz=z+Math.sin(a)*d*1.05;acRod(g,[px-Math.cos(a)*.5,1.75,pz-Math.sin(a)*.5],[px+Math.cos(a)*.5,1.75,pz+Math.sin(a)*.5],.52,tone(ST,.06),12,.52)}}});
+ /* architrave beams where two intact columns stand side by side (the first row only) */
+ for(let i=0;i<5;i+=2){const a=P(-W/2+i*W/5,-D/2),b=P(-W/2+(i+1)*W/5,-D/2);g.box((a[0]+b[0])/2,1.2+6.4+.36+.4,(a[1]+b[1])/2,Math.hypot(b[0]-a[0],b[1]-a[1])+.4,.8,1.2,tone(ST2,.04),Math.atan2(-(b[1]-a[1]),b[0]-a[0]),0);cT.push([(a[0]+b[0])/2,(a[1]+b[1])/2,0,8])}
+ [[-W/2+1.5,-D/2+3,W/2-1.5,-D/2+3],[-W/2+1.5,-D/2+3,-W/2+1.5,D/2-3],[W/2-1.5,-D/2+3,W/2-1.5,D/2-8]].forEach(([a,b,c,d])=>{const p=P(a,b),q=P(c,d);wall(p[0],p[1],q[0],q[1],3.4,.7)});
+ /* a free-standing arch */
+ {const ax=105,az=-185,hw=3.2;col(ax-hw,az,.7,6.5,0,tone(ST,.05));col(ax+hw,az,.7,6.5,0,tone(ST,.05));for(let i=0;i<9;i++){const a=Math.PI*i/8,x=ax+Math.cos(a)*hw,y=6.6+Math.sin(a)*hw*.7;g.box(x,y,az,.9,.8,1.3,tone(ST2,.05),0,0)}cT.push([ax-hw,az,0,10],[ax+hw,az,0,10])}
+ /* tumbled walls: an old courtyard and a long boundary wall with gaps */
+ wall(60,-60,125,-60,2.6,.8);wall(125,-60,125,-125,2.4,.8);wall(60,-60,60,-95,2,.8);wall(-160,-30,-60,-30,1.8,.7);wall(-170,-210,-110,-250,2.2,.8);
+ /* blocks, drums and rubble */
+ for(let i=0;i<110;i++){const a=R()*6.28,d=8+R()*70,bx=(i%3?cx:105)+Math.cos(a)*d,bz=(i%3?cz:-185)+Math.sin(a)*d;if(Math.abs(bx)<22)continue;const s=.35+R()*.9;g.box(bx,s*.3,bz,s,s*.6,s*(.7+R()*.5),tone(R()<.5?ST:DK,.12),R()*6.28,0);if(s>.8)cT.push([bx,bz,0,s*.6])}
+ /* a few cypress and olive trees among the stones */
+ for(let i=0;i<34;i++){const a=R()*6.28,d=10+R()*95,x=cx+Math.cos(a)*d*1.4,z=cz+Math.sin(a)*d;if(Math.abs(x)<24||Math.abs(x)>380||Math.abs(z)>380)continue;const k=R()<.55?'fir':'oak',h=k==='fir'?9+R()*5:5+R()*3;const e=vgTree(g,x,z,h,R,k);if(e&&e[2]!==undefined)cT.push(e)}
+ /* a sandy track from the runway to the temple, and a dry stream bed */
+ g.quad([-8,.014,-100],[8,.014,-100],[-70,.014,-122],[-84,.014,-122],[.66,.58,.42],0);
+}
 function plScene(v,extra,R){R=R||RWY;const long=R===RWYF;v.ground(long?420:220,long?420:220);const T=v.T;const r=v.add(new T.BoxGeometry(R.w,.04,R.z0-R.z1),'#3b4045',[R.x,.02,(R.z0+R.z1)/2],{},.3);
  for(let z=R.z0-8;z>R.z1+6;z-=12)v.add(new T.BoxGeometry(.4,.05,5),'#e8e8e0',[R.x,.03,z],{},0);v.pad(R.x,.05,R.z0-3,2.2,true);v.label('RWY',[R.x+8,1.5,R.z0-4],'#e3a23b');v.pole(-14,36,4);v.label('טייס',[-14,5,36],'#5fb8cc');extra&&extra(v)}
 const PLANE_I={
@@ -11711,6 +11761,7 @@ function acFinish(key,M){const F=ACFIN[key]||{},gl=F.gloss??9,gear=c=>c.ch==='ge
  body.forEach(G=>geoOrient(G));wheels.forEach(G=>geoOrient(G));
  if(F.refine)body.forEach(G=>geoRefine(G,F.refine));
  if(F.paint)body.forEach(G=>geoPaint(G,F.paint));
+ if(F.wear)body.forEach(G=>geoPaint(G,F.wear));
  body.forEach(G=>geoSmooth(G,F.soft||52));wheels.forEach(G=>geoSmooth(G,52));
  if(F.decals)F.decals(M);
  body.forEach(G=>{geoGloss(G,gl);if(F.kind)for(let i=0;i<G.k.length;i++){const q=F.kind(G.p[i*3],G.p[i*3+1],G.p[i*3+2],G.c[i*3],G.c[i*3+1],G.c[i*3+2]);if(q!=null)G.k[i]=q}});
@@ -12164,6 +12215,19 @@ function geoBf109(){const g=new Geo(),K=acKit2(g),cs=[],CM=WB.CM,AL=[.5,.52,.55]
  /* narrow-track, outward-folding gear and a fixed tail wheel */
  acWheelGear(K,g,cs,{mains:[1,-1].map(sd=>({top:[sd*.1,-.06,.05],x:sd*.15,y:-.175,z:.02,r:.047,w:.028,lr:.01,door:[[sd*.11,-.07,.0],[sd*.11,-.07,.09],[sd*.15,-.17,.09],[sd*.15,-.17,.0]],dcol:BFK.B76})),steer:{top:[0,.01,.79],x:0,y:-.042,z:.81,r:.016,w:.012,tail:true},leg:AL,tyre:[.08,.08,.09],rt:{main:{dir:'out',k:1.5},steer:{sgn:0,k:1}}});
  return {g,cs,prop:{n:3,r:.215,p:.26,z:-.44,y:.02,col:[.08,.09,.08],tip:BFK.BK},gm:[-.222,.02],gt:[-.058,.81]}}
+/* ---- weathering for the warbirds: exhaust soot that trails back from the stacks, oil on the wing root, chipped paint on the leading edges, a dirtier belly and a little sun fade.
+   Every layer is a soft, noisy mix of at most a third, so the paint still reads first. o.ex: exhaust ports [x,y,z] (the streak runs aft, +z); o.oil: wing-root oil origins [x,z]; o.guns: gun ports [x,y,z] ---- */
+function wxMake(o){const SOOT=[.09,.08,.075],OIL=[.17,.12,.08],BARE=[.66,.66,.64],s=o.s??1;
+ return (x,y,z,r,g,b,nx,ny,nz)=>{const lum=.3*r+.59*g+.11*b;if(lum<.13)return;let c=[r,g,b],ch=0;
+  const mix=(col,f)=>{f=Math.max(0,Math.min(1,f))*s;if(f>.003){c=[c[0]+(col[0]*(.9+.2*lum)-c[0])*f,c[1]+(col[1]*(.9+.2*lum)-c[1])*f,c[2]+(col[2]*(.9+.2*lum)-c[2])*f];ch=1}};
+  const stripe=(a,k)=>.55+.9*acN(a*k,y*7,z*5);
+  (o.ex||[]).forEach(e=>{if(x*e[0]<0)return;const t=z-e[2];if(t<0||t>.6)return;const w=(y-(e[1]-t*.03))/(.012+t*.07),dx=Math.abs(x)-Math.abs(e[0]);if(Math.abs(dx)>.09)return;mix(SOOT,.55*Math.exp(-t/.2)*Math.exp(-w*w)*stripe(x,38)*(1-.5*Math.min(1,Math.abs(dx)/.09)))});
+  (o.guns||[]).forEach(e=>{if(Math.abs(x-e[0])>.02)return;const t=z-e[2];if(t<0||t>.3)return;const w=(y-e[1])/(.012+t*.03);mix(SOOT,.5*Math.exp(-t/.09)*Math.exp(-w*w))});
+  if(ny>.45)(o.oil||[]).forEach(e=>{if(x*e[0]<0)return;const t=z-e[1],dx=Math.abs(x)-Math.abs(e[0]);if(t<0||t>.5||Math.abs(dx)>.11)return;mix(OIL,.38*Math.exp(-t/.25)*Math.exp(-dx*dx/.0016)*acSS(0,.04,t)*stripe(x,44))});
+  if(nz<-.5&&Math.abs(x)>.05){const n=acN(x*46+3,y*46,z*46);if(n>.76)mix(BARE,(n-.76)*5)}
+  if(ny<-.45)mix([.12,.1,.09],.2+.25*acN(x*9,y*9,z*9));
+  if(ny>.6){const f=acN(x*5+9,y*5,z*5)-.5;mix(f>0?[.78,.76,.68]:[.2,.2,.17],Math.abs(f)*.3)}
+  return ch?c:undefined}}
 ACFIN.bf109={gloss:6,refine:.03,soft:56,
  paint:(x,y,z,r,g,b,nx,ny)=>{if(r>.45&&g<.14&&Math.abs(r-b)<.06){if(ny<-.3)return BFK.B76;return bfCam(x,y,z)}},
  kind:(x,y,z,r,g,b)=>(b>r+.04&&b>g&&r<.2)?9:null,
@@ -12174,6 +12238,10 @@ ACFIN.bf109={gloss:6,refine:.03,soft:56,
   /* the Eastern-front white band round the rear fuselage */
   rd([0,.0,.56],[-1,0,0],[0,0,-1],[{rect:[-.03,-.09,.03,.09],col:WB.WHT,lay:0}]);rd([0,.0,.56],[1,0,0],[0,0,1],[{rect:[-.03,-.09,.03,.09],col:WB.WHT,lay:0}])}};
 
+ACFIN.p47.wear=wxMake({ex:[[.12,.02,-.27],[-.12,.02,-.27],[.054,-.055,.36],[-.054,-.055,.36]],oil:[[.1,-.02],[-.1,-.02]],guns:[.27,.325,.375,.42].flatMap(s=>[[s,-.065+s*.0787,-.13],[-s,-.065+s*.0787,-.13]])});
+ACFIN.bf109.wear=wxMake({ex:[[.074,.0,-.28],[-.074,.0,-.28],[.074,.0,-.24],[-.074,.0,-.24],[.074,.0,-.2],[-.074,.0,-.2]],oil:[[.17,.02],[-.17,.02]],s:.9});
+if(ACFIN.p51)ACFIN.p51.wear=wxMake({ex:[[.075,.03,-.385],[-.075,.03,-.385],[.075,.0,-.34],[-.075,.0,-.34]],oil:[[.14,-.2],[-.14,-.2]],s:.9});
+if(ACFIN.spit)ACFIN.spit.wear=wxMake({ex:[[.066,.036,-.388],[-.066,.036,-.388],[.066,.02,-.33],[-.066,.02,-.33]],oil:[[.14,-.2],[-.14,-.2]],s:.9});
 /* ---- build, scale and cache a model; the wheel contact points set the physics gear height and the tail-dragger rest attitude ---- */
 const PLVS={tr1:1.25,tr2:1.2,p51:1.25,spit:1.25,p47:1.25,bf109:1.25,jet:1.3};
 const PLGEO2={tr1:geoTr1,tr2:geoTr2,p51:geoP51,spit:geoSpit,p47:geoP47,bf109:geoBf109,jet:geoJet};
@@ -12226,14 +12294,74 @@ async function plRender(k){await load3();const T=THREE;clearTimeout(plRender.tm)
 /* render the hangar images ahead of time, one per idle slot, so the hangar opens with them ready */
 function plWarm(){if(plWarm.on)return;plWarm.on=1;const ks=PLKEYS.filter(k=>!PLIMG[k]);const next=()=>{const k=ks.shift();if(!k)return;(window.requestIdleCallback||(f=>setTimeout(f,200)))(()=>plImg(k).then(next).catch(()=>{}))};setTimeout(next,1200)}
 function plImgFill(){document.querySelectorAll('img[data-plimg]').forEach(im=>{const k=im.dataset.plimg;plImg(k).then(u=>{if(im.isConnected){im.src=u;const f=im.closest('.hfig');f?.classList.add('fade');requestAnimationFrame(()=>f?.classList.add('ready'))}}).catch(()=>{})})}
-function vHangar(){setTimeout(plImgFill,30);const cur=planeKey(),pick=cfg('planePick')!==false,DN=['','מתחיל','בסיסי','בינוני','מתקדם','מומחה'];
- const bar=(lb,v,val)=>`<span class="hgs${val?' hgv':''}"${val?` title="מהירות מרבית ${val}"`:''}><small>${lb}</small><i><u style="width:${Math.round(v*100)}%"></u></i>${val?`<b class="mono">${val}</b>`:''}</span>`;
- return `<div class="pagehead"><div><div class="code">HANGAR · ${PLKEYS.length} MODELS</div><h1>הטיסנים</h1><div class="hint">${pick?'בחר את הטיסן שתטוס בו. כל המשימות, הציונים ושיטת הניקוד עובדים אותו דבר בכל הדגמים, אבל כל טיסן מתנהג אחרת באוויר.':'המנהל קבע טיסן אחד לכל המטיסים בקורס.'}</div></div></div>
- <div class="hgrid">${PLKEYS.map(k=>{const M=PLANES[k],[sp,stb,ag,df]=PLSTAT[k],on=k===cur;return `<article class="hcard ${on?'on':''}" ${on?'aria-current="true"':''}>
-  <div class="hfig ${PLIMG[k]?'ready':''}">${PLIMG[k]?`<img class="himg" src="${PLIMG[k]}" alt="${esc(M.n)}">`:`<span class="hskel" aria-hidden="true"></span><img class="himg" data-plimg="${k}" alt="${esc(M.n)}">`}<span class="hcls">${esc(M.cls)}</span></div>
-  <div class="hbody"><b class="hn">${esc(M.n)}</b><span class="hint">${esc(M.sub)}</span>
-   <div class="hstats">${bar('מהירות',sp,plKmh(k)+' קמ״ש')}${bar('יציבות',stb)}${bar('זריזות',ag)}</div>
-   <div class="hfoot">${diffTag({ph:df,lvl:df})}${on?`<span class="chip ok">${si('check',13)} בשימוש</span>`:pick?`<button class="btn sm pri" data-act="pl-pick" data-v="${k}">בחר טיסן</button>`:''}</div></div></article>`}).join('')}</div>`}
+/* ---- the hangar: planes and quads, a 3D viewer you turn with the mouse, and what each of them can do ---- */
+const HG={veh:null,key:null,az:.62,el:.2,dist:1,auto:true,raf:0,R:null,cv:null,ro:null,k0:null};
+const PLINFO={
+ tr1:['טריינר כנף עליונה','כנף גבוהה עם דיהדרל גדול שמחזירה את הטיסן לאופק מעצמה. הדגם לשעות הטיסה הראשונות: עוצר לאט וסולח על טעויות.'],
+ tr2:['טריינר ספורט, כנף תחתונה','כנף תחתונה דקה יותר, מהירה ומגיבה יותר. כבר לא מתייצב לבד, ולכן מלמד פנייה מתואמת ושליטה בגובה.'],
+ p51:['P-51D מוסטנג','לוחם ארוך טווח של 1944 עם מנוע רולס-רויס מרלין. הכנף הלמינרית הדקה והגוף הנקי נותנים מהירות גבוהה (כ-700 קמ״ש במקור). דורש מצערת עדינה בהמראה בגלל מומנט המדחף.'],
+ spit:['ספיטפייר Mk IX','הכנף האליפטית המפורסמת: הזדקרות רכה ומתרה, גלגול קל וזריז. מנוע מרלין, גלגלים ומדפים נשלפים. מקבל טעויות יותר מהמוסטנג.'],
+ p47:['P-47D ת׳אנדרבולט','"הקנקן": לוחם כבד עם מנוע רדיאלי של 18 צילינדרים ומגדש טורבו, שמונה מקלעים בכנפיים וגוף רחב. כבד, יציב ומהיר בצלילה, אבל איטי להאיץ ולהסתובב.'],
+ bf109:['Messerschmitt Bf 109 G','לוחם גרמני קל עם מנוע DB 605 הפוך, דגלי קצה כנף ומסלול גלגלים צר. מטפס מצוין, אבל בהמראה נוטה לסחרר ולהישאר עם האף הצידה אם לא מתקנים בהגה.'],
+ jet:['לוחם חמקן בסגנון F-35','טורבינה במקום מדחף: אין זרימת מדחף על הזנב, התאוצה איטית בהתחלה וחדה אחר כך, מהיר מאוד. דורש תכנון מראש של כל תמרון.']};
+const QINFO={
+ fs5:['5″ פריסטייל','רחפן המירוץ והפריסטייל הקלאסי: מנועים חזקים, תאוצה אנכית עצומה ותגובה מיידית. בלי סיוע, כל תנועה של הסטיק היא תנועה של הרחפן.'],
+ tr3:['3″ אימון','קטן ואיטי יותר, עם דחף מתון ועמידות גבוהה. מתאים לטוס בתוך בניין או שטח קטן, ומסלח על התרסקויות.'],
+ cw:['סינמה-וופ 3.5″','מגני מדחפים סביב כל מנוע וסוללה גדולה: טיסה חלקה ואיטית עם מצלמה כבדה. נושף ונע כמו מצלמת צילום.'],
+ tw:['טייני-וופ 65 מ״מ','כמעט כף יד: סוללת תא אחד, מדחפים מוגנים וטיסה פנימית. הכי איטי וקל, ולכן מתאים לשליטה עדינה בחדר.']};
+const QSTAT={fs5:[1,.35,1,5],tr3:[.34,.7,.55,3],cw:[.2,.8,.4,3],tw:[.1,.9,.3,2]};
+const hgCl=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+function hgSpecs(veh,k){
+ if(veh==='plane'){const M=PLANES[k],P=M.P,cm=P.cl0+P.cla*P.stall,vs=Math.sqrt(2*P.m*9.81/(1.225*P.S*cm))*3.6,en=PLN_ENG[ENGK[k]||'nitro']?.n||'';
+  return [['מוטת כנפיים',P.b.toFixed(2)+' מ׳'],['משקל',P.m.toFixed(1)+' ק״ג'],['עומס כנף',(P.m/P.S).toFixed(1)+' ק״ג/מ״ר'],['דחף ליחס משקל',(P.tmax/(P.m*9.81)).toFixed(2)],['מהירות הזדקרות','≈ '+Math.round(vs/5)*5+' קמ״ש'],['מהירות שיוט',Math.round(M.cr*3.6/5)*5+' קמ״ש'],['מהירות מרבית',plKmh(k)+' קמ״ש'],['מנוע',en||'—']]}
+ const Q=QUADS[k];return [['מתח סוללה',Q.cells+'S'],['קיבולת',Q.mah+' mAh'],['זרם מרבי',Q.imax+' A'],['יחס דחף למשקל',Q.twr+':1'],['גרר',Q.drag<=1.1?'נמוך':Q.drag<2?'בינוני':'גבוה'],['עמידות',Q.tough>=2?'גבוהה מאוד':Q.tough>=1.5?'גבוהה':'רגילה']]}
+function hgCaps(k){const P=PLANES[k].P,c=[];if(P.rg)c.push('גלגלים נשלפים');if(P.fl)c.push('מדפים');if(P.tail)c.push('גלגל זנב');if(PLANES[k].jet)c.push('טורבינה');else if((P.rtq||0)>1.5)c.push('מומנט מדחף חזק');if((P.sf||0)>=.5)c.push('הזדקרות רכה');if((P.swg||0)>=.18)c.push('סחרור בהמראה');if(P.b>=1.95)c.push('מוטה רחבה');return c}
+function hgBar(l,v,val){return `<span class="hgs${val?' hgv':''}"><small>${l}</small><i><u style="width:${Math.round(hgCl(v)*100)}%"></u></i>${val?`<b class="mono">${val}</b>`:''}</span>`}
+const hgQuadSvg=`<svg viewBox="0 0 120 100" class="plsil" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M30 24L90 76M90 24L30 76"/><circle cx="26" cy="20" r="14"/><circle cx="94" cy="20" r="14"/><circle cx="26" cy="80" r="14"/><circle cx="94" cy="80" r="14"/></g><rect x="48" y="38" width="24" height="24" rx="6" fill="currentColor"/></svg>`;
+function vHangar(){
+ const isP=HG.veh?HG.veh==='plane':true;if(!HG.veh)HG.veh='plane';const veh=HG.veh,keys=veh==='plane'?PLKEYS:Object.keys(QUADS);if(!HG.key||!keys.includes(HG.key))HG.key=veh==='plane'?planeKey():quadKey();const k=HG.key;
+ const pick=veh==='plane'?cfg('planePick')!==false:!!cfg('quadPick'),cur=veh==='plane'?planeKey():quadKey(),on=k===cur;
+ const nm=veh==='plane'?PLANES[k].n:QUADS[k].n,sub=veh==='plane'?PLANES[k].sub:QUADS[k].sub,info=(veh==='plane'?PLINFO:QINFO)[k]||['',''];
+ const st=veh==='plane'?PLSTAT[k]:QSTAT[k],DN=['','מתחיל','בסיסי','בינוני','מתקדם','מומחה'];
+ const bars=veh==='plane'?hgBar('מהירות',st[0],plKmh(k)+' קמ״ש')+hgBar('יציבות',st[1])+hgBar('זריזות',st[2]):hgBar('מהירות',st[0])+hgBar('יציבות',st[1])+hgBar('זריזות',st[2]);
+ const caps=veh==='plane'?hgCaps(k):[QUADS[k].cells+'S',QUADS[k].tough>=1.5?'עמיד':'רגיל',QUADS[k].drag>=2?'מגינים':'ללא מגינים'];
+ setTimeout(hgMount,30);
+ return `<div class="pagehead"><div><div class="code">HANGAR · ${PLKEYS.length} ${'PLANES'} · ${Object.keys(QUADS).length} QUADS</div><h1>ההאנגר</h1><div class="hint">בחר כלי, סובב אותו בעכבר או באצבע וראה מה הוא יודע לעשות. הכלי שתבחר הוא זה שתטוס בו.</div></div>
+  <div class="r"><span class="seg sseg" role="group" style="--n:2;--i:${veh==='plane'?0:1}"><button data-act="hg-veh" data-v="plane" aria-pressed="${veh==='plane'}"><span>טיסנים</span></button><button data-act="hg-veh" data-v="quad" aria-pressed="${veh==='quad'}"><span>רחפנים</span></button></span></div></div>
+ <div class="hgmain">
+  <section class="panel hgstage"><div class="hgview" id="hgStage" aria-label="תצוגת תלת-ממד של ${esc(nm)}"><span class="hghint">גרור לסיבוב · גלגלת לזום · לחיצה כפולה לאיפוס</span></div>
+   <div class="hgtools" role="group" aria-label="זוויות צפייה"><button class="btn sm" data-act="hg-view" data-v="tq">תלת-רבע</button><button class="btn sm" data-act="hg-view" data-v="side">צד</button><button class="btn sm" data-act="hg-view" data-v="front">חזית</button><button class="btn sm" data-act="hg-view" data-v="top">מלמעלה</button><button class="btn sm" data-act="hg-auto" aria-pressed="${HG.auto}">סיבוב אוטומטי</button></div></section>
+  <section class="panel hginfo"><div class="hgh"><span class="hcls mono">${veh==='plane'?esc(PLANES[k].cls):'רחפן FPV'}</span><h2>${esc(nm)}</h2><span class="hint">${esc(info[0])}</span></div>
+   <p class="hgdesc">${esc(info[1])}</p><div class="hstats">${bars}</div>
+   <div class="hgcaps">${caps.map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>
+   <dl class="hgspec">${hgSpecs(veh,k).map(([a,b])=>`<div><dt>${esc(a)}</dt><dd class="mono">${esc(b)}</dd></div>`).join('')}</dl>
+   <div class="hfoot">${diffTag({ph:st[3]||2,lvl:st[3]||2})}${on?`<span class="chip ok">${si('check',13)} בשימוש</span>`:pick?`<button class="btn pri" data-act="${veh==='plane'?'pl-pick':'sim-quad'}" data-v="${k}">${veh==='plane'?'בחר טיסן':'בחר רחפן'}</button>`:`<span class="hint">המנהל קבע כלי אחד לכל המטיסים</span>`}</div></section></div>
+ <div class="hgstrip" role="listbox" aria-label="הכלים">${keys.map(q=>{const act=q===k,use=q===cur,n=(veh==='plane'?PLANES[q].n:QUADS[q].n);return `<button class="hgc ${act?'on':''}" role="option" aria-selected="${act}" data-act="hg-sel" data-v="${q}"><span class="hgsil">${veh==='plane'?plSil(q,92):hgQuadSvg}</span><b>${esc(n.split(' · ')[0])}</b>${use?'<i class="hgu" title="בשימוש"></i>':''}</button>`}).join('')}</div>`}
+function hgDispose(){cancelAnimationFrame(HG.raf);HG.raf=0;HG.ro?.disconnect();HG.ro=null;if(HG.R){try{HG.R.dispose()}catch(e){}HG.R=null}HG.cv=null;HG.mesh=null}
+function hgView(v){const V={tq:[.62,.2],side:[Math.PI/2,0],front:[0,0],top:[0,1.5]}[v];if(V){HG.az=V[0];HG.el=V[1];HG.auto=false;document.querySelectorAll('[data-act="hg-auto"]').forEach(x=>x.setAttribute('aria-pressed','false'))}}
+function hgMount(){const host=document.getElementById('hgStage');if(!host){hgDispose();return}
+ if(HG.cv&&HG.cv.parentNode===host&&HG.k0===HG.veh+'|'+HG.key)return;hgDispose();
+ const cv=document.createElement('canvas');cv.className='hgcv';cv.tabIndex=0;host.prepend(cv);let R;try{R=new SimGL(cv)}catch(e){cv.remove();host.insertAdjacentHTML('afterbegin','<div class="hint" style="padding:30px">הדפדפן לא תומך ב-WebGL2, ולכן אין תצוגת תלת-ממד.</div>');return}
+ HG.R=R;HG.cv=cv;HG.k0=HG.veh+'|'+HG.key;const gl=R.gl,veh=HG.veh,k=HG.key,parts=[];let mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];
+ const ext=G=>{for(let i=0;i<G.p.length;i+=3)for(let a=0;a<3;a++){mn[a]=Math.min(mn[a],G.p[i+a]);mx[a]=Math.max(mx[a],G.p[i+a])}};
+ try{if(veh==='plane'){const G=acMerged(k);ext(G);parts.push({m:R.mesh(G),M:I4,o:{}})}
+  else{const G=droneGeo(k);ext(G);parts.push({m:R.mesh(G),M:I4,o:{}});const bm=R.mesh(bladeGeo(k)),pm=R.mesh(propGeo(k));motorPos(k).forEach(([x,z,d],i)=>{const a=i*.9,c=Math.cos(a),sn=Math.sin(a);parts.push({m:bm,M:[c,0,-sn,0,0,1,0,0,sn,0,c,0,x,0,z,1],o:{lines:false}});parts.push({m:pm,M:[1,0,0,0,0,1,0,0,0,0,1,0,x,0,z,1],o:{alpha:.14,lines:false},blend:true})});const P=propSpec(k);mn[0]-=P.pr;mx[0]+=P.pr;mn[2]-=P.pr;mx[2]+=P.pr}}catch(e){console.error(e)}
+ const ct=[0,1,2].map(a=>(mn[a]+mx[a])/2),rad=Math.max(mx[0]-mn[0],mx[2]-mn[2],mx[1]-mn[1])*.62||1,fl=new Geo();fl.cyl(ct[0],ct[2],rad*.95,.004,mn[1]-.004,[.1,.11,.13],72);fl.cyl(ct[0],ct[2],rad*.98,.003,mn[1]-.007,[.82,.6,.2],72);parts.push({m:R.mesh(fl),M:I4,o:{lines:false}});
+ let dragging=false,lx=0,ly=0,idle=0;
+ cv.addEventListener('pointerdown',e=>{dragging=true;lx=e.clientX;ly=e.clientY;HG.auto=false;document.querySelectorAll('[data-act="hg-auto"]').forEach(x=>x.setAttribute('aria-pressed','false'));cv.setPointerCapture?.(e.pointerId)});
+ cv.addEventListener('pointermove',e=>{if(!dragging)return;HG.az-=(e.clientX-lx)*.009;HG.el=hgCl(HG.el+(e.clientY-ly)*.007,-.35,1.5);lx=e.clientX;ly=e.clientY});
+ const up=()=>{dragging=false};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+ cv.addEventListener('wheel',e=>{e.preventDefault();HG.dist=hgCl(HG.dist*Math.exp(e.deltaY*.001),.35,2.2)},{passive:false});
+ cv.addEventListener('dblclick',()=>{HG.az=.62;HG.el=.2;HG.dist=1});
+ let last=performance.now();const frame=t=>{if(!cv.isConnected||HG.cv!==cv){if(HG.cv===cv)hgDispose();return}
+  const dt=Math.min(.05,(t-last)/1000);last=t;if(HG.auto&&!dragging)HG.az+=dt*.45;
+  const dp=Math.min(2,devicePixelRatio||1),w=Math.max(2,Math.round(host.clientWidth*dp)),h=Math.max(2,Math.round(host.clientHeight*dp));if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h}
+  gl.viewport(0,0,w,h);gl.clearColor(.06,.07,.09,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+  gl.uniform1f(R.u.uTac,0);gl.uniform1f(R.u.uNight,0);gl.uniform1f(R.u.uGfx,0);gl.uniform1f(R.u.uT,t/1000);gl.uniform1f(R.u.uTexOn,R.texOK?1:0);gl.uniform1f(R.u.uMS,R.ms?1:0);gl.uniform1f(R.u.uGL,0);gl.uniform4f(R.u.uPad,0,0,0,0);gl.uniform3fv(R.u.uFog,[.06,.07,.09]);gl.uniform1f(R.u.uFK,0);gl.uniform4f(R.u.uWx,0,0,0,0);
+  const d=rad*2.3*HG.dist,ce=Math.cos(HG.el),eye=[ct[0]+Math.sin(HG.az)*ce*d,ct[1]+Math.sin(HG.el)*d,ct[2]+Math.cos(HG.az)*ce*d],cq=M4.lookQ(eye,ct),P=M4.persp(38*Math.PI/180,w/h,d*.05,d*8),VP=M4.mul(P,M4.view(cq,eye));
+  gl.uniformMatrix4fv(R.u.uVP,false,VP);gl.uniform3fv(R.u.uEye,eye);
+  parts.forEach(p=>{if(p.blend){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);R.draw(p.m,p.M,p.o);gl.depthMask(true);gl.disable(gl.BLEND)}else R.draw(p.m,p.M,p.o)});
+  HG.raf=requestAnimationFrame(frame)};HG.raf=requestAnimationFrame(frame)}
 function plPick(k){if(!PLANES[k]||cfg('planePick')===false)return;try{localStorage.setItem('fpv-sim-plane',k)}catch(e){}window.CLOUD?.sync?.();const I=SIM.inst;if(I&&I.plane&&I.mis){const lid=I.mis.id;if(I.mis.free)I.loadPlaneFree();else I.loadMis(lid)}SFX.play('select');toast(PLANES[k].n+' · '+PLANES[k].sub);
  document.querySelectorAll('[data-act="pl-pick"]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===k));if(/hangar/.test(location.hash))render()}
 /* ===================== mission builder (admin) =====================
@@ -12456,10 +12584,11 @@ function pdRing(r,hp,c,sw,txt){const C=2*Math.PI*r,a=Math.max(0,Math.min(100,hp)
 function pdSvg(s,big){const d=pdArr(s),pl=!!s.plane,hp=d.map(x=>Math.round(100-x));let b='';
  if(!pl){const M=motorPos(quadKey()),sc=big?46:34;
   b+=`<g stroke="currentColor" stroke-width="${big?5:4}" stroke-linecap="round" opacity=".55">${M.map(([x,z])=>`<path d="M0 0L${(x/M[0][0]*sc).toFixed(1)} ${(z/M[0][0]*sc).toFixed(1)}"/>`).join('')}</g><rect x="${-sc*.34}" y="${-sc*.5}" width="${sc*.68}" height="${sc}" rx="${sc*.2}" fill="var(--panel2)" stroke="currentColor" stroke-width="1.6" opacity=".95"/><path d="M0 ${-sc*.5}v${-sc*.28}M${-sc*.12} ${-sc*.62}L0 ${-sc*.78}L${sc*.12} ${-sc*.62}" stroke="currentColor" stroke-width="1.6" fill="none" opacity=".7" stroke-linecap="round"/>`;
-  M.forEach(([x,z],i)=>{const px=x/M[0][0]*sc,pz=z/M[0][0]*sc,c=PDC(hp[i]),r=sc*.56;b+=`<g transform="translate(${px.toFixed(1)} ${pz.toFixed(1)})">${pdRing(r,hp[i],c,big?5:4.2,true)}</g>`})}
+  M.forEach(([x,z],i)=>{const px=x/M[0][0]*sc,pz=z/M[0][0]*sc,c=PDC(hp[i]),r=sc*.58;b+=`<g transform="translate(${px.toFixed(1)} ${pz.toFixed(1)})">${pdRing(r,hp[i],c,big?5:4.2,true)}</g>`})}
+ else if(!big){const c=PDC(hp[0]);b+=`<g>${pdRing(26,hp[0],c,6,true)}</g>`}
  else{const c=PDC(hp[0]),jet=PLANES[s.PK||planeKey()]?.jet;
   b+=`<g fill="var(--panel2)" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" opacity=".95"><path d="M0 -30c3.200 0 5 4 5 9v9l33 15v8l-33-6.500v13l9.500 6.500v5.500L0 25l-14.500 3.500V23l9.500-6.500v-13L-38 10v-8l33-15v-9c0-5 1.800-9 5-9z"/></g><g transform="translate(0 -36)">${pdRing(jet?9:13,hp[0],c,3.2,true)}</g>`}
- return `<svg viewBox="${pl?'-48 -66 96 112':'-82 -82 164 164'}" class="${big?'pdbig':'pdsm'}" aria-hidden="true">${b}</svg>`}
+ return `<svg viewBox="${pl?(big?'-48 -66 96 112':'-34 -34 68 68'):(big?'-82 -82 164 164':'-62 -62 124 124')}" class="${big?'pdbig':'pdsm'}" aria-hidden="true">${b}</svg>`}
 function pdHud(s){const host=document.getElementById('simView');if(!host||!s||s.att)return;
  let el=document.getElementById('soPd');if(!el){el=document.createElement('button');el.type='button';el.id='soPd';el.className='so pdmini';el.setAttribute('data-act','pd-toggle');host.appendChild(el)}
  const d=pdArr(s),key=d.map(x=>Math.round(x)).join(',')+(s.plane?'p':'q')+(s.crash?'x':'');
@@ -12682,6 +12811,7 @@ document.addEventListener('click',e=>{
   if(a==='tilt-rec'){const lid=b.closest('.tilt')?.dataset.lid,l=S.lessons.find(x=>x.id===lid);if(l)setTilt(tiltRec(l),l);return}
   if(a==='sim-osd'){SIM.osd=b.dataset.v;try{localStorage.setItem('fpv-sim-osd',SIM.osd)}catch(e){}document.querySelectorAll('[data-act="sim-osd"]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===SIM.osd));$('#simView')?.classList.toggle('osd-auth',SIM.osd==='auth');return}
   if(a==='sim-gfx'){SIM.gfx=b.dataset.v==='low'?'low':'high';try{localStorage.setItem('fpv-sim-gfx',SIM.gfx)}catch(e){}document.querySelectorAll('[data-act="sim-gfx"]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===SIM.gfx));const I=SIM.inst;if(I&&!I.att&&SIM.gfx==='high'&&!I.grassM){const p=I.p.slice(),q=I.q.slice(),v=I.v.slice(),ar=I.armed;if(I.mis&&!I.mis.ball)I.loadMis(I.mis.free?I.mis:I.mis.id);else if(!I.mis)I.load(I.scnKey&&I.scnKey!=="free"?I.scnKey:SIM.scene);if(ar){I.p=p;I.q=q;I.v=v;I.armed=ar;I.airHold=false}}toast(SIM.gfx==='high'?'פירוט מלא: דשא, טקסטורות קרקע ופרחים.':'פירוט בסיסי: קל ומהיר יותר.');return}
+  if(a==='pl-area'){SIM.plArea=b.dataset.v==='ruins'?'ruins':'field';try{localStorage.setItem('fpv-sim-plarea',SIM.plArea)}catch(e){}document.querySelectorAll('[data-act="pl-area"]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===SIM.plArea));const I=SIM.inst;if(I&&I.plane&&I.mis?.free)I.loadPlaneFree();toast(SIM.plArea==='ruins'?'אתר עתיק · חורבות':'שדה תעופה');return}
   if(a==='sim-look'){SIM.look=b.dataset.v;try{localStorage.setItem('fpv-sim-look',SIM.look)}catch(e){}document.querySelectorAll('[data-act="sim-look"]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===SIM.look));$('#simView')?.classList.toggle('tac',SIM.look!=='real');return}
   if(a==='sim-mode'){simSetMode(b.dataset.v);return}
   if(a==='tune-pre'){if(tuneLocked())return;const P=tclone(TPRE[b.dataset.v]);const W=TUNEUI.W;W.type=P.type;W.ax=P.ax;W.ang=P.ang;tuneSave(W);render();return}
@@ -12695,11 +12825,15 @@ document.addEventListener('click',e=>{
   if(a==='sim-orient'){SIM.orient=b.dataset.v==='off'?'off':'on';try{localStorage.setItem('fpv-sim-orient',SIM.orient)}catch(e){}document.querySelectorAll('[data-act="sim-orient"]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===SIM.orient));return}
   if(a==='sim-guide'){SIM.guide=['full','mark','off'].includes(b.dataset.v)?b.dataset.v:'full';try{localStorage.setItem('fpv-sim-guide',SIM.guide)}catch(e){}document.querySelectorAll('[data-act="sim-guide"]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===SIM.guide));return}
   if(a==='pl-pick'){plPick(b.dataset.v);return}
+  if(a==='hg-veh'){HG.veh=b.dataset.v==='quad'?'quad':'plane';HG.key=null;HG.k0=null;render();return}
+  if(a==='hg-sel'){HG.key=b.dataset.v;HG.k0=null;render();return}
+  if(a==='hg-view'){hgView(b.dataset.v);return}
+  if(a==='hg-auto'){HG.auto=!HG.auto;document.querySelectorAll('[data-act="hg-auto"]').forEach(x=>x.setAttribute('aria-pressed',String(HG.auto)));return}
   if(a==='mb-step'){const k=b.dataset.k;if(k==='tpl'){mbTplPick();return}if(k==='route'){const r=$('#mbRouteSec');r?.scrollIntoView({block:'nearest',behavior:'smooth'});r?.classList.remove('flash');void r?.offsetWidth;r?.classList.add('flash');return}if(k==='env'){MB.tab='ms';mbProps();document.querySelectorAll('[data-act="mb-tab"]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v==='ms'));return}if(k==='save'){document.querySelector('[data-act="mb-3d"]')?.click();return}return}
   if(a==='mb-tplpick'){mbTplPick();return}
   if(a==='mb-tplgo'){const v=b.dataset.v,sel=$('#mbTpl');$('#modalHost').innerHTML='';if(sel){sel.value=v;sel.dispatchEvent(new Event('change',{bubbles:true}))}return}
   if(a==='mb-help'){mbHelp();return}
-  if(a==='sim-quad'){if(!cfg('quadPick'))return;SIM.quad=QUADS[b.dataset.v]?b.dataset.v:'fs5';try{localStorage.setItem('fpv-sim-quad',SIM.quad)}catch(e){}SIMQ.flush();document.querySelectorAll('[data-act="sim-quad"]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===SIM.quad));const qs=document.getElementById('qSub');if(qs)qs.textContent=SIMQ().sub;SIM.inst?.reset?.();toast(SIMQ().n+' · '+SIMQ().sub);return}
+  if(a==='sim-quad'){if(!cfg('quadPick'))return;SIM.quad=QUADS[b.dataset.v]?b.dataset.v:'fs5';try{localStorage.setItem('fpv-sim-quad',SIM.quad)}catch(e){}SIMQ.flush();document.querySelectorAll('[data-act="sim-quad"]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===SIM.quad));const qs=document.getElementById('qSub');if(qs)qs.textContent=SIMQ().sub;SIM.inst?.reset?.();toast(SIMQ().n+' · '+SIMQ().sub);if(/hangar/.test(location.hash))render();return}
   if(a==='sim-thrc'){if(tuneLocked())return;SIM.thrc=b.dataset.v==='lin'?'lin':'train';try{localStorage.setItem('fpv-sim-thrc',SIM.thrc)}catch(e){}{const T=tclone(getTune());T.thr.assist=SIM.thrc!=='lin';if(!T.thr.assist&&T.thr.ex===.6)T.thr.ex=0;if(T.thr.assist&&!T.thr.ex)T.thr.ex=.6;tuneSave(T)}document.querySelectorAll('[data-act="sim-thrc"]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===SIM.thrc));toast(SIM.thrc==='lin'?'מצערת ליניארית: הריחוף בערך ב־30% מהסטיק, כמו ברחפן אמיתי.':'ריחוף במרכז: חצי סטיק = ריחוף, ושליטה עדינה סביבו.');return}
   if(a==='sim-rates'){if(tuneLocked()||!TPRE[b.dataset.v])return;SIM.rates=b.dataset.v;try{localStorage.setItem('fpv-sim-rates',SIM.rates)}catch(e){}{const T=tclone(getTune()),P=tclone(TPRE[SIM.rates]);T.type=P.type;T.ax=P.ax;T.ang=P.ang;tuneSave(T)}document.querySelectorAll('[data-act="sim-rates"]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===SIM.rates));return}
   if(a==='win-close'){/* the dimmed backdrop covers the header: a click that lands on a header control (username, settings, sound) is passed through to it, so it is never swallowed */
