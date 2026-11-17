@@ -7625,7 +7625,7 @@ DECKS.plane={n:'עקרונות הטסת טיסן',task:'איך טיסן RC עף:
     draw()}},
   {t:'סוגי טיסנים',k:'כל סוג טיסן הוא פשרה אחרת בין יציבות, מהירות וביצועים. בוחרים לפי המיומנות, לא לפי המראה.',
    b:['<b>טריינר:</b> כנף עליונה, עומס נמוך, מתייצב לבד. כלי הלימוד הנכון.','<b>ספורט וסקייל:</b> עומס גבוה יותר, מהירות גבוהה, פחות סליחה על טעויות. בדגמי הסקייל יש גלגלים נשלפים ומדפים: מורידים אותם לפני נחיתה.','<b>סילון (טורבינה):</b> מהיר מאוד, מואץ לאט, בלי זרימת מדחף על הזנב, ומצריך נחיתות מהירות.','בחר דגם וראה את המאפיינים המספריים שלו.'],
-   lab:()=>LAB(LSV(`${PBG}<g transform="translate(110 100) scale(1.5)" id="tySil" color="var(--fg)"></g><rect x="214" y="30" width="170" height="162" rx="5" fill="var(--panel2)" stroke="var(--line2)"/><g id="tyD"></g>`),segB('ty',Object.keys(PLANES).map(k=>[k,{tr1:'טריינר',tr2:'ספורט',p51:'מוסטנג',spit:'ספיטפייר',jet:'סילון'}[k]]),'tr1')+`<p class="hint lcap" id="tyCap"></p>`),
+   lab:()=>LAB(LSV(`${PBG}<g transform="translate(110 100) scale(1.5)" id="tySil" color="var(--fg)"></g><rect x="214" y="30" width="170" height="162" rx="5" fill="var(--panel2)" stroke="var(--line2)"/><g id="tyD"></g>`),segB('ty',Object.keys(PLANES).map(k=>[k,{tr1:'טריינר',tr2:'ספורט',p51:'מוסטנג',spit:'ספיטפייר',bf109:'מסרשמיט',p47:'ת׳אנדרבולט',jet:'סילון'}[k]]),'tr1')+`<p class="hint lcap" id="tyCap"></p>`),
    init:r=>{const draw=k=>{const P=PLANES[k],q=P.P,wl=q.m*1000/(q.S*100);$l(r,'#tySil').innerHTML=plSil(k,80).replace('<svg ','<svg x="-40" y="-33" ').replace('width="80" height="66"','width="80" height="66"');
      const row=(y,l,v)=>T(376,y,l,{a:'end',c:'dim',s:9})+T(376,y+17,v,{a:'end',s:13,w:700});$l(r,'#tyD').innerHTML=row(52,'משקל',q.m+' kg')+row(88,'עומס כנף',wl.toFixed(0)+' g/dm²')+row(124,'שיוט',P.cr+' m/s · '+Math.round(P.cr*3.6)+' km/h')+row(160,'סוג',P.cls);$l(r,'#tyCap').textContent=P.n+'. '+P.sub};
     r.addEventListener('click',e=>{const b=e.target.closest('[data-l=ty]');if(b){r.querySelectorAll('[data-l=ty]').forEach(x=>x.setAttribute('aria-pressed',x===b));draw(b.dataset.v)}});draw('tr1')}},
@@ -8150,7 +8150,7 @@ const CFG=[
  {g:'סימולטור',k:'quadType',n:'סוג רחפן',d:'הרחפן שמדומה בסימולטור: משקל, מנועים, סוללה, גרר ועמידות. משפיע על נקודת הריחוף, התאוצה, המהירות וזמן הטיסה.',t:'sel',opts:[['fs5','5″ פריסטייל'],['tr3','3″ אימון'],['cw','סינמה-וופ 3.5″'],['tw','טייני-וופ 65 מ״מ']],def:'fs5'},
  {g:'סימולטור',k:'tuneLock',n:'נעילת כיוונון לחניכים',d:'כשמופעל, החניכים טסים עם הכיוונון שקבעת כברירת מחדל במסך הכיוונון ולא יכולים לשנות אותו. כבוי = כל חניך מכוונן לעצמו.',t:'bool',def:false},
  {g:'סימולטור',k:'routeArrows',n:'טבעות נתיב',d:'טבעות אור דקות מרחפות לפני הרחפן ומראות לאן הנתיב ממשיך, גם אחרי השער הבא. סימון היעד, החץ בשולי המסך וההוראה בראש המסך נשארים תמיד.',t:'bool',def:true},
- {g:'סימולטור',k:'planeType',n:'סוג טיסן (קורסי טיסנים)',d:'הטיסן שמדומה בקורסי טיסנים כשהחניך לא בחר אחר: טריינר, טריינר ספורט, שני סקיילים ממלחמת העולם השנייה או מטוס קרב סילוני.',t:'sel',opts:[['tr1','טריינר כנף עליונה'],['tr2','טריינר ספורט'],['spit','ספיטפייר · סקייל'],['p51','מוסטנג P-51 · סקייל'],['jet','מטוס קרב חמקן']],def:'tr1'},
+ {g:'סימולטור',k:'planeType',n:'סוג טיסן (קורסי טיסנים)',d:'הטיסן שמדומה בקורסי טיסנים כשהחניך לא בחר אחר: טריינר, טריינר ספורט, שני סקיילים ממלחמת העולם השנייה או מטוס קרב סילוני.',t:'sel',opts:[['tr1','טריינר כנף עליונה'],['tr2','טריינר ספורט'],['spit','ספיטפייר · סקייל'],['p51','מוסטנג P-51 · סקייל'],['bf109','Messerschmitt Bf 109 · סקייל'],['p47','P-47 ת׳אנדרבולט · סקייל'],['jet','מטוס קרב חמקן']],def:'tr1'},
  {g:'סימולטור',k:'planePick',n:'בחירת טיסן למשתמש',d:'מאפשר לחניך בקורס טיסנים לבחור טיסן אחר בהאנגר. כבוי = כולם טסים בטיסן שנקבע כאן.',t:'bool',def:true},
  {g:'סימולטור',k:'quadPick',n:'בחירת רחפן למשתמש',d:'מאפשר לחניך לבחור סוג רחפן אחר בסימולטור. כבוי = כולם טסים ברחפן שנקבע כאן.',t:'bool',def:true},
  {g:'משחוק וחוויה',k:'lives',n:'מד חיים',d:'לרחפן יש כנפיים (מקטעים במד החיים). פגיעה קשה מורידה כנף שלמה, ויותר אם הפגיעה הייתה מהירה. הרחפן נהדף וממשיך לטוס מאותה נקודה. שריטה או נחיתה קשה מורידות מעט, ולעולם לא מרסקות לבד. כשהמד מתרוקן הרחפן מתרסק והמשימה מתחילה מההתחלה. כבוי = כל פגיעה קשה מרסקת.',t:'sel',opts:[['0','כבוי · כל פגיעה מרסקת'],['1','שבירי · פגיעה קשה אחת מרסקת'],['3','רגיל · 3 פגיעות קשות'],['5','עמיד · 5 פגיעות קשות']],def:'3'},
@@ -10235,7 +10235,7 @@ const I4=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];
    nitro  glow 2-stroke (trainer): one firing every revolution, thin raspy ring, tuned-pipe resonance, uneven burble at idle
    gas4   petrol 4-stroke twin (scale warbird): one firing every two revolutions per cylinder, uneven deep beats, big slow prop
    jet    kerosene turbine: slow spool-up and spool-down, rising compressor whine on top of a broadband roar */
-const ENGK={tr1:'nitro',tr2:'nitro',p51:'gas4',spit:'gas4',jet:'jet'};
+const ENGK={tr1:'nitro',tr2:'nitro',p51:'gas4',spit:'gas4',p47:'gas4',bf109:'gas4',jet:'jet'};
 const FXS={};
 /* v153: one soft sprite per colour and kind, drawn with drawImage: a radial gradient per particle per frame (up to 460 of them) was the most expensive line of the whole frame. Colours are rounded to steps of 8, which keeps the number of sprites small and cannot be seen. */
 function fxSprite(kind,R,G,B){R&=248;G&=248;B&=248;const key=kind+R+'.'+G+'.'+B;let c=FXS[key];if(c)return c;const S=96,x=(c=document.createElement('canvas')).getContext('2d');c.width=c.height=S;const g=x.createRadialGradient(S/2,S/2,0,S/2,S/2,S/2),rg=a=>`rgba(${R},${G},${B},${a})`;
@@ -11554,6 +11554,12 @@ const PLANES={
  jet:{n:'מטוס קרב חמקן · בסגנון F-35',sub:'מוטה 1.45 מ׳ · 3.6 ק״ג · טורבינה · שיוט 24 מ׳/ש׳ · גלגלים ומדפים נשלפים, מהיר, בלי זרימת מדחף על הזנב',cr:24,cls:'סילוני',jet:true,
   P:Object.assign({},PLBASE,{m:3.6,S:.42,b:1.45,c:.29,Ix:.11,Iy:.26,Iz:.3,cl0:.05,cla:3.6,stall:.264,cd0:.04,k:.091,cyb:-.5,tmax:30,vprop:150,idl:.3,wash:0,cm0:.0471,cma:-.9,cmq:-10,cmd:1.1,de:.3,clb:-.15,clp:-.5,da:.22,cnb:.11,cnr:-.2,cnd:.09,gear:.224,cr:24,jet:true,
    rg:true,fl:true,gcd:.012,fcl:.3,fst:.02,fcd:.04,fcm:.035,vle:32,vfe:30,belly:.075,sf:.35,sd:.025,wh:0,spool:[1.3,2.2],fb0:.09,fb1:.5,rtq:0,ptq:0,swg:0,vcr:3.4,vhd:2}),ex:[[0,.01,.63]],sm:.55}};
+PLANES.p47={n:'P-47 ת׳אנדרבולט · סקייל',sub:'מוטה 2.07 מ׳ · 7.6 ק״ג · מנוע בנזין רדיאלי · שיוט 21 מ׳/ש׳',cr:21,cls:'סקייל WWII',
+ P:Object.assign({},PLBASE,{m:7.6,S:.774,b:2.07,c:.374,Ix:.74,Iy:.96,Iz:1.55,cl0:.15,cla:4.4,stall:.22,cd0:.046,k:.068,tmax:52,vprop:64,wash:95,cm0:.0564,cma:-1.2,cmq:-14,clb:-.16,clp:-.46,da:.28,cnb:.11,cnd:.09,tail:true,gp0:.2,vtl:12,gear:.25,cr:21,
+  rg:true,fl:true,gcd:.016,fcl:.45,fst:.015,fcd:.07,fcm:.055,vle:25,vfe:23,belly:.2,cdp:.016,rtq:2.3,ptq:1.15,swg:.16,sf:.3,sd:.04,wh:0,spool:[.5,.6],fb0:.035,fb1:.2,vcr:3.8,vhd:2.2}),ex:[[.09,-.01,-.27],[-.09,-.01,-.27]],sm:1};
+PLANES.bf109={n:'Messerschmitt Bf 109 G · סקייל',sub:'מוטה 1.8 מ׳ · 4.6 ק״ג · מנוע בנזין · שיוט 23 מ׳/ש׳ · שלפים בכנף, מסלול גלגלים צר וסחרור חזק בהמראה',cr:23,cls:'סקייל WWII',
+ P:Object.assign({},PLBASE,{m:4.6,S:.534,b:1.8,c:.297,Ix:.318,Iy:.454,Iz:.719,cl0:.12,cla:4.5,stall:.27,cd0:.036,k:.066,tmax:40,vprop:70,wash:95,cm0:.0407,cma:-1.3,cmq:-13,clb:-.15,clp:-.45,da:.3,cnb:.12,cnd:.09,tail:true,gp0:.19,vtl:12,gear:.2,cr:23,
+  rg:true,fl:true,gcd:.015,fcl:.42,fst:.015,fcd:.07,fcm:.05,vle:27,vfe:24,belly:.15,cdp:.015,rtq:2.6,ptq:1.2,swg:.2,sf:.3,sd:.04,wh:0,spool:[.4,.5],fb0:.03,fb1:.18,vcr:3.6,vhd:2.1}),ex:[[.07,.0,-.2],[-.07,.0,-.2]],sm:1};
 const PLKEYS=Object.keys(PLANES);
 /* top speed in level flight at full power, from the same drag and thrust the flight model uses: the highest speed at which the propeller still covers the drag */
 function plVmax(P){const W=P.m*9.81;let best=0;for(let u=6;u<110;u+=.25){const q=.6125*u*u,CL=Math.min(1.6,W/(q*P.S)),D=q*P.S*(P.cd0+P.k*CL*CL);if(P.tmax*(1-u/P.vprop)>=D)best=u}return best}
@@ -12054,11 +12060,124 @@ function geoJet(){const g=new Geo(),K=acKit2(g),cs=[],GR=[.46,.49,.52],GD=[.39,.
  cs.push(...K.surf({st:[{s:0,le:.26,c:.24,t:.05},{s:.22,le:.43,c:.11,t:.045}],P:PC(.085,.06,.45),col:()=>GR,cut:{s0:.02,s1:.2,u:.66,ch:'rud',sgn:1,mir:true,col:AC}}));
  acWheelGear(K,g,cs,{mains:[1,-1].map(sd=>({top:[sd*.12,-.005,.02],x:sd*.13,y:-.14,z:.02,r:.032,w:.022})),steer:{top:[0,0,-.42],x:0,y:-.14,z:-.43,r:.027,w:.018},leg:[.62,.63,.66],rt:{main:{dir:'in',k:1.5},steer:{sgn:1,k:1.5}}});
  return {g,cs,prop:null,gm:[-.172,.02],gt:null}}
+/* ===== P-47D Thunderbolt (the "Jug"), 1/6 scale; modelled at k=.1333 of the real metres and drawn at VS 1.25 ===== */
+const P47K={OD:[.27,.285,.16],NG:[.6,.615,.61],RED:[.78,.1,.09],WHT:[.92,.92,.89]};
+/* fuselage: [x real m, width, top above the thrust line, bottom below it] -> ring rows [z, w, h, yc] in model units */
+const P47S=[[.6,1.3,.65,-.65],[.85,1.38,.69,-.69],[1.4,1.46,.73,-.73],[1.95,1.42,.71,-.76],[2.3,1.36,.7,-.88],[3,1.3,.66,-1],[3.8,1.3,.6,-1.08],[4.6,1.2,.55,-1.08],[5.6,1.02,.48,-.95],[6.6,.86,.4,-.78],[7.6,.7,.32,-.62],[8.6,.54,.26,-.42],[9.6,.38,.2,-.2],[10.5,.22,.18,-.04],[10.95,.14,.15,.04]]
+ .map(([x,w,t,b])=>[(x-4)*.1333,w*.1333,(t-b)*.1333,(t+b)/2*.1333+.02]);
+const p47L=(v,j)=>{const i=Math.min(P47S.length-2,Math.max(0,Math.floor(v))),f=Math.min(1,Math.max(0,v-i));return P47S[i][j]+(P47S[i+1][j]-P47S[i][j])*f};
+function p47Mark(x,y,z){const w=acN(x*3.3+5,y*3.3,z*3.3+1)-.5;return .94+.1*acF(x*17+w,y*17,z*17,2)}
+/* olive drab over neutral grey: the demarcation runs along the middle of the fuselage; a red ring round the front of the cowling */
+function p47Fus(p,u,v){const x=p[0],y=p[1],z=p[2],yc=p47L(v,3),h=p47L(v,2),yd=yc-h*.06+.006*Math.sin(z*14),up=acSS(-.006,.006,y-yd);
+ const m=p47Mark(x,y,z);let c=acMix(P47K.NG,P47K.OD,up);c=[c[0]*m,c[1]*m,c[2]*m];
+ if(z<-.405){const f=acSS(-.46,-.45,z);c=acMix(c,[P47K.RED[0]*m,P47K.RED[1]*m,P47K.RED[2]*m],f)}
+ /* cowl flaps: a ring of slightly darker segments at the rear of the cowling */
+ if(z>-.38&&z<-.27){const s=Math.abs(Math.sin(Math.atan2(x,y-.02)*14));c=c.map(q=>q*(.92+.08*s))}
+ /* a dark band for the oil and turbo-charger scoop under the cowl, blended into the belly */
+ const so=Math.exp(-Math.pow((y-.06)/.03,2))*acSS(-.5,-.45,z)*(1-acSS(-.3,-.15,z))*acSS(.03,.07,Math.abs(x));return [c[0]*(1-.3*so),c[1]*(1-.3*so),c[2]*(1-.28*so)]}
+const P47C=[[-.2,.05,.02,.088,.086],[-.16,.115,.07,.1,.088],[-.1,.138,.12,.128,.088],[-.04,.142,.146,.138,.088],[.04,.136,.15,.142,.086],[.12,.116,.11,.124,.08],[.2,.075,.06,.1,.07],[.28,.034,.026,.08,.062]];
+function p47Can(p,u,v){const fr=Math.abs(v-1.1)<.16||Math.abs(v-3.3)<.1||Math.abs(v-4.9)<.1||v>6.3||(v<2&&Math.abs(p[0])<.004);return fr?[P47K.OD[0]*.9,P47K.OD[1]*.9,P47K.OD[2]*.9]:WB.GL}
+function geoP47(){const g=new Geo(),K=acKit2(g),cs=[],CM=WB.CM,OD=P47K.OD,NG=P47K.NG,BK=WB.BK,AL=[.62,.63,.66];
+ /* fuselage and cowling, one smooth loft; the dark mouth of the cowling behind the propeller hub */
+ const F=P47S.map(a=>K.ring(a[0],a[1],a[2],a[3],2.15,30));loftS(g,F,{sub:3,col:p47Fus});K.cap(F[F.length-1],[0,.036,p47L(14,0)+.004],NG);K.cap(F[0],[0,.02,-.47],[.05,.05,.055]);
+ /* the dome of the propeller hub and a short spinner */
+ loftS(g,[[-.452,.088,.088],[-.468,.082,.082],[-.495,.066,.066],[-.52,.04,.04],[-.532,.014,.014]].map(a=>K.ring(a[0],a[1],a[2],.02,2,22)),{sub:2,col:P47K.RED});
+ /* the deep chin scoop under the cowling (oil cooler and the turbo-charger intercooler air) */
+ {const R=[[-.42,.03,.012,-.062],[-.37,.09,.04,-.082],[-.28,.11,.055,-.094],[-.16,.1,.055,-.106],[-.05,.08,.04,-.116],[.04,.04,.015,-.118]].map(a=>K.ring(...a,2,16));loftS(g,R,{sub:2,col:(p,u,v)=>v<.5?[.08,.08,.09]:p47Fus(p,u,3.2)});K.cap(R[0],[0,-.062,-.435],[.08,.08,.09])}
+ /* the exhaust waste gates of the turbo-charger on both flanks of the rear belly, with their long flap */
+ [1,-1].forEach(sd=>{acRod(g,[sd*.052,-.06,.3],[sd*.056,-.045,.42],.0095,[.18,.17,.16],8,.0065)});
+ /* the bubble canopy: a framed windscreen, the dome of the hood and a faired rear */
+ loftS(g,P47C.map(a=>K.ring(a[0],a[1],a[2],a[3],2,18,a[4])),{sub:3,col:p47Can});
+ /* the long dorsal fillet that runs from the canopy back into the fin (D-25 and later) */
+ loftS(g,[[.24,.008,.006,.083],[.32,.016,.04,.088],[.4,.022,.066,.094],[.48,.024,.084,.098],[.54,.02,.07,.1]].map(a=>K.ring(...a,2,10)),{sub:2,col:P47K.OD});
+ /* gun barrels: four in the leading edge of each wing; antenna mast behind the canopy; pitot on the left wing */
+ const sec=ellSt(.828,.393,-.113,.15,.09,.25,10),dh=4.5*Math.PI/180,y0=-.07;
+ [1,-1].forEach(sd=>{[.27,.325,.375,.42].forEach(s=>{const e=Math.sqrt(1-(s/.828)**2),le=-.113+.393*.25*(1-e);acRod(g,[sd*s,y0+s*Math.tan(dh)-.002,le+.014],[sd*s,y0+s*Math.tan(dh)-.002,le-.075],.0044,[.18,.18,.2],8,.0038)})});
+ acRod(g,[0,.1,.32],[0,.18,.345],.0032,[.14,.14,.15],6);
+ acRod(g,[-.6,y0+.6*Math.tan(dh)-.012,-.1],[-.6,y0+.6*Math.tan(dh)-.012,-.215],.0024,[.16,.16,.17],6);
+ /* wing: elliptical, straight quarter-chord, slightly cambered; split flaps inboard, ailerons outboard */
+ cs.push(...K.surf({st:sec,cam:[.02,.4],P:PH(y0,dh),col:(s,u,sd,up)=>up?CM:NG,cuts:[{s0:.12,s1:.45,u:.72,ch:'flp',sgn:1,max:.9,k:.9},{s0:.475,s1:.77,u:.76,ch:'ail',sgn:-1,mir:true,col:CM}]}));
+ [1,-1].forEach(sd=>g.box(sd*.822,y0+.822*Math.tan(dh)+.002,-.1,.012,.008,.02,sd>0?[.1,.8,.2]:[.9,.1,.08],0,5));
+ /* tail plane: elliptical, elevator behind the hinge; fin and rudder, tall with a long dorsal fillet */
+ cs.push(...K.surf({st:ellSt(.287,.25,.573,.09,.07,.25,6),P:PH(.026,0),col:(s,u,sd,up)=>up?CM:NG,cut:{s0:.015,s1:.28,u:.6,ch:'ele',sgn:1,col:CM}}));
+ cs.push(...K.surf({st:[{s:0,le:.45,c:.46,t:.09},{s:.08,le:.53,c:.36,t:.09},{s:.2,le:.61,c:.27,t:.08},{s:.29,le:.65,c:.2,t:.07},{s:.315,le:.68,c:.14,t:.05}],P:PV(.012),sides:[1],col:()=>CM,cut:{s0:.03,s1:.3,u:.62,ch:'rud',sgn:1,mir:true,col:CM}}));
+ /* wide, tall main gear that folds inward; the tail wheel steers with the rudder */
+ acWheelGear(K,g,cs,{mains:[1,-1].map(sd=>({top:[sd*.25,-.07,-.12],x:sd*.34,y:-.2043,z:-.067,r:.0457,w:.03,lr:.011,door:[[sd*.28,-.08,-.16],[sd*.28,-.08,-.07],[sd*.337,-.185,-.07],[sd*.337,-.185,-.16]],dcol:NG})),steer:{top:[0,.03,.74],x:0,y:-.05,z:.78,r:.02,w:.014,tail:true},leg:AL,tyre:[.08,.08,.09],rt:{main:{dir:'in',k:1.5},steer:{sgn:1,k:1.5}}});
+ return {g,cs,prop:{n:4,r:.25,p:.28,z:-.496,y:.02,col:[.08,.08,.09],tip:WB.YEL},gm:[-.25,-.067],gt:[-.07,.78]}}
+ACFIN.p47={gloss:6,refine:.032,soft:56,
+ paint:(x,y,z,r,g,b,nx,ny)=>{if(r>.45&&g<.14&&Math.abs(r-b)<.06){const m=p47Mark(x,y,z);if(ny<-.3)return P47K.NG.map(v=>v*m);return acMix(P47K.NG,P47K.OD,acSS(-.4,.1,ny)).map(v=>v*m)}},
+ kind:(x,y,z,r,g,b)=>(b>r+.04&&b>g&&r<.2)?9:null,
+ decals:(M)=>{const G=M.g,rd=(c,d,u,parts)=>acDecal(G,{c,d,u,H:.34,parts,step:.011});
+  const SB=(r)=>[{rect:[-r*2.5,-r*.31,r*2.5,r*.31],col:[.1,.2,.5],lay:0},{ring:[0,r],col:[.1,.2,.5],lay:1},{rect:[r*.98,-r*.17,r*2.3,r*.17],col:WB.WHT,lay:1},{rect:[-r*2.3,-r*.17,-r*.98,r*.17],col:WB.WHT,lay:1},{poly:wbStar(r*.82),col:WB.WHT,lay:2}];
+  const S=SB(.05);rd([0,.0,.47],[-1,0,0],[0,0,-1],S);rd([0,.0,.47],[1,0,0],[0,0,1],S);
+  const W=SB(.055);rd([-.5,.3,-.05],[0,-1,0],[1,0,0],W);rd([.5,-.3,-.05],[0,1,0],[-1,0,0],W);
+  /* the white recognition bands on the fin */
+  rd([0,.3,.69],[-1,0,0],[0,0,-1],[{rect:[-.02,-.05,.02,.05],col:WB.WHT,lay:0}])}};
+
+/* ===== Messerschmitt Bf 109 G-6 (Gustav), ~1/5.5 scale; nominal units = real metres x .144, drawn at VS 1.25 ===== */
+const BFK={U74:[.30,.33,.29],U75:[.40,.42,.46],B76:[.66,.72,.75],YEL:[.9,.76,.12],SPN:[.09,.11,.09],BK:[.06,.06,.07]};
+/* fuselage: [x real m, width, top, bottom] relative to the thrust line */
+const BFS=[[.55,.66,.36,-.36],[1.0,.76,.42,-.42],[1.9,.86,.5,-.5],[2.8,.88,.56,-.55],[3.6,.86,.68,-.6],[4.5,.8,.62,-.62],[5.5,.66,.5,-.58],[6.5,.52,.4,-.46],[7.5,.38,.3,-.32],[8.4,.24,.24,-.2],[8.95,.12,.2,-.12]]
+ .map(([x,w,t,b])=>[(x-3)*.144,w*.144,(t-b)*.144,(t+b)/2*.144+.02]);
+const bfL=(v,j)=>{const i=Math.min(BFS.length-2,Math.max(0,Math.floor(v))),f=Math.min(1,Math.max(0,v-i));return BFS[i][j]+(BFS[i+1][j]-BFS[i][j])*f};
+function bfCam(x,y,z,sd){/* RLM 74/75 splinter-and-mottle on the upper surfaces */
+ const w=acN(x*4.1+2,y*4.1,z*4.1+7)-.5,m=acN(x*11+w,y*11,z*11)-.5,f=acSS(-.02,.02,Math.sin((x*9+z*14)+w*5)+ m*.8);
+ const c=acMix(BFK.U74,BFK.U75,f),k=.96+.08*acF(x*19,y*19,z*19,2);return [c[0]*k,c[1]*k,c[2]*k]}
+function bfFus(p,u,v){const x=p[0],y=p[1],z=p[2],yc=bfL(v,3),h=bfL(v,2),yd=yc-h*.12+.01*Math.sin(z*13+x*5);
+ let c;const dn=acSS(-.012,.012,y-yd);
+ if(dn<.5)c=BFK.B76;else c=bfCam(x,y,z);
+ if(dn>.05&&dn<.95){const mt=acN(x*20,y*20,z*20);c=acMix(BFK.B76,bfCam(x,y,z),acSS(.3,.7,dn+(mt-.5)*.6))}
+ /* the yellow lower cowling of the Mediterranean and Eastern fronts */
+ if(z<-.2&&y<yc+.004){c=acMix(c,BFK.YEL,acSS(-.2,-.215,z)*acSS(.012,-.004,y-yc))}
+ /* the dark exhaust stain and the cowl gun troughs */
+ if(z>-.3&&z<-.13){const t=acSS(.02,.0,Math.abs(y-(yc+h*.5-.02)))*acSS(.02,.04,Math.abs(x));c=c.map(q=>q*(1-.25*t))}
+ return c}
+const BFC=[[-.07,.06,.03,.115,.112],[-.03,.11,.08,.13,.11],[.03,.125,.13,.15,.11],[.1,.12,.125,.145,.11],[.17,.09,.07,.13,.11],[.24,.04,.025,.12,.11]];
+function bfCan(p,u,v){const fr=Math.abs(v-1.4)<.14||Math.abs(v-2.6)<.1||Math.abs(v-3.7)<.1||Math.abs(v-4.7)<.1||v>4.9||(v<2&&Math.abs(p[0])<.004);return fr?bfCam(p[0],p[1],p[2]):WB.GL}
+function geoBf109(){const g=new Geo(),K=acKit2(g),cs=[],CM=WB.CM,AL=[.5,.52,.55],y0=-.05,dh=5.5*Math.PI/180;
+ const F=BFS.map(a=>K.ring(a[0],a[1],a[2],a[3],2.2,28));loftS(g,F,{sub:3,col:bfFus});
+ K.cap(F[F.length-1],[0,.025,bfL(10,0)+.004],BFK.U74);K.cap(F[0],[0,.02,-.38],[.05,.05,.055]);
+ /* the pointed spinner, black-green */
+ loftS(g,[[-.40,.07,.07],[-.43,.068,.068],[-.47,.058,.058],[-.51,.038,.038],[-.53,.012,.012]].map(a=>K.ring(a[0],a[1],a[2],.02,2,20)),{sub:2,col:BFK.SPN});
+ /* the two MG 131 bulges on top of the cowling */
+ [1,-1].forEach(sd=>acRod(g,[sd*.032,.088,-.31],[sd*.032,.1,-.12],.016,BFK.U74,8,.012));
+ /* the oil cooler under the nose */
+ {const R=[[-.3,.04,.02,-.066],[-.22,.07,.04,-.074],[-.12,.07,.04,-.078],[-.04,.05,.02,-.07]].map(a=>K.ring(...a,2,14));loftS(g,R,{sub:2,col:(p)=>BFK.B76})}
+ /* the framed canopy and the faired rear */
+ loftS(g,BFC.map(a=>K.ring(a[0],a[1],a[2],a[3],2,16,a[4])),{sub:3,col:bfCan});
+ /* tapered wing with slightly forward-swept trailing edge; flaps inboard, Frise ailerons outboard */
+ const sec=[{s:0,le:.0,c:.34,t:.13},{s:.15,le:.012,c:.3,t:.12},{s:.4,le:.045,c:.24,t:.11},{s:.6,le:.075,c:.19,t:.095},{s:.7,le:.095,c:.14,t:.085},{s:.72,le:.105,c:.07,t:.06}];
+ cs.push(...K.surf({st:sec,cam:[.025,.4],P:PH(y0,dh),col:(s,u,sd,up)=>up?CM:BFK.B76,cuts:[{s0:.06,s1:.38,u:.72,ch:'flp',sgn:1,max:.9,k:.9},{s0:.42,s1:.69,u:.78,ch:'ail',sgn:-1,mir:true,col:CM}]}));
+ /* leading-edge slats: a faint dark line along the outer half of each wing */
+ [1,-1].forEach(sd=>acRod(g,[sd*.25,y0+.25*Math.tan(dh)-.004,.044],[sd*.6,y0+.6*Math.tan(dh)-.004,.078],.003,[.2,.2,.22],6,.0025));
+ /* the wing radiators and the 20 mm gondolas */
+ [1,-1].forEach(sd=>{g.box(sd*.14,y0+.14*Math.tan(dh)-.034,.14,.05,.016,.085,[.16,.16,.18],0,5)});
+ [1,-1].forEach(sd=>{acRod(g,[sd*.33,y0+.33*Math.tan(dh)-.052,.06],[sd*.33,y0+.33*Math.tan(dh)-.048,-.05],.012,BFK.B76,8,.01)});
+ /* tailplane (cantilevered), elevator, tall fin and rudder with the mass balance */
+ cs.push(...K.surf({st:[{s:0,le:.72,c:.13,t:.09},{s:.23,le:.76,c:.07,t:.07}],P:PH(.04,0),col:(s,u,sd,up)=>up?CM:BFK.B76,cut:{s0:.015,s1:.23,u:.58,ch:'ele',sgn:1,col:CM}}));
+ cs.push(...K.surf({st:[{s:0,le:.7,c:.24,t:.08},{s:.08,le:.745,c:.17,t:.07},{s:.16,le:.79,c:.1,t:.05},{s:.2,le:.83,c:.05,t:.04}],P:PV(.01),sides:[1],col:()=>CM,cut:{s0:.02,s1:.2,u:.6,ch:'rud',sgn:1,mir:true,col:CM}}));
+ /* narrow-track, outward-folding gear and a fixed tail wheel */
+ acWheelGear(K,g,cs,{mains:[1,-1].map(sd=>({top:[sd*.1,-.06,.05],x:sd*.15,y:-.175,z:.02,r:.047,w:.028,lr:.01,door:[[sd*.11,-.07,.0],[sd*.11,-.07,.09],[sd*.15,-.17,.09],[sd*.15,-.17,.0]],dcol:BFK.B76})),steer:{top:[0,.01,.79],x:0,y:-.042,z:.81,r:.016,w:.012,tail:true},leg:AL,tyre:[.08,.08,.09],rt:{main:{dir:'out',k:1.5},steer:{sgn:0,k:1}}});
+ return {g,cs,prop:{n:3,r:.215,p:.26,z:-.44,y:.02,col:[.08,.09,.08],tip:BFK.BK},gm:[-.222,.02],gt:[-.058,.81]}}
+ACFIN.bf109={gloss:6,refine:.03,soft:56,
+ paint:(x,y,z,r,g,b,nx,ny)=>{if(r>.45&&g<.14&&Math.abs(r-b)<.06){if(ny<-.3)return BFK.B76;return bfCam(x,y,z)}},
+ kind:(x,y,z,r,g,b)=>(b>r+.04&&b>g&&r<.2)?9:null,
+ decals:(M)=>{const G=M.g,rd=(c,d,u,parts)=>acDecal(G,{c,d,u,H:.34,parts,step:.011});
+  const BK=(r)=>[{rect:[-r*1.12,-r*.38,r*1.12,r*.38],col:WB.WHT,lay:0},{rect:[-r*.38,-r*1.12,r*.38,r*1.12],col:WB.WHT,lay:0},{rect:[-r,-r*.28,r,r*.28],col:BFK.BK,lay:1},{rect:[-r*.28,-r,r*.28,r],col:BFK.BK,lay:1}];
+  const S=BK(.055);rd([0,.0,.38],[-1,0,0],[0,0,-1],S);rd([0,.0,.38],[1,0,0],[0,0,1],S);
+  const W=BK(.05);rd([-.45,.3,.17],[0,-1,0],[1,0,0],W);rd([.45,.3,.17],[0,-1,0],[1,0,0],W);rd([-.45,-.3,.17],[0,1,0],[1,0,0],W);rd([.45,-.3,.17],[0,1,0],[1,0,0],W);
+  /* the Eastern-front white band round the rear fuselage */
+  rd([0,.0,.56],[-1,0,0],[0,0,-1],[{rect:[-.03,-.09,.03,.09],col:WB.WHT,lay:0}]);rd([0,.0,.56],[1,0,0],[0,0,1],[{rect:[-.03,-.09,.03,.09],col:WB.WHT,lay:0}])}};
+
 /* ---- build, scale and cache a model; the wheel contact points set the physics gear height and the tail-dragger rest attitude ---- */
-const PLVS={tr1:1.25,tr2:1.2,p51:1.25,spit:1.25,jet:1.3};
-const PLGEO2={tr1:geoTr1,tr2:geoTr2,p51:geoP51,spit:geoSpit,jet:geoJet};
+const PLVS={tr1:1.25,tr2:1.2,p51:1.25,spit:1.25,p47:1.25,bf109:1.25,jet:1.3};
+const PLGEO2={tr1:geoTr1,tr2:geoTr2,p51:geoP51,spit:geoSpit,p47:geoP47,bf109:geoBf109,jet:geoJet};
+/* models drawn with the origin at the wing root: slide everything so the origin sits at the centre of gravity (the wing's quarter chord, a little aft) */
+const PLDZ={bf109:-.09};
+function geoDz(M,dz){const sh=G=>{for(let i=2;i<G.p.length;i+=3)G.p[i]+=dz;for(let i=2;i<G.L.length;i+=3)G.L[i]+=dz};sh(M.g);M.cs.forEach(c=>{sh(c.g);c.a=[c.a[0],c.a[1],c.a[2]+dz];c.b=[c.b[0],c.b[1],c.b[2]+dz];if(c.h2)c.h2={...c.h2,a:[c.h2.a[0],c.h2.a[1],c.h2.a[2]+dz]}});
+ if(M.gm)M.gm=[M.gm[0],M.gm[1]+dz];if(M.gt)M.gt=[M.gt[0],M.gt[1]+dz];if(M.prop)M.prop={...M.prop,z:M.prop.z+dz}}
 const ACC={};
-function acBuild(k){k=PLANES[k]?k:planeKey();if(ACC[k])return ACC[k];const vs=PLVS[k],M=acFinish(k,PLGEO2[k]());geoScale(M.g,vs);M.cs.forEach(c=>{geoScale(c.g,vs);c.a=c.a.map(v=>v*vs);c.b=c.b.map(v=>v*vs);if(c.h2)c.h2={...c.h2,a:c.h2.a.map(v=>v*vs)}});
+function acBuild(k){k=PLANES[k]?k:planeKey();if(ACC[k])return ACC[k];const vs=PLVS[k],M=acFinish(k,PLGEO2[k]());if(PLDZ[k])geoDz(M,PLDZ[k]);geoScale(M.g,vs);M.cs.forEach(c=>{geoScale(c.g,vs);c.a=c.a.map(v=>v*vs);c.b=c.b.map(v=>v*vs);if(c.h2)c.h2={...c.h2,a:c.h2.a.map(v=>v*vs)}});
  const P=PLANES[k].P,gm=[M.gm[0]*vs,M.gm[1]*vs];P.gm=gm;if(M.gt){const gt=[M.gt[0]*vs,M.gt[1]*vs];P.tail=true;P.gp0=Math.atan((gm[0]-gt[0])/(gm[1]-gt[1]))}
  const r0=P.tail?P.gp0:0;P.gear=-(gm[0]*Math.cos(r0)-gm[1]*Math.sin(r0));
  if(M.prop){const p=M.prop;M.propG=geoScale(acKit2(new Geo()).prop(p.n,p.r,p.p,p.col,p.tip),vs);M.propZ=p.z*vs;M.propY=p.y*vs;M.propR=p.r*vs}
@@ -12072,7 +12191,7 @@ function planeThree(T,k,pk){const G=acMerged(pk),pos=new Float32Array(G.p.length
  return new T.Mesh(bg,new T.MeshStandardMaterial({vertexColors:true,roughness:.4,metalness:.1,side:T.DoubleSide}))}
 
 /* ---- hangar: the learner picks which plane to fly ---- */
-const PLSTAT={tr1:[.45,1,.4,1],tr2:[.6,.75,.6,2],spit:[.75,.62,.75,3],p51:[.82,.5,.8,4],jet:[1,.55,.95,5]};
+const PLSTAT={tr1:[.45,1,.4,1],tr2:[.6,.75,.6,2],spit:[.75,.62,.75,3],p51:[.82,.5,.8,4],bf109:[.84,.48,.8,4],p47:[.8,.58,.7,4],jet:[1,.55,.95,5]};
 function plSil(k,w=120){const B=(d,x='')=>`<svg class="plsil" viewBox="0 0 120 100" width="${w}" height="${Math.round(w*.83)}" aria-hidden="true"><g fill="currentColor" stroke="var(--line2,#0006)" stroke-width="1" stroke-linejoin="round">${d}</g>${x}</svg>`;
  const fus=(l,wd,t=0)=>`<rect x="${60-wd/2}" y="${10+t}" width="${wd}" height="${l}" rx="${wd/2}"/>`;
  return {
@@ -12080,6 +12199,8 @@ function plSil(k,w=120){const B=(d,x='')=>`<svg class="plsil" viewBox="0 0 120 1
   tr2:B(fus(78,10)+'<path d="M58 30 L6 36 L6 46 L58 50 L62 50 L114 46 L114 36 L62 30Z"/><path d="M60 76 L38 80 L38 86 L82 86 L82 80Z"/>'),
   p51:B(fus(84,10,-2)+'<path d="M58 34 L5 40 L7 48 L58 54 L62 54 L113 48 L115 40 L62 34Z"/><path d="M60 76 L36 82 L37 88 L83 88 L84 82Z"/><rect x="56" y="48" width="8" height="12" rx="3" opacity=".6"/>'),
   spit:B(fus(82,9,-1)+'<ellipse cx="60" cy="44" rx="56" ry="11"/><ellipse cx="60" cy="83" rx="20" ry="5"/>'),
+  bf109:B(fus(80,9,-1)+'<path d="M58 34 L12 40 L10 46 L58 52 L62 52 L110 46 L108 40 L62 34Z"/><path d="M60 78 L42 82 L42 87 L78 87 L78 82Z"/>'),
+  p47:B(fus(84,13,-2)+'<ellipse cx="60" cy="44" rx="55" ry="12"/><ellipse cx="60" cy="82" rx="19" ry="5"/>'),
   jet:B('<path d="M60 4 L66 20 L70 52 L68 84 L52 84 L50 52 L54 20Z"/><path d="M62 38 L112 62 L112 70 L68 70 L52 70 L8 70 L8 62 L58 38Z"/><path d="M66 74 L92 86 L92 92 L66 90Z M54 74 L28 86 L28 92 L54 90Z"/><path d="M57 14 L63 14 L64 26 L56 26Z" fill="#c9a23a"/>')}[k]||''}
 /* studio renders of the 3D models for the hangar (one shared renderer, cached as images) */
 const PLIMG={};let plR=null;
