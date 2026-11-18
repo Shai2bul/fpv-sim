@@ -7553,7 +7553,8 @@ const PT=`<g class="ptv">
 const plChk=[['סוללות','סוללת השלט וסוללת הטיסן מלאות. שלט חלש מקצר את הטווח.'],['חומרה','כנפיים, זנב ומדחף מהודקים. אום המדחף וכיסוי הספינר חזקים.'],['משטחים','צירים וחיבורים חופשיים בלי חיכוך, והסרוו לא רועד.'],['כיוון','סטיק ימינה: האילרון הימני עולה. סטיק אחורה: האלוביטור עולה. הגה ימינה: האף ימינה.'],['איזון','נקודת האיזון (מרכז הכובד) בטווח שהיצרן קבע. עדיף כבד מעט בחרטום.'],['מנוע','מצערת מוגדרת כך שהמנוע לא מתניע בטעות, והחימוש מנותק.'],['טווח','בדיקת טווח לפי הוראות השלט: הולכים כ־30 צעדים והמשטחים נשארים יציבים.'],['בטיחות כשל','הגדרת Failsafe: במקרה של אובדן קשר המצערת יורדת למינימום.']];
 const PLN_ENG={nitro:{n:'ניטרו · 2 פעימות',rpm:[2800,12800],pat:[1,1,1,1],cap:'מנוע גלואו דו-פעימתי, כמו בטריינר: ירייה אחת בכל סיבוב. צליל דק, צורמני ומצלצל, שעולה מהר עם המצערת.'},
  gas4:{n:'בנזין · 4 פעימות',rpm:[1500,6800],pat:[1,.55,1,.55],cap:'מנוע בנזין ארבע-פעימתי, כמו בדגם סקייל: כל צילינדר יורה פעם בשני סיבובים. צליל עמוק וגרוני, עם פעימות לא אחידות.'},
- jet:{n:'סילון',rpm:[0,0],pat:null,cap:'טורבינה: אין פעימות נפרדות. שריקת מדחס שעולה לאט מעל שאגה רחבה, והמנוע מגיב באיחור למצערת.'}};
+ jet:{n:'סילון',rpm:[0,0],pat:null,cap:'טורבינה: אין פעימות נפרדות. שאגה רחבה ועמוקה שגדלה עם ההספק, ומעליה שריקה דקה של ציר הטורבינה שעולה לאט מ־600 עד 2,000 הרץ. במצב סרק זו נשימה נמוכה בלבד, והמנוע מגיב באיחור למצערת.'},
+ 'quad:fs5':{n:'רחפן FPV · ארבעה מנועים',rpm:[0,0],pat:null,fast:1,cap:'ארבעה מנועים חסרי מברשות על מדחפי שלוש להבים. הצפצוף הוא הסיבובים כפול מספר הלהבים, והוא קופץ מיד עם המצערת. כל דגם נשמע אחרת: ה־TWR נמוך וכבד, הרחפן הקטן גבוה ודק.'}};
 DECKS.plane={n:'עקרונות הטסת טיסן',task:'איך טיסן RC עף: הכוחות, הכנף וההזדקרות, מרכז הכובד, הבקרה והפנייה, המנוע והמדחף, השלט, בדיקות לפני טיסה, המראה, נחיתה ורוח, וכל מה שעושים כשמשהו משתבש.',
  icon:sz=>(NAVICO.hangar||'').replace('width="18" height="18"',`width="${sz}" height="${sz}"`).replace('stroke-width="1.6"','stroke-width="1.2"'),
  slides:[
@@ -7632,12 +7633,12 @@ DECKS.plane={n:'עקרונות הטסת טיסן',task:'איך טיסן RC עף:
       const tx=$l(r,'#ppT');const g=ra<2?['נמוך מדי: יחס '+ra.toFixed(1)+', אין ביצועים','var(--bad)']:ra<=3.2?['טוב: יחס '+ra.toFixed(1)+' להזדקרות','var(--ok)']:['גבוה: יחס '+ra.toFixed(1)+', יעיל במהירות, חלש בהמראה','var(--warn)'];tx.textContent=g[0];tx.style.fill=g[1];$l(r,'#ppR').textContent='מהירות הזדקרות משוערת: '+vs+' m/s';$l(r,'#ppRpmV').textContent=rpm;$l(r,'#ppPtV').textContent=pt};
      r.addEventListener('click',e=>{const b=e.target.closest('[data-l=pp]');if(b){kind=b.dataset.v;r.querySelectorAll('[data-l=pp]').forEach(x=>x.setAttribute('aria-pressed',x===b));up()}});r.addEventListener('input',up);up()}},
   {t:'סוגי מנועים והצליל שלהם',k:'כל מנוע חותם את הטיסה בצליל משלו, והצליל מלמד על הסיבובים והעומס.',
-   b:['<b>ניטרו, 2 פעימות:</b> ירייה בכל סיבוב, במהירות גבוהה. צליל דק וצורמני.','<b>בנזין, 4 פעימות:</b> ירייה אחת לכל צילינדר בשני סיבובים. צליל עמוק, עם פעימות לא אחידות.','<b>סילון:</b> טורבינה שמסתובבת בלי הפסקה. שריקה מעל שאגה, ותגובה איטית למצערת.','לחץ "האזן" והזז את המצערת.'],
-   lab:()=>LAB(LSV(`${PBG}<g id="enG"></g>`),segB('en',[['nitro','ניטרו · 2 פעימות'],['gas4','בנזין · 4 פעימות'],['jet','סילון']],'nitro')+`<label class="lrng"><span class="lbl">מצערת</span><input type="range" id="enThr" min="0" max="100" value="40" aria-label="מצערת"></label><button type="button" class="btn sm pri" id="enPlay" aria-pressed="false">האזן</button><p class="hint lcap" id="enCap"></p>`),
+   b:['<b>ניטרו, 2 פעימות:</b> ירייה בכל סיבוב, במהירות גבוהה. צליל דק וצורמני.','<b>בנזין, 4 פעימות:</b> ירייה אחת לכל צילינדר בשני סיבובים. צליל עמוק, עם פעימות לא אחידות.','<b>סילון:</b> טורבינה שמסתובבת בלי הפסקה. שאגה עמוקה עם שריקה דקה מעליה, ותגובה איטית למצערת.','<b>רחפן FPV:</b> ארבעה מנועים ללא מברשות, צפצוף גבוה שעוקב אחרי המצערת כמעט מיד.','לחץ "האזן" והזז את המצערת.'],
+   lab:()=>LAB(LSV(`${PBG}<g id="enG"></g>`),segB('en',[['nitro','ניטרו · 2 פעימות'],['gas4','בנזין · 4 פעימות'],['jet','סילון'],['quad:fs5','רחפן']],'nitro')+`<label class="lrng"><span class="lbl">מצערת</span><input type="range" id="enThr" min="0" max="100" value="40" aria-label="מצערת"></label><button type="button" class="btn sm pri" id="enPlay" aria-pressed="false">האזן</button><p class="hint lcap" id="enCap"></p>`),
    init:r=>{let kind='nitro',play=false,tm=0;const thr=()=>+$l(r,'#enThr').value/100;
     const draw=()=>{const E=PLN_ENG[kind],g=$l(r,'#enG');let h=T(200,34,E.n,{s:14,w:700});
      if(E.pat){h+=`<path d="M30 190H370" stroke="var(--line2)"/>`+[0,1,2,3].map(i=>`<line x1="${60+i*80}" y1="196" x2="${60+i*80}" y2="204" stroke="var(--dim)"/>`+T(60+i*80,218,'סיבוב '+(i+1),{s:10,c:'dim'})).join('')+E.pat.map((a,i)=>`<rect x="${52+i*80}" y="${190-a*110}" width="16" height="${a*110}" rx="3" fill="var(--acc)" opacity="${.4+a*.6}"/>`).join('')+T(200,62,'x',{s:11,c:'dim'}).replace('>x<','>'+(kind==='nitro'?'ירייה בכל סיבוב':'שני צילינדרים לסירוגין')+'<')+T(200,78,Math.round(E.rpm[0]/60)+' – '+Math.round(E.rpm[1]/60)+' סיבובים בשנייה',{s:11,c:'dim'})}
-     else h+=`<path d="M30 150Q80 140 130 130T230 100T370 70" fill="none" stroke="var(--acc)" stroke-width="2.4"/>`+T(200,62,'סיבוב רציף, עם השהיה לשינוי מצערת',{s:11,c:'dim'})+T(200,210,'מצערת ← סיבובים (איטי)',{s:11,c:'dim'});
+     else h+=`<path d="M30 150Q80 140 130 130T230 100T370 70" fill="none" stroke="var(--acc)" stroke-width="2.4"/>`+T(200,62,E.fast?'ארבעה מנועים, תגובה מהירה לשינוי מצערת':'סיבוב רציף, עם השהיה לשינוי מצערת',{s:11,c:'dim'})+T(200,210,E.fast?'מצערת ← סיבובים (מהיר)':'מצערת ← סיבובים (איטי)',{s:11,c:'dim'});
      g.innerHTML=h;$l(r,'#enCap').textContent=E.cap};
     const tick=()=>{if(!r.isConnected||!play){play=false;clearInterval(tm);MOTOR.stop();return}MOTOR.set(true,thr(),12,kind)};
     r.addEventListener('click',e=>{const b=e.target.closest('[data-l=en]');if(b){kind=b.dataset.v;r.querySelectorAll('[data-l=en]').forEach(x=>x.setAttribute('aria-pressed',x===b));draw();return}
@@ -8170,7 +8171,7 @@ const CFG=[
  {g:'סימולטור',k:'quadType',n:'סוג רחפן',d:'הרחפן שמדומה בסימולטור: משקל, מנועים, סוללה, גרר ועמידות. משפיע על נקודת הריחוף, התאוצה, המהירות וזמן הטיסה.',t:'sel',opts:[['fs5','5″ פריסטייל'],['tr3','3″ אימון'],['cw','סינמה-וופ 3.5″'],['tw','טייני-וופ 65 מ״מ']],def:'fs5'},
  {g:'סימולטור',k:'tuneLock',n:'נעילת כיוונון לחניכים',d:'כשמופעל, החניכים טסים עם הכיוונון שקבעת כברירת מחדל במסך הכיוונון ולא יכולים לשנות אותו. כבוי = כל חניך מכוונן לעצמו.',t:'bool',def:false},
  {g:'סימולטור',k:'routeArrows',n:'טבעות נתיב',d:'טבעות אור דקות מרחפות לפני הרחפן ומראות לאן הנתיב ממשיך, גם אחרי השער הבא. סימון היעד, החץ בשולי המסך וההוראה בראש המסך נשארים תמיד.',t:'bool',def:true},
- {g:'סימולטור',k:'planeType',n:'סוג טיסן (קורסי טיסנים)',d:'הטיסן שמדומה בקורסי טיסנים כשהחניך לא בחר אחר: טריינר, טריינר ספורט, שני סקיילים ממלחמת העולם השנייה או מטוס קרב סילוני.',t:'sel',opts:[['tr1','טריינר כנף עליונה'],['tr2','טריינר ספורט'],['spit','ספיטפייר · סקייל'],['p51','מוסטנג P-51 · סקייל'],['bf109','Messerschmitt Bf 109 · סקייל'],['p47','P-47 ת׳אנדרבולט · סקייל'],['jet','מטוס קרב חמקן']],def:'tr1'},
+ {g:'סימולטור',k:'planeType',n:'סוג טיסן (קורסי טיסנים)',d:'הטיסן שמדומה בקורסי טיסנים כשהחניך לא בחר אחר: טריינר, טריינר ספורט, שני סקיילים ממלחמת העולם השנייה או מטוס קרב סילוני.',t:'sel',opts:[['tr1','טריינר כנף עליונה'],['tr2','טריינר ספורט'],['spit','ספיטפייר · סקייל'],['p51','מוסטנג P-51 · סקייל'],['bf109','Messerschmitt Bf 109 · סקייל'],['p47','P-47 ת׳אנדרבולט · סקייל'],['jet','F-35A ברק II · סקייל']],def:'tr1'},
  {g:'סימולטור',k:'planePick',n:'בחירת טיסן למשתמש',d:'מאפשר לחניך בקורס טיסנים לבחור טיסן אחר בהאנגר. כבוי = כולם טסים בטיסן שנקבע כאן.',t:'bool',def:true},
  {g:'סימולטור',k:'quadPick',n:'בחירת רחפן למשתמש',d:'מאפשר לחניך לבחור סוג רחפן אחר בסימולטור. כבוי = כולם טסים ברחפן שנקבע כאן.',t:'bool',def:true},
  {g:'משחוק וחוויה',k:'lives',n:'מד חיים',d:'לרחפן יש כנפיים (מקטעים במד החיים). פגיעה קשה מורידה כנף שלמה, ויותר אם הפגיעה הייתה מהירה. הרחפן נהדף וממשיך לטוס מאותה נקודה. שריטה או נחיתה קשה מורידות מעט, ולעולם לא מרסקות לבד. כשהמד מתרוקן הרחפן מתרסק והמשימה מתחילה מההתחלה. כבוי = כל פגיעה קשה מרסקת.',t:'sel',opts:[['0','כבוי · כל פגיעה מרסקת'],['1','שבירי · פגיעה קשה אחת מרסקת'],['3','רגיל · 3 פגיעות קשות'],['5','עמיד · 5 פגיעות קשות']],def:'3'},
@@ -10202,12 +10203,26 @@ void main(){float vK=vK0;if(vKf>9.5)vK=0.;if(vKf>6.5&&vKf<7.5){if(uTac<.5)discar
  if(uTac>.5){if(vK>1.5&&vK<3.5){float t=clamp(normalize(vW-uEye).y*1.4,0.,1.);o=vec4(mix(mix(vec3(.075,.105,.095),vec3(.035,.05,.045),pow(t,.5)),uFog,clamp(uWx.z*1.1+uWx.w,0.,1.)),1.);return;}
   if(vK<-.5){vec2 g=vW.xz;vec2 g1=g/2.,g2=g/10.,w1=fwidth(g1),w2=fwidth(g2);vec2 q1=abs(fract(g1-.5)-.5)/max(w1,1e-4),q2=abs(fract(g2-.5)-.5)/max(w2,1e-4);float a1=(1.-min(min(q1.x,q1.y),1.))*(1.-smoothstep(.15,.45,max(w1.x,w1.y))),a2=(1.-min(min(q2.x,q2.y),1.))*(1.-smoothstep(.15,.45,max(w2.x,w2.y)));vec3 c0=vec3(.04,.058,.05)+vC*.04;c0=mix(c0,vec3(.13,.18,.16),a1*.55);c0=mix(c0,vec3(.2,.28,.25),a2);float fg=1.-exp(-dd*dd*max(.00006,uFK));o=vec4(mix(c0,uFog,clamp(fg,0.,1.)),1.);return;}
   vec3 nn=normalize(vN);if(dot(nn,uEye-vW)<0.)nn=-nn;float ll=max(dot(nn,uSun),0.);vec3 cc=vC*.32*(.55+.6*ll)+vec3(.02,.03,.025);cc=mix(cc,uTint,uGlow*.6);if(vK>3.5)cc=vC;float fg=1.-exp(-dd*dd*max(.00006,uFK));o=vec4(mix(cc,uFog,clamp(fg,0.,1.)),uAlpha);return;}
- vec3 n=normalize(vN);if(dot(n,uEye-vW)<0.)n=-n;float l=max(dot(n,uSun),0.)*(1.-uWx.x*.62);vec3 amb=mix(vec3(.30,.32,.30),vec3(.55,.62,.68),n.y*.5+.5);vec3 c=vC;float tr=0.,oa=uAlpha;spc=0.;vec3 rfl=vec3(0.);
+ vec3 n=normalize(vN);if(dot(n,uEye-vW)<0.)n=-n;float l=max(dot(n,uSun),0.)*(1.-uWx.x*.62);vec3 amb=mix(vec3(.30,.32,.30),vec3(.55,.62,.68),n.y*.5+.5);vec3 c=vC;float tr=0.,oa=uAlpha;spc=0.;vec3 rfl=vec3(0.);float gkS=-1.,met=0.;
  if(vKf>7.5&&vKf<8.5&&uTac<.5&&uTexOn>.5){/* v154: water: two sets of ripples drifting against each other, the sky mirrored more at a low angle, the sun glinting */
   vec2 q=vW.xz*.17;vec2 s1=texture(uTex,vec3(q+vec2(uT*.021,uT*.013),22.)).rg-.5,s2=texture(uTex,vec3(q*2.7+vec2(-uT*.019,uT*.027)+.37,22.)).rg-.5;
   vec3 nw=normalize(vec3((s1.x+s2.x)*1.25,1.,(s1.y+s2.y)*1.25));vec3 V=normalize(uEye-vW);float fr=pow(1.-max(dot(vec3(0.,1.,0.),V),0.),2.2)*.8+.1;
   vec3 sky=mix(vec3(.5,.66,.82),uFog,.35);float dp=.5+.5*(s1.x+s2.y);c=mix(vC*(.55+.5*dp),sky,clamp(fr*(.7+.6*(nw.x+nw.z)*.5),0.,1.));
   vec3 rf=reflect(-V,nw);spc=pow(max(dot(rf,uSun),0.),70.)*1.4+pow(max(dot(rf,uSun),0.),9.)*.12;l=.9;}
+ else if(vKf>69.5&&vKf<99.5){/* v156: aircraft skin. u runs along the body, v round it (turns x 8) or along the span; kind = 70 + 10*finish + class. finish: 0 satin paint, 1 gloss paint, 2 bare metal, 3 matte stealth coating. class: 0 fuselage panels, 1 wing panels, 2 fabric, 3 stealth panels, 4 fuselage panels with the cowl checkerboard, 5 covering with hatch lines only (vU.w = rows from the front of the cowl) */
+  int ks=int(vKf+.5)-70;int fn=ks/10;int sf=ks-fn*10;float u=vU.x,v=vU.y;float px=length(fwidth(vW));c=vC;
+  vec2 cs=(sf==0||sf==4)?vec2(.2,.075):sf==5?vec2(.34,.075):sf==1?vec2(.2,.3):sf==2?vec2(.16,.16):vec2(.34,.3);
+  float pv=(sf==0||sf==4||sf==5)?v*cs.y:v;vec2 g=vec2(u/cs.x,pv/cs.y);float ro=floor(g.y);g.x+=h(vec2(ro,1.7))*3.;vec2 id=floor(g),f=fract(g),dl=min(f,1.-f)*cs;float ed=min(dl.x,dl.y);
+  float pid=h(id+vec2(3.1,7.7));float lw=max(.0006,px*.6);float ln=1.-smoothstep(lw*.45,lw*1.25,ed);ln*=mix(1.,.5,smoothstep(.003,.012,px));
+  float rpU=.018,rpV=cs.y/floor(cs.y/.018+.5),dr=.0048,rr=max(.0011,px*.5);
+  float d1=length(vec2((fract(u/rpU)-.5)*rpU,dl.y-dr)),d2=length(vec2((fract(pv/rpV)-.5)*rpV,dl.x-dr));float rv=1.-smoothstep(rr*.55,rr,min(d1,d2));rv*=1.-smoothstep(.0035,.009,px);if(sf==3)rv*=.35;if(sf==2||sf==5)rv=0.;
+  float stk=vn(vec2(u*2.5,pv*170.));float gr=1.-smoothstep(0.,.008,ed);
+  c*=1.+(pid-.5)*(fn==2?.075:sf==2?.1:sf==5?.025:.06)+(stk-.5)*(fn==2?.07:.03);c*=1.-ln*(sf==2?.34:.46)*(sf==3?.7:sf==5?.6:1.);c*=1.-rv*.34;c*=1.-gr*.045;
+  if(sf==2){float rb=1.-smoothstep(.0007,.0018+px*.5,abs(fract(pv/.16)-.5)*.16);c*=1.-.1*rb;}
+  gkS=fn==0?.45:fn==1?1.:fn==2?1.:.3;if(sf==3)gkS=.2;met=fn==2?1.:0.;
+  if(sf==4){float cu=vU.w,cv=v*3.;float sk=sin(3.14159*cu)*sin(3.14159*cv);float aa=fwidth(sk)*.9+.02;float par=smoothstep(-aa,aa,sk);float inb=smoothstep(-.03,.03,cu)*(1.-smoothstep(5.97,6.03,cu));
+   vec3 ck=mix(vec3(.04,.04,.045),vec3(.9,.9,.86),par)*(1.-.12*ln);c=mix(c,ck,inb);gkS=mix(gkS,.55,inb);met=mix(met,0.,inb);}
+ }
  else if(vKf>9.5){int kk=int(vKf+.5);
   if(uTexOn<.5){if(kk>=100)discard;}
   else if(kk>=100){vec4 tx=texture(uTex,vec3(vU.xy,float(kk-100)));float a=tx.a;
@@ -10226,10 +10241,10 @@ void main(){float vK=vK0;if(vKf>9.5)vK=0.;if(vKf>6.5&&vKf<7.5){if(uTac<.5)discar
    float pm=(1.-smoothstep(uPad.z*.5,uPad.z,length(g-uPad.xy)+(n2-.5)*.8))*step(.1,uPad.z);c=mix(c,vec3(.4,.33,.24)*dirt,pm*.92);
   }else if(uGfx>.5){/* full detail: soft patches of lush and dry grass at three scales, blade grain up close, and a few flowers */float gr=step(vC.r*1.05,vC.g);float n1=vn(g*.021+1.7),n2=vn(g*.13+7.3),n3=vn(g*1.1+3.1)*(1.-smoothstep(.04,.35,px)),n4=h(floor(g*9.))*(1.-smoothstep(.015,.09,px));vec3 dry=vC*vec3(1.16,1.08,.74),lush=vC*vec3(.8,1.03,.84);c=mix(vC,mix(lush,dry,smoothstep(.38,.78,n1)),gr);c*=.86+.22*n2+.12*(n3-.5)+.1*(n4-.5);float fl=step(.988,h(floor(g*3.3)))*(1.-smoothstep(.02,.12,px))*gr;c=mix(c,mix(vec3(.96,.92,.55),vec3(.92,.94,.98),step(.5,h(floor(g*3.3)+.5))),fl*.55);vec2 g5=g/10.,w5=fwidth(g5),q=abs(fract(g5-.5)-.5)/max(w5,1e-4);float ln=(1.-min(min(q.x,q.y),1.))*(1.-smoothstep(.12,.4,max(w5.x,w5.y)));c=mix(c,c*1.08,ln*.25);}else{float fd=1.-smoothstep(.3,1.2,px);float n2=(h(floor(g*.5))*.06)*fd+h(floor(g*.08))*.08*(1.-smoothstep(4.,12.,px));c=vC*(0.9+n2);vec2 g5=g/5.,w5=fwidth(g5),q=abs(fract(g5-.5)-.5)/max(w5,1e-4);float ln=(1.-min(min(q.x,q.y),1.))*(1.-smoothstep(.12,.4,max(w5.x,w5.y)));c=mix(c,c*1.18,ln*.5);}}
  /* v154: gloss: kind 9 shines like paint and glass, kind 6 like satin; the sun glints, the sky and the ground are mirrored towards the edges */
- float gk=(vKf>8.5&&vKf<9.5)?1.:((vKf>5.5&&vKf<6.5)?.45:0.);
+ float gk=gkS>=0.?gkS:((vKf>8.5&&vKf<9.5)?1.:((vKf>5.5&&vKf<6.5)?.45:0.));
  if(gk>0.&&uTac<.5){vec3 V2=normalize(uEye-vW),R2=reflect(-V2,n);float nv=max(dot(n,V2),0.),fr2=.05+.95*pow(1.-nv,4.),up=smoothstep(-.12,.3,R2.y);
   vec3 env=mix(vec3(.2,.21,.18),mix(vec3(.8,.87,.93),vec3(.38,.58,.86),clamp(R2.y*1.4,0.,1.)),up);
-  spc+=pow(max(dot(R2,uSun),0.),mix(34.,120.,gk))*mix(.3,1.6,gk)*(1.-uWx.x*.75);rfl=env*(fr2*mix(.4,.85,gk)+.05*gk)*(1.-uWx.x*.4)*(1.-uWx.y*.3);}
+  spc+=pow(max(dot(R2,uSun),0.),mix(34.,120.,gk))*mix(.3,1.6,gk)*(1.-uWx.x*.75);rfl=env*(fr2*mix(.4,.85,gk)+.05*gk)*(1.-uWx.x*.4)*(1.-uWx.y*.3)+env*c*met*.3*(1.-uWx.x*.4);}
  vec3 col=c*(amb*.75+l*vec3(1.,.96,.88)*.75);if(uNight<.5)col+=c*tr*vec3(1.,.95,.55)+vec3(1.,.95,.8)*spc+rfl;if(uNight>.5)col=c*(amb*.055+l*vec3(.55,.6,.8)*.045+lamp(n));col=mix(col,uTint,uGlow);col*=1.-uWx.y*.16;float d=length(vW-uEye);float fg=1.-exp(-d*d*uFK);col=mix(col,uFog,clamp(fg,0.,1.));o=vec4(col,oa);}`;
 class SimGL{
  constructor(cv){const gl=this.gl=cv.getContext('webgl2',{antialias:true,alpha:false});if(!gl)throw new Error('webgl2');if(gl.isContextLost())throw new Error('webgl-lost');this.cv=cv;cv.addEventListener('webglcontextlost',e=>{e.preventDefault();cv.__lost=true;/* the browser took the GPU context away (too many GL views, tab sleep, driver reset): rebuild the simulator on a fresh canvas so the flight carries on */setTimeout(()=>{const I=SIM.inst;if(I&&I.cv===cv&&cv.isConnected&&$('#simView')){try{mountSim()}catch(_){}}},150)});
@@ -10275,6 +10290,12 @@ function noiseBuf(c){let b=_nbf.get(c);if(!b){b=c.createBuffer(1,c.sampleRate*2,
 /* a pulse train: duty = pulse width as a fraction of the period; alt > 0 adds a second, weaker pulse half a period later (twin cylinder) */
 function pulseWave(c,duty,alt=0,N=72){const re=new Float32Array(N+1),im=new Float32Array(N+1);for(let n=1;n<=N;n++)re[n]=2*Math.sin(n*Math.PI*duty)/(n*Math.PI)*(1+alt*(n%2?-1:1));return c.createPeriodicWave(re,im)}
 const HWR=new Float32Array([0,0,1]);
+/* v156: each drone has its own voice: how fast its motors idle and run, the blades on the prop (the blade tone is rev x blades), the share of prop rush and motor whine, and the loudness */
+const QSND={
+ fs5:{idle:3600,max:30500,bl:3,ml:7,lp:[900,5200],nb:[1500,3000],ng:.5,tn:.55,g:[.034,.078]},
+ tr3:{idle:6800,max:39000,bl:3,ml:7,lp:[1200,5600],nb:[1800,3400],ng:.45,tn:.4,g:[.03,.07]},
+ cw:{idle:4800,max:27500,bl:3,ml:7,lp:[800,3600],nb:[1200,2200],ng:.8,tn:.3,g:[.032,.068]},
+ tw:{idle:10500,max:54000,bl:4,ml:7,lp:[1800,7200],nb:[2600,4800],ng:.3,tn:.2,g:[.02,.05]}};
 function engBuild(c,out,kind,onDead){
  const m=c.createGain();m.gain.value=0;m.connect(out);const nodes=[];
  const osc=(type,f,pw)=>{const o=c.createOscillator();if(pw)o.setPeriodicWave(pw);else o.type=type;o.frequency.value=f;o.start();nodes.push(o);return o};
@@ -10300,37 +10321,49 @@ function engBuild(c,out,kind,onDead){
    T(x.dg.gain,(.35+.45*thr+(Math.random()-.5)*.25*(1-thr))*mf,t,.02);T(x.b.frequency,1300+thr*1100,t,.06);
    T(gp.gain,.1+.18*thr,t,.06);T(wf.frequency,300+k*800,t,.1);T(wg.gain,k*.08,t,.1)}
  }else if(kind==='gas4'){
-  const a=osc('',20,pulseWave(c,.2,.72)),lp=fl('lowpass',700,.9),ga=gn(1);a.connect(ga).connect(lp).connect(m);
-  const sub=osc('sine',20),gs=gn(.4);sub.connect(gs).connect(m);
-  const x=burst(750,.7,.2,.72),xl=fl('lowpass',1900,.5);x.g.connect(xl).connect(m);
-  const tk=nz(),tf=fl('highpass',3200,.7),tg=gn(.01);tk.connect(tf).connect(tg).connect(m);
-  const pr=osc('sawtooth',40),pl=fl('lowpass',260,.6),gp=gn(.28);pr.connect(pl).connect(gp).connect(m);
-  const wn=nz(.7),wf=fl('bandpass',420,.5),wg=gn(0);wn.connect(wf).connect(wg).connect(m);
-  cf={idle:1500,max:6800,up:.14,dn:.3,pw:.9,sp:18,g0:.026,g1:.051,lv:1};
-  let jw2=0;upd=(rpm,thr,sp,t)=>{jw2+=((Math.random()-.5)-jw2)*.06;const rev=rpm/60,f=rev/2*(1+jw2*.035*(1.15-thr)),k=Math.min(1,sp/30);
-   T(a.frequency,f,t,.02);T(sub.frequency,rev*.5,t,.05);T(x.p.frequency,f,t,.02);T(pr.frequency,rev*2,t,.04);
-   T(lp.frequency,450+thr*1000,t,.06);T(ga.gain,.8+.4*thr,t,.05);T(gs.gain,.3+.2*thr,t,.06);
-   T(x.dg.gain,.4+.4*thr+(Math.random()-.5)*.3*(1-thr),t,.03);T(x.b.frequency,600+thr*800,t,.06);
-   T(tg.gain,.008+.02*thr,t,.1);T(gp.gain,.18+.2*thr,t,.06);T(wf.frequency,260+k*700,t,.1);T(wg.gain,k*.07,t,.1)}
+  /* v156: petrol 4-stroke twin. The firing rate at idle is 25 per second, so most of what a pulse train carries is below 100 Hz, where a laptop or a phone has no speaker: that is why the idle was inaudible. Two pulse trains now run in step with the cylinders: a wide one (the deep rumble, which takes over with power) and a narrow one (the crack of each exhaust pulse, strongest at idle), a rumble filter takes out what no speaker plays, and some cycles are weak (the lope). */
+  const mm=fl('highpass',62,.7);mm.connect(m);
+  const a=osc('',20,pulseWave(c,.2,.72)),lp=fl('lowpass',700,.9),ga=gn(1);a.connect(ga).connect(lp).connect(mm);
+  const a2=osc('',20,pulseWave(c,.022,.68)),lp2=fl('lowpass',1500,.8),g2=gn(.5);a2.connect(lp2).connect(g2).connect(mm);
+  const x=burst(750,.7,.2,.72),xl=fl('lowpass',2200,.5);x.g.connect(xl).connect(mm);
+  const tk=nz(),tf=fl('highpass',3200,.7),tg=gn(.01);tk.connect(tf).connect(tg).connect(mm);
+  const pr=osc('sawtooth',40),pl=fl('lowpass',300,.6),gp=gn(.28);pr.connect(pl).connect(gp).connect(mm);
+  const wn=nz(.7),wf=fl('bandpass',420,.5),wg=gn(0);wn.connect(wf).connect(wg).connect(mm);
+  const pp=nz(),ppf=fl('bandpass',800,1.1),ppg=gn(0);pp.connect(ppf).connect(ppg).connect(mm);let nxP=0,nxD=0,dpD=0;
+  cf={idle:1500,max:6800,up:.14,dn:.3,pw:.9,sp:18,g0:.11,g1:.1,lv:1};
+  let jw2=0;upd=(rpm,thr,sp,t)=>{jw2+=((Math.random()-.5)-jw2)*.06;const rev=rpm/60,f=rev/2*(1+jw2*.035*(1.15-thr)),k=Math.min(1,sp/30),id=Math.max(0,1-thr*3.5);
+   if(t>=nxD){dpD=t+.05+.08*Math.random();nxD=t+.25+.6*Math.random()}const mf=t<dpD?1-.55*id:1;
+   if(id>.03&&t>=nxP){nxP=t+.09+.25*Math.random();ppf.frequency.setValueAtTime(450+Math.random()*750,t);ppg.gain.cancelScheduledValues(t);ppg.gain.setValueAtTime(0,t);ppg.gain.linearRampToValueAtTime(.45*id*(.35+Math.random()*.65),t+.006);ppg.gain.exponentialRampToValueAtTime(.002,t+.1)}
+   T(a.frequency,f,t,.02);T(a2.frequency,f,t,.02);T(x.p.frequency,f,t,.02);T(pr.frequency,rev*2,t,.04);
+   T(lp.frequency,760+thr*900,t,.06);T(ga.gain,(.45+.45*thr)*mf,t,.05);T(g2.gain,(.5*id+.1+.1*thr)*mf,t,.04);T(lp2.frequency,1500+thr*800,t,.06);
+   T(x.dg.gain,(.7+.35*thr+(Math.random()-.5)*.4*(1-thr))*mf,t,.03);T(x.b.frequency,650+thr*800,t,.06);
+   T(tg.gain,.008+.02*thr,t,.1);T(gp.gain,.015+.26*thr,t,.06);T(wf.frequency,260+k*700,t,.1);T(wg.gain,k*.07,t,.1)}
  }else if(kind==='jet'){
-  const w1=osc('sine',2000),w2=osc('sine',4000),w3=osc('triangle',900),g1=gn(.1),g2=gn(.04),g3=gn(.06);w1.connect(g1).connect(m);w2.connect(g2).connect(m);w3.connect(g3).connect(m);
-  const r=nz(),rb=fl('bandpass',1800,.45),rl=fl('lowpass',5200,.5),rg=gn(.4);r.connect(rb).connect(rl).connect(rg).connect(m);
-  const rm=nz(1.3),rf=fl('lowpass',260,.6),rmg=gn(.5);rm.connect(rf).connect(rmg).connect(m);
-  const hs=nz(.9),hf=fl('highpass',4200,.5),hg=gn(.02);hs.connect(hf).connect(hg).connect(m);
-  cf={idle:.25,max:1,up:1.0,dn:1.6,pw:1,sp:0,g0:.18,g1:0,lv:1};
-  upd=(s,thr,sp,t)=>{const f=700+3600*s,fz=1+(Math.random()-.5)*.02;
-   T(w1.frequency,f*fz,t,.05);T(w2.frequency,f*2.01*fz,t,.05);T(w3.frequency,250+1100*s,t,.08);
-   T(g1.gain,.03+.5*s*s,t,.1);T(g2.gain,.01+.3*s*s*s,t,.1);T(g3.gain,.04+.16*s,t,.1);
-   T(rb.frequency,900+1800*s,t,.1);T(rg.gain,(.1+.9*Math.pow(s,1.4)),t,.05);
-   T(rmg.gain,.35+.5*s,t,.1);T(hg.gain,.01+.1*s*s,t,.1)}
+  /* v156: a turbine: a thin shaft whine from 580 Hz at idle to 2.1 kHz at full power (a small turbine runs at 35,000 to 125,000 rpm), a deep roar that grows with the power, a mid-range rush, a hiss and a rumble; at idle it is a low whoosh and a quiet whine */
+  const w1=osc('sine',580),w2=osc('sine',1160),w3=osc('triangle',290),g1=gn(.04),g2=gn(.015),g3=gn(.03);w1.connect(g1).connect(m);w2.connect(g2).connect(m);w3.connect(g3).connect(m);
+  const cb=nz(.9),cbf=fl('bandpass',3500,9),cbg=gn(.01);cb.connect(cbf).connect(cbg).connect(m);
+  const r1=nz(),r1f=fl('lowpass',700,.6),r1g=gn(.3);r1.connect(r1f).connect(r1g).connect(m);
+  const r2=nz(1.2),r2f=fl('bandpass',1500,.5),r2g=gn(.1);r2.connect(r2f).connect(r2g).connect(m);
+  const hs=nz(.9),hf=fl('highpass',3800,.5),hg=gn(.01);hs.connect(hf).connect(hg).connect(m);
+  const rm=nz(1.4),rmf=fl('lowpass',170,.7),rmg=gn(.3);rm.connect(rmf).connect(rmg).connect(m);
+  const lf=osc('sine',5.3),lg=gn(.04);lf.connect(lg).connect(r1g.gain);
+  cf={idle:.25,max:1,up:1.0,dn:1.6,pw:1,sp:0,g0:.2,g1:0,lv:1};
+  let jw=0;upd=(s,thr,sp,t)=>{jw+=((Math.random()-.5)-jw)*.05;const q=Math.max(0,Math.min(1,(s-.25)/.75)),f=(583+1520*q)*(1+jw*.004);
+   T(w1.frequency,f,t,.05);T(w2.frequency,f*2.01,t,.05);T(w3.frequency,f*.5,t,.08);
+   T(g1.gain,.05+.15*q*q,t,.1);T(g2.gain,.008+.1*q*q*q,t,.1);T(g3.gain,.02+.05*q,t,.1);
+   T(cbf.frequency,f*6,t,.1);T(cbg.gain,.006+.05*q*q,t,.1);
+   T(r1f.frequency,500+900*q,t,.1);T(r1g.gain,.17+.65*Math.pow(q,1.3),t,.06);
+   T(r2f.frequency,1100+1500*q,t,.1);T(r2g.gain,.04+.45*q*q,t,.08);
+   T(hg.gain,.006+.1*q*q,t,.1);T(rmg.gain,.35+.45*q,t,.1);T(lg.gain,.04+.05*q,t,.1)}
  }else{
   const lp=fl('lowpass',2000,.9),mo=[0,1,2,3].map(i=>{const bf=osc('sawtooth',300),wh=osc('square',900),gb=gn(.5),gw=gn(.05);bf.connect(gb).connect(lp);wh.connect(gw).connect(lp);return {bf,wh,d:1+(i-1.5)*.011}});lp.connect(m);
   const n=nz(),nb=fl('bandpass',2400,.7),ng=gn(.1);n.connect(nb).connect(ng).connect(m);
   const fo=osc('sine',11),fg=gn(0);fo.connect(fg).connect(ng.gain);
   const tn=nz(.6),tf=fl('lowpass',700,.6),tg=gn(.2);tn.connect(tf).connect(tg).connect(m);
-  cf={idle:5200,max:31000,up:.045,dn:.12,pw:.85,sp:0,g0:.035,g1:.076,lv:1};
-  const jm=[0,0,0,0];upd=(rpm,thr,sp,t,pn)=>{const rev=rpm/60;mo.forEach((o,i)=>{jm[i]+=((Math.random()-.5)-jm[i])*.05;const j=1+jm[i]*.01;T(o.bf.frequency,rev*3*o.d*j,t,.025);T(o.wh.frequency,rev*7*o.d*j,t,.025)});
-   T(lp.frequency,1100+thr*4200+pn*1500,t,.05);T(nb.frequency,1800+thr*2200+pn*1200,t,.06);T(ng.gain,.05+.45*thr+pn*.35,t,.05);T(fg.gain,.04+.02*thr,t,.1);T(tg.gain,.1+.5*thr,t,.08)}
+  const Q=QSND[String(kind).slice(5)]||QSND.fs5;
+  cf={idle:Q.idle,max:Q.max,up:.045,dn:.12,pw:.85,sp:0,g0:Q.g[0],g1:Q.g[1],lv:1};
+  const jm=[0,0,0,0];upd=(rpm,thr,sp,t,pn)=>{const rev=rpm/60;mo.forEach((o,i)=>{jm[i]+=((Math.random()-.5)-jm[i])*.05;const j=1+jm[i]*.01;T(o.bf.frequency,rev*Q.bl*o.d*j,t,.025);T(o.wh.frequency,rev*Q.ml*o.d*j,t,.025)});
+   T(lp.frequency,Q.lp[0]+thr*(Q.lp[1]-Q.lp[0])+pn*1500,t,.05);T(nb.frequency,Q.nb[0]+thr*(Q.nb[1]-Q.nb[0])+pn*1200,t,.06);T(ng.gain,.05+Q.ng*thr+pn*.35,t,.05);T(fg.gain,.04+.02*thr,t,.1);T(tg.gain,.1+Q.tn*thr,t,.08)}
  }
  const E={kind,cf,get dead(){return S.dead},
   set(thr,sp,t,vol){if(S.dead)return;clearTimeout(S.to);if(!S.run){S.run=true;S.r=0;S.t=t-.016}
@@ -10748,7 +10781,7 @@ class FPVSim{
   /* drag: clean airframe + wheels and legs (more while the doors are open) + flaps + a stopped or idling propeller + induced drag */
   const gd=A.gear,CDx=(P.rg?(P.gcd||0)*(gd+(gd>.03&&gd<.97?.5:0)):0)+(P.fcd||0)*(.15*fl+.85*fl*fl)+(jet?0:(P.cdp||0)*(1-this.rpm));
   const qd=.5*1.225*V2,CD=P.cd0+CDx+P.k*(1+.35*fl)*ge*CL*CL+(stall?.18:0),vh=Va>.3?V.mul(vb,1/Va):[0,0,-1];let lf=V.cross([1,0,0],vh);const ll=V.len(lf);lf=ll>.01?V.mul(lf,1/ll):[0,1,0];
-  const Th=P.tmax*this.mt*Math.max(0,1-Math.max(0,u)/(P.vprop*(jet?1:Math.max(.12,this.rpm))))*cl((190-this.p[1])/70,0,1);
+  const Th=P.tmax*this.mt*Math.max(0,1-Math.max(0,u)/(P.vprop*(jet?1:Math.max(.12,this.rpm))))*cl((420-this.p[1])/150,0,1);
   let Fb=V.add(V.mul(lf,qd*P.S*CL),V.mul(vh,-qd*P.S*CD));Fb[0]+=qd*P.S*P.cyb*be;Fb[2]-=Th;
   const F=V.add(Q.rot(this.q,Fb),[0,-g*P.m,0]);
   /* moments. A propeller adds a rolling reaction to its own torque (rolls the airframe the other way) and, slow and at high power, a yaw to the left from the swirling slipstream and P-factor */
@@ -10779,8 +10812,8 @@ class FPVSim{
    /* stopped on the ground with the engine idling for a few seconds: the ground crew tops up the tank */
    if(!bel&&alive&&Math.hypot(this.v[0],this.v[2])<.4&&thr<.05&&(this.bat??100)<99){this.refT=(this.refT||0)+dt;if(this.refT>2.5){this.bat=100;this.dry=false;this.lowF=false;this.refT=0;this.flash('תודלק · מוכן להמראה',1600);SFX.play('select')}}else this.refT=0}
   this.gTouch=this.p[1]<=GH+1e-6;this.gl=0;
-  /* a soft ceiling: the thin air takes the engine's power away above 120 m (zero at 190 m) and the plane simply stops climbing, with no invisible hand holding its vertical speed while the nose rises into a stall */
-  if(this.p[1]>135&&!this.ceilF){this.ceilF=true;this.flash('גובה מרבי · האוויר דליל והמנוע מאבד כוח',1800)}else if(this.p[1]<110)this.ceilF=false;
+  /* a soft ceiling: the thin air takes the engine's power away above 270 m (zero at 420 m) and the plane simply stops climbing, with no invisible hand holding its vertical speed while the nose rises into a stall */
+  if(this.p[1]>300&&!this.ceilF){this.ceilF=true;this.flash('גובה מרבי · האוויר דליל והמנוע מאבד כוח',1800)}else if(this.p[1]<270)this.ceilF=false;
   if(alive&&this.trees&&this.trees.length){const spd=V.len(this.v),b2=(P.b||1.8)*.5,y=this.p[1];for(const [tx,tz,cr,th] of this.trees){const d=Math.hypot(this.p[0]-tx,this.p[2]-tz);if(d>cr+b2+1.2||y>=th)continue;
    const trunk=d<.3+b2*.5,crown=y>th*.35&&d<cr*(1-Math.max(0,y-th*.35)/(th*.75))*.9+.2;
    if(trunk||crown){if(this.hit(trunk?'פגיעה בגזע או בעמוד':'פגיעה בענפי עץ',(trunk?28:10)+spd*(trunk?3:1.5),spd>(trunk?9:15)))return;
@@ -10865,7 +10898,7 @@ class FPVSim{
   if(simBlocked()||document.hidden){this.last=t;this.acc=0;MOTOR.stop();wxAudio(0);this.held=true;this.raf=requestAnimationFrame(this.loop);return}this.held=false;
   this.perf(t);  const dt=Math.max(0,Math.min(.05,(t-this.last)/1000));this.last=t;const I=this.input();this.I=I;if(!this.att)immAuto(I);if(PREF.simrc&&!this.att){const R=this.rcEl&&this.rcEl.isConnected?this.rcEl:(this.rcEl=document.getElementById('simRC'));if(R&&!R.hidden)setSticks(R,I.thr,I.yaw,I.pit,I.rol)}
   this.acc+=dt;const h=1/240;let n=0;while(this.acc>=h&&n<20){this.pp=this.p.slice();this.pq=this.q.slice();this.step(h,I);this.acc-=h;n++}if(n>=20)this.acc=0;
-  {const al=Math.max(0,Math.min(1,this.acc/h)),P0=this.p,Q0=this.q;if(this.pp&&!this.crash&&V.len(V.sub(P0,this.pp))<2){let pq=this.pq;if(pq[0]*Q0[0]+pq[1]*Q0[1]+pq[2]*Q0[2]+pq[3]*Q0[3]<0)pq=pq.map(x=>-x);this.p=P0.map((v,i)=>this.pp[i]+(v-this.pp[i])*al);this.q=Q.norm(Q0.map((v,i)=>pq[i]+(v-pq[i])*al))}this.render(t);wxFx(this,t);this.p=P0;this.q=Q0}if(this.armed&&!this.crash&&this.p[1]>.2&&!SIMM.lid)airTick(dt);simHud(this,I);guideTick(this,I);orientTick(this);MOTOR.set(this.armed&&!this.crash,Math.min(1,this.pwr()*1.05),V.len(this.v),this.plane?(ENGK[this.PK]||'nitro'):'quad');if(MODE==='learn'){if(SIMM.lid)recTick(this,I,dt);else if(!this.mis)drillTick(this,dt)}this.raf=requestAnimationFrame(this.loop)}
+  {const al=Math.max(0,Math.min(1,this.acc/h)),P0=this.p,Q0=this.q;if(this.pp&&!this.crash&&V.len(V.sub(P0,this.pp))<2){let pq=this.pq;if(pq[0]*Q0[0]+pq[1]*Q0[1]+pq[2]*Q0[2]+pq[3]*Q0[3]<0)pq=pq.map(x=>-x);this.p=P0.map((v,i)=>this.pp[i]+(v-this.pp[i])*al);this.q=Q.norm(Q0.map((v,i)=>pq[i]+(v-pq[i])*al))}this.render(t);wxFx(this,t);this.p=P0;this.q=Q0}if(this.armed&&!this.crash&&this.p[1]>.2&&!SIMM.lid)airTick(dt);simHud(this,I);guideTick(this,I);orientTick(this);MOTOR.set(this.armed&&!this.crash,Math.min(1,this.pwr()*1.05),V.len(this.v),this.plane?(ENGK[this.PK]||'nitro'):'quad:'+quadKey());if(MODE==='learn'){if(SIMM.lid)recTick(this,I,dt);else if(!this.mis)drillTick(this,dt)}this.raf=requestAnimationFrame(this.loop)}
  render(t){const gl=this.r.gl,c=this.cv,NT=!this.att&&!!this.night,TAC=this.att||(SIM.look!=='real'&&!NT),cam=this.att?'cine':(this.mis&&this.mis.ball&&SIM.cam==='fpv'?'chase':SIM.cam);this.r.tac=TAC;gl.uniform1f(this.r.u.uTac,TAC?1:0);gl.uniform1f(this.r.u.uNight,NT?1:0);gl.uniform1f(this.r.u.uGfx,SIM.gfx==='high'&&!TAC?1:0);{const W=this.fwind,wk=W?Math.min(1.8,.4+W.base*.16+W.gust*.04):.45,wd=W?W.dir:[.7,0,.7];gl.uniform1f(this.r.u.uT,(t||0)/1000);gl.uniform3f(this.r.u.uWnd,wd[0],wd[2],wk);gl.uniform1f(this.r.u.uTexOn,this.r.texOK?1:0);gl.uniform1f(this.r.u.uMS,this.r.ms?1:0);gl.uniform1f(this.r.u.uGL,this.gLay||0);const pd=this.padU||[0,0,0];gl.uniform4f(this.r.u.uPad,pd[0],pd[1],pd[2],0)}const WX=this.wx,ic=WX&&WX.ceil?Math.max(0,Math.min(1,(this.p[1]-(WX.ceil-.4))/.9)):0,FG=wxFog(NT,TAC,WX,ic);this.inCloud=ic;gl.uniform3fv(this.r.u.uFog,FG);gl.uniform1f(this.r.u.uFK,wxK(WX)+ic*.14);gl.uniform4f(this.r.u.uWx,WX?WX.c/100:0,WX?WX.r/100:0,WX?WX.f/100:0,ic);gl.viewport(0,0,c.width,c.height);gl.clearColor(FG[0],FG[1],FG[2],1);{const f0=Q.rot(this.q,[0,0,-1]),u0=Q.rot(this.q,[0,1,0]);gl.uniform3fv(this.r.u.uLp,V.add(this.p,V.mul(f0,.12)));gl.uniform3fv(this.r.u.uLd,V.norm(V.add(f0,V.mul(u0,-.28))))}gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
   let eye,cq,fov;const fwd=Q.rot(this.q,[0,0,-1]);
   if(cam==='cine'){const hf=V.norm([fwd[0],0,fwd[2]]),sd=[-hf[2],0,hf[0]],ph=Math.sin(t/7000);const want=V.add(this.p,V.add(V.add(V.mul(hf,-3.4),V.mul(sd,2.2*ph)),[0,1.2+.5*Math.cos(t/9000),0]));this.chase=this.chase?V.lerp(this.chase,want,this.still?1:.04):want;eye=this.chase;cq=M4.lookQ(eye,V.add(this.p,V.mul(hf,2)));fov=62}
@@ -11520,7 +11553,7 @@ cxRegisterAll();
 /* trainer derivatives (per rad), in the range published for small high-wing trainers */
 /* trainer (nitro 2-stroke, high wing). Wing area, span and weight now match the model that is drawn (1.85 m span, 0.62 m² wing, 3.2 kg = 52 g/dm²), the lift curve stalls at a clean-wing CLmax of 1.3 (stall 28 km/h),
    and the trim (cm0) is solved so it flies hands-off at its cruise speed. The propeller adds torque roll, slipstream yaw and a ground swing; fuel burns with power. */
-const PLANE={m:3.2,S:.62,b:1.85,c:.335,Ix:.24,Iy:.36,Iz:.56,cl0:.3,cla:4.5,stall:.225,cd0:.042,k:.072,cyb:-.45,tmax:17,vprop:42,idl:.22,wash:110,
+const PLANE={m:3.2,S:.62,b:1.85,c:.335,Ix:.24,Iy:.36,Iz:.56,cl0:.3,cla:4.5,stall:.225,cd0:.042,k:.072,cyb:-.45,tmax:26,vprop:40,idl:.22,wash:130,
  cm0:.067,cma:-1.1,cmq:-12,cmd:.95,de:.26,clb:-.2,clp:-.5,clr:.14,cld:.19,da:.35,cnb:.09,cnr:-.16,cnda:-.012,cnd:.1,dr:.45,gear:.26,
  cr:12,cdp:.012,rtq:.55,ptq:.25,swg:.02,sf:.5,sd:.01,wh:.2,spool:[.3,.35],fb0:.04,fb1:.24,vcr:4.2,vhd:2.5};
 const vehOf=cid=>(typeof cid==='string'?S.courses.find(c=>c.id===cid):cid)?.vehicle==='plane'?'plane':'quad';
@@ -11602,22 +11635,22 @@ const PLBASE=PLANE;
 const PLANES={
  tr1:{n:'טריינר כנף עליונה',sub:'מוטה 1.85 מ׳ · 3.2 ק״ג · מנוע ניטרו · שיוט 12 מ׳/ש׳ · מתייצב לבד, סלחני מאוד',cr:12,cls:'אימון',P:PLBASE,ex:[[.06,-.1,-.5]],sm:1},
  tr2:{n:'טריינר ספורט · כנף תחתונה',sub:'מוטה 1.75 מ׳ · 3 ק״ג · מנוע ניטרו · שיוט 15 מ׳/ש׳ · מגיב יותר, פחות מתייצב לבד',cr:15,cls:'אימון מתקדם',
-  P:Object.assign({},PLBASE,{m:3,S:.49,b:1.75,c:.28,Ix:.2,Iy:.3,Iz:.47,cl0:.2,cla:4.6,stall:.217,cd0:.038,k:.064,tmax:23.5,vprop:42.5,wash:100,cm0:.0564,cma:-1.1,clb:-.15,clp:-.46,da:.3,cnd:.09,gear:.253,cr:15,rtq:.8,ptq:.4,swg:.04,sf:.4,sd:.02,wh:-.03,spool:[.28,.32],fb0:.04,fb1:.26,vcr:3.8,vhd:2.2}),ex:[[.05,-.08,-.5]],sm:1},
+  P:Object.assign({},PLBASE,{m:3,S:.49,b:1.75,c:.28,Ix:.2,Iy:.3,Iz:.47,cl0:.2,cla:4.6,stall:.217,cd0:.038,k:.064,tmax:34,vprop:44,wash:120,cm0:.0564,cma:-1.1,clb:-.15,clp:-.46,da:.3,cnd:.09,gear:.253,cr:15,rtq:.8,ptq:.4,swg:.04,sf:.4,sd:.02,wh:-.03,spool:[.28,.32],fb0:.04,fb1:.26,vcr:3.8,vhd:2.2}),ex:[[.05,-.08,-.5]],sm:1},
  p51:{n:'מוסטנג P-51 · סקייל',sub:'מוטה 2.05 מ׳ · 5.8 ק״ג · מנוע בנזין · שיוט 20 מ׳/ש׳ · גלגלים ומדפים נשלפים, גלגל זנב ומומנט מדחף · מלחמת העולם השנייה',cr:20,cls:'סקייל WWII',
-  P:Object.assign({},PLBASE,{m:5.8,S:.69,b:2.05,c:.337,Ix:.53,Iy:.79,Iz:1.25,cl0:.1,cla:4.6,stall:.217,cd0:.032,k:.067,tmax:40,vprop:65,wash:80,cm0:.0617,cma:-1.2,cmq:-13,clb:-.15,clp:-.45,da:.245,cnb:.1,cnd:.085,tail:true,gp0:.17,vtl:11,gear:.222,cr:20,
-   rg:true,fl:true,gcd:.014,fcl:.42,fst:.015,fcd:.055,fcm:.05,vle:24,vfe:22,belly:.17,cdp:.014,rtq:1.5,ptq:.8,swg:.14,sf:.28,sd:.05,wh:0,spool:[.4,.5],fb0:.03,fb1:.17,vcr:3.4,vhd:2}),ex:[[.075,.03,-.385],[-.075,.03,-.385]],sm:1},
+  P:Object.assign({},PLBASE,{m:5.8,S:.69,b:2.05,c:.337,Ix:.53,Iy:.79,Iz:1.25,cl0:.1,cla:4.6,stall:.217,cd0:.032,k:.067,tmax:62,vprop:72,wash:105,cm0:.0617,cma:-1.2,cmq:-13,clb:-.15,clp:-.45,da:.245,cnb:.1,cnd:.085,tail:true,gp0:.17,vtl:11,gear:.222,cr:20,
+   rg:true,fl:true,gcd:.014,fcl:.42,fst:.015,fcd:.055,fcm:.05,vle:24,vfe:22,belly:.17,cdp:.014,rtq:1.9,ptq:1,swg:.18,sf:.28,sd:.05,wh:0,spool:[.4,.5],fb0:.03,fb1:.22,vcr:3.4,vhd:2}),ex:[[.075,.03,-.385],[-.075,.03,-.385]],sm:1},
  spit:{n:'ספיטפייר · סקייל',sub:'מוטה 2 מ׳ · 5.2 ק״ג · מנוע בנזין · שיוט 18 מ׳/ש׳ · גלגלים ומדפים נשלפים, כנף אליפטית והזדקרות רכה · מלחמת העולם השנייה',cr:18,cls:'סקייל WWII',
-  P:Object.assign({},PLBASE,{m:5.2,S:.75,b:2,c:.375,Ix:.46,Iy:.67,Iz:1.06,cl0:.12,cla:4.5,stall:.24,cd0:.03,k:.063,tmax:36,vprop:57.5,wash:80,cm0:.0594,cma:-1.2,cmq:-13,clb:-.15,clp:-.48,da:.3,cnb:.1,cnd:.085,tail:true,gp0:.18,vtl:10,gear:.219,cr:18,
-   rg:true,fl:true,gcd:.013,fcl:.38,fst:.015,fcd:.05,fcm:.045,vle:22,vfe:20,belly:.095,cdp:.014,rtq:1.3,ptq:.7,swg:.12,sf:.6,sd:.015,wh:0,spool:[.4,.5],fb0:.03,fb1:.17,vcr:3.2,vhd:1.9}),ex:[[.066,.036,-.388],[-.066,.036,-.388]],sm:1},
- jet:{n:'מטוס קרב חמקן · בסגנון F-35',sub:'מוטה 1.45 מ׳ · 3.6 ק״ג · טורבינה · שיוט 24 מ׳/ש׳ · גלגלים ומדפים נשלפים, מהיר, בלי זרימת מדחף על הזנב',cr:24,cls:'סילוני',jet:true,
-  P:Object.assign({},PLBASE,{m:3.6,S:.42,b:1.45,c:.29,Ix:.11,Iy:.26,Iz:.3,cl0:.05,cla:3.6,stall:.264,cd0:.04,k:.091,cyb:-.5,tmax:30,vprop:150,idl:.3,wash:0,cm0:.0471,cma:-.9,cmq:-10,cmd:1.1,de:.3,clb:-.15,clp:-.5,da:.22,cnb:.11,cnr:-.2,cnd:.09,gear:.224,cr:24,jet:true,
-   rg:true,fl:true,gcd:.012,fcl:.3,fst:.02,fcd:.04,fcm:.035,vle:32,vfe:30,belly:.075,sf:.35,sd:.025,wh:0,spool:[1.3,2.2],fb0:.09,fb1:.5,rtq:0,ptq:0,swg:0,vcr:3.4,vhd:2}),ex:[[0,.01,.63]],sm:.55}};
+  P:Object.assign({},PLBASE,{m:5.2,S:.75,b:2,c:.375,Ix:.46,Iy:.67,Iz:1.06,cl0:.12,cla:4.5,stall:.24,cd0:.03,k:.063,tmax:56,vprop:64,wash:105,cm0:.0594,cma:-1.2,cmq:-13,clb:-.15,clp:-.48,da:.3,cnb:.1,cnd:.085,tail:true,gp0:.18,vtl:10,gear:.219,cr:18,
+   rg:true,fl:true,gcd:.013,fcl:.38,fst:.015,fcd:.05,fcm:.045,vle:22,vfe:20,belly:.095,cdp:.014,rtq:1.65,ptq:.9,swg:.15,sf:.6,sd:.015,wh:0,spool:[.4,.5],fb0:.03,fb1:.22,vcr:3.2,vhd:1.9}),ex:[[.066,.036,-.388],[-.066,.036,-.388]],sm:1},
+ jet:{n:'F-35A ברק II · סקייל',sub:'מוטה 1.45 מ׳ · אורך 2.1 מ׳ · 3.6 ק״ג · טורבינה · שיוט 24 מ׳/ש׳ · גלגלים ומדפים נשלפים, מהיר, זנבות כפולים, בלי זרימת מדחף',cr:24,cls:'סילוני',jet:true,
+  P:Object.assign({},PLBASE,{m:3.6,S:.42,b:1.45,c:.29,Ix:.11,Iy:.26,Iz:.3,cl0:.05,cla:3.6,stall:.3,cd0:.04,k:.091,cyb:-.5,tmax:44,vprop:160,idl:.3,wash:0,cm0:.0471,cma:-.9,cmq:-10,cmd:1.1,de:.3,clb:-.15,clp:-.5,da:.22,cnb:.11,cnr:-.2,cnd:.09,gear:.224,cr:24,jet:true,
+   rg:true,fl:true,gcd:.012,fcl:.3,fst:.02,fcd:.04,fcm:.035,vle:32,vfe:30,belly:.075,sf:.5,sd:.025,wh:0,spool:[1.3,2.2],fb0:.09,fb1:.55,rtq:0,ptq:0,swg:0,vcr:3.4,vhd:2}),ex:[[0,.003,.66]],sm:.55}};
 PLANES.p47={n:'P-47 ת׳אנדרבולט · סקייל',sub:'מוטה 2.07 מ׳ · 7.6 ק״ג · מנוע בנזין רדיאלי · שיוט 21 מ׳/ש׳',cr:21,cls:'סקייל WWII',
- P:Object.assign({},PLBASE,{m:7.6,S:.774,b:2.07,c:.374,Ix:.74,Iy:.96,Iz:1.55,cl0:.15,cla:4.4,stall:.22,cd0:.046,k:.068,tmax:52,vprop:64,wash:95,cm0:.0564,cma:-1.2,cmq:-14,clb:-.16,clp:-.46,da:.28,cnb:.11,cnd:.09,tail:true,gp0:.2,vtl:12,gear:.25,cr:21,
-  rg:true,fl:true,gcd:.016,fcl:.45,fst:.015,fcd:.07,fcm:.055,vle:25,vfe:23,belly:.2,cdp:.016,rtq:2.3,ptq:1.15,swg:.16,sf:.3,sd:.04,wh:0,spool:[.5,.6],fb0:.035,fb1:.2,vcr:3.8,vhd:2.2}),ex:[[.09,-.01,-.27],[-.09,-.01,-.27]],sm:1};
-PLANES.bf109={n:'Messerschmitt Bf 109 G · סקייל',sub:'מוטה 1.8 מ׳ · 4.6 ק״ג · מנוע בנזין · שיוט 23 מ׳/ש׳ · שלפים בכנף, מסלול גלגלים צר וסחרור חזק בהמראה',cr:23,cls:'סקייל WWII',
- P:Object.assign({},PLBASE,{m:4.6,S:.534,b:1.8,c:.297,Ix:.318,Iy:.454,Iz:.719,cl0:.12,cla:4.5,stall:.27,cd0:.036,k:.066,tmax:40,vprop:70,wash:95,cm0:.0407,cma:-1.3,cmq:-13,clb:-.15,clp:-.45,da:.3,cnb:.12,cnd:.09,tail:true,gp0:.19,vtl:12,gear:.2,cr:23,
-  rg:true,fl:true,gcd:.015,fcl:.42,fst:.015,fcd:.07,fcm:.05,vle:27,vfe:24,belly:.15,cdp:.015,rtq:2.6,ptq:1.2,swg:.2,sf:.3,sd:.04,wh:0,spool:[.4,.5],fb0:.03,fb1:.18,vcr:3.6,vhd:2.1}),ex:[[.07,.0,-.2],[-.07,.0,-.2]],sm:1};
+ P:Object.assign({},PLBASE,{m:7.6,S:.774,b:2.07,c:.374,Ix:.74,Iy:.96,Iz:1.55,cl0:.15,cla:4.4,stall:.22,cd0:.046,k:.068,tmax:80,vprop:76,wash:125,cm0:.0564,cma:-1.2,cmq:-14,clb:-.16,clp:-.46,da:.28,cnb:.11,cnd:.09,tail:true,gp0:.2,vtl:12,gear:.25,cr:21,
+  rg:true,fl:true,gcd:.016,fcl:.45,fst:.015,fcd:.07,fcm:.055,vle:25,vfe:23,belly:.2,cdp:.016,rtq:2.9,ptq:1.4,swg:.2,sf:.3,sd:.04,wh:0,spool:[.5,.6],fb0:.035,fb1:.26,vcr:3.8,vhd:2.2}),ex:[[.09,-.01,-.27],[-.09,-.01,-.27]],sm:1};
+PLANES.bf109={n:'Messerschmitt Bf 109 E · סקייל',sub:'מוטה 1.8 מ׳ · 4.6 ק״ג · מנוע בנזין · שיוט 23 מ׳/ש׳ · שלפים בכנף, מסלול גלגלים צר וסחרור חזק בהמראה',cr:23,cls:'סקייל WWII',
+ P:Object.assign({},PLBASE,{m:4.6,S:.534,b:1.8,c:.297,Ix:.318,Iy:.454,Iz:.719,cl0:.12,cla:4.5,stall:.27,cd0:.036,k:.066,tmax:56,vprop:76,wash:120,cm0:.0407,cma:-1.3,cmq:-13,clb:-.15,clp:-.45,da:.3,cnb:.12,cnd:.09,tail:true,gp0:.19,vtl:12,gear:.2,cr:23,
+  rg:true,fl:true,gcd:.015,fcl:.42,fst:.015,fcd:.07,fcm:.05,vle:27,vfe:24,belly:.15,cdp:.015,rtq:3.1,ptq:1.45,swg:.24,sf:.3,sd:.04,wh:0,spool:[.4,.5],fb0:.03,fb1:.22,vcr:3.6,vhd:2.1}),ex:[[.07,.0,-.2],[-.07,.0,-.2]],sm:1};
 const PLKEYS=Object.keys(PLANES);
 /* top speed in level flight at full power, from the same drag and thrust the flight model uses: the highest speed at which the propeller still covers the drag */
 function plVmax(P){const W=P.m*9.81;let best=0;for(let u=6;u<110;u+=.25){const q=.6125*u*u,CL=Math.min(1.6,W/(q*P.S)),D=q*P.S*(P.cd0+P.k*CL*CL);if(P.tmax*(1-u/P.vprop)>=D)best=u}return best}
@@ -11656,25 +11689,32 @@ function geoOrient(G){
    s[u]=du===dt?-s[t]:s[t];comp[u]=nc;list.push(u);q.push(u)}}
   comps.push(list);nc++}
  const fnx=(t,ax)=>{const i=t*9,ux=P[i+3]-P[i],uy=P[i+4]-P[i+1],uz=P[i+5]-P[i+2],vx=P[i+6]-P[i],vy=P[i+7]-P[i+1],vz=P[i+8]-P[i+2];return (ax===0?uy*vz-uz*vy:ax===1?uz*vx-ux*vz:ux*vy-uy*vx)*s[t]};
- for(const list of comps){let best=-1e9,bt=-1,bax=0,bsg=1,bj=0;
-  for(let q=0;q<list.length;q++){const t=list[q];for(let j=0;j<3;j++){const i=t*9+j*3;for(let ax=0;ax<3;ax++)for(let sg=1;sg>=-1;sg-=2){const v=P[i+ax]*sg;if(v>best){best=v;bt=t;bax=ax;bsg=sg;bj=j}}}}
-  /* the face at that corner whose normal leans furthest along the extreme direction decides */
-  let bv=0;const vi=vid[bt*3+bj];
-  for(let q=0;q<list.length;q++){const t=list[q];for(let j=0;j<3;j++)if(vid[t*3+j]===vi){const f=fnx(t,bax)*bsg;if(Math.abs(f)>Math.abs(bv))bv=f}}
-  if(bv<0)for(let q=0;q<list.length;q++)s[list[q]]=-s[list[q]]}
+ for(const list of comps){
+  /* a piece with no open edge is a solid: the sign of its volume says which way is out (the corner test below cannot tell for thin, off-centre pieces such as a flap) */
+  let closed=true;for(const t of list){if(nb[t*3]<0||nb[t*3+1]<0||nb[t*3+2]<0){closed=false;break}}
+  if(closed){let vol=0;for(const t of list){const i=t*9;vol+=s[t]*(P[i]*(P[i+4]*P[i+8]-P[i+5]*P[i+7])-P[i+1]*(P[i+3]*P[i+8]-P[i+5]*P[i+6])+P[i+2]*(P[i+3]*P[i+7]-P[i+4]*P[i+6]))}
+   if(vol<0)for(const t of list)s[t]=-s[t];continue}
+  /* an open piece: the corner farthest from the middle of the piece; the faces round it must lean away from the middle */
+  let cx=0,cy=0,cz=0,cn=0;for(const t of list)for(let j=0;j<3;j++){const i=t*9+j*3;cx+=P[i];cy+=P[i+1];cz+=P[i+2];cn++}cx/=cn;cy/=cn;cz/=cn;
+  let far=-1,fv=-1,fx=0,fy=0,fz=0;for(const t of list)for(let j=0;j<3;j++){const i=t*9+j*3,d=(P[i]-cx)*(P[i]-cx)+(P[i+1]-cy)*(P[i+1]-cy)+(P[i+2]-cz)*(P[i+2]-cz);if(d>far){far=d;fv=vid[t*3+j];fx=P[i]-cx;fy=P[i+1]-cy;fz=P[i+2]-cz}}
+  let bv=0;for(const t of list){let has=false;for(let j=0;j<3;j++)if(vid[t*3+j]===fv)has=true;if(!has)continue;const i=t*9,ux=P[i+3]-P[i],uy=P[i+4]-P[i+1],uz=P[i+5]-P[i+2],vx=P[i+6]-P[i],vy=P[i+7]-P[i+1],vz=P[i+8]-P[i+2];
+   bv+=s[t]*((uy*vz-uz*vy)*fx+(uz*vx-ux*vz)*fy+(ux*vy-uy*vx)*fz)/Math.hypot(uy*vz-uz*vy,uz*vx-ux*vz,ux*vy-uy*vx||1e-12)}
+  if(bv<0)for(const t of list)s[t]=-s[t]}
  for(let t=0;t<nt;t++)if(s[t]<0){const i=t*9;for(let c=0;c<3;c++){let x=P[i+3+c];P[i+3+c]=P[i+6+c];P[i+6+c]=x;x=C[i+3+c];C[i+3+c]=C[i+6+c];C[i+6+c]=x}
   const k=K[t*3+1];K[t*3+1]=K[t*3+2];K[t*3+2]=k;for(let j=0;j<3;j++){N[i+j*3]=-N[i+j*3];N[i+j*3+1]=-N[i+j*3+1];N[i+j*3+2]=-N[i+j*3+2]}}
  return G}
 /* split every edge longer than L (the same decision on both sides of an edge, so no cracks), colours and normals follow */
 function geoRefine(G,L){
- const P=G.p,N=G.n,C=G.c,K=G.k,nt=Math.floor(P.length/9),L2=L*L;let V=new Float64Array(1<<17),nv=0;const T=[];
+ const P=G.p,N=G.n,C=G.c,K=G.k,nt=Math.floor(P.length/9),L2=typeof L==='function'?null:L*L;let V=new Float64Array(1<<17),nv=0;const T=[];
  /* a flat pool of corners (position, normal, colour, kind), triangles are lists of three pool numbers */
  const add=(x,y,z,nx,ny,nz,r,g,b,k)=>{if((nv+1)*10>V.length){const W=new Float64Array(V.length*2);W.set(V);V=W}const o=nv*10;V[o]=x;V[o+1]=y;V[o+2]=z;V[o+3]=nx;V[o+4]=ny;V[o+5]=nz;V[o+6]=r;V[o+7]=g;V[o+8]=b;V[o+9]=k;return nv++};
  const d2=(a,b)=>{const x=V[a*10]-V[b*10],y=V[a*10+1]-V[b*10+1],z=V[a*10+2]-V[b*10+2];return x*x+y*y+z*z};
  const lt=(a,b)=>V[a]!==V[b]?V[a]<V[b]:V[a+1]!==V[b+1]?V[a+1]<V[b+1]:V[a+2]<V[b+2];
  const mid=(a,b)=>{let ia=a*10,ib=b*10;if(!lt(ia,ib)){const t=ia;ia=ib;ib=t}const nx=V[ia+3]+V[ib+3],ny=V[ia+4]+V[ib+4],nz=V[ia+5]+V[ib+5],nl=Math.hypot(nx,ny,nz)||1;
   return add((V[ia]+V[ib])*.5,(V[ia+1]+V[ib+1])*.5,(V[ia+2]+V[ib+2])*.5,nx/nl,ny/nl,nz/nl,(V[ia+6]+V[ib+6])*.5,(V[ia+7]+V[ib+7])*.5,(V[ia+8]+V[ib+8])*.5,V[ia+9])};
- const go=(a,b,c)=>{const s0=d2(a,b)>L2,s1=d2(b,c)>L2,s2=d2(c,a)>L2;
+ /* the longest edge allowed: one number, or a function of the middle of the edge (a finer mesh where the paint has an edge) */
+ const lm=(a,b)=>{if(L2!==null)return L2;const l=L((V[a*10]+V[b*10])/2,(V[a*10+1]+V[b*10+1])/2,(V[a*10+2]+V[b*10+2])/2);return l*l};
+ const go=(a,b,c)=>{const s0=d2(a,b)>lm(a,b),s1=d2(b,c)>lm(b,c),s2=d2(c,a)>lm(c,a);
   if(!s0&&!s1&&!s2){T.push(a,b,c);return}
   if(s0&&s1&&s2){const x=mid(a,b),y=mid(b,c),z=mid(c,a);go(a,x,z);go(x,b,y);go(z,y,c);go(x,y,z);return}
   if(s0&&!s1&&!s2){const x=mid(a,b);go(a,x,c);go(x,b,c);return}
@@ -11741,6 +11781,7 @@ function acDecal(G,o){
    for(let j=1;j<=J;j++)for(let i=0;i<n;i++)pts.push([B[i][0]*j/J,B[i][1]*j/J]);
    for(let i=0;i<n;i++){const i2=(i+1)%n;tri.push([0,1+i,1+i2])}
    for(let j=1;j<J;j++)for(let i=0;i<n;i++){const i2=(i+1)%n,A=1+(j-1)*n+i,B2=1+(j-1)*n+i2,C=1+j*n+i2,D=1+j*n+i;tri.push([A,B2,C],[A,C,D])}}
+  if(q.at)for(const p of pts){p[0]+=q.at[0];p[1]+=q.at[1]}
   parts.push({pts,tri,col:q.col,lay:q.lay||0})}
  /* the triangles of the surface that can be reached */
  let x0=1e9,y0=1e9,z0=1e9,x1=-1e9,y1=-1e9,z1=-1e9;const L=H*2.2;
@@ -11764,10 +11805,22 @@ function acFinish(key,M){const F=ACFIN[key]||{},gl=F.gloss??9,gear=c=>c.ch==='ge
  if(F.wear)body.forEach(G=>geoPaint(G,F.wear));
  body.forEach(G=>geoSmooth(G,F.soft||52));wheels.forEach(G=>geoSmooth(G,52));
  if(F.decals)F.decals(M);
- body.forEach(G=>{geoGloss(G,gl);if(F.kind)for(let i=0;i<G.k.length;i++){const q=F.kind(G.p[i*3],G.p[i*3+1],G.p[i*3+2],G.c[i*3],G.c[i*3+1],G.c[i*3+2]);if(q!=null)G.k[i]=q}});
+ /* v156: surface coordinates for the skin shader (panel lines, rivets); F.skin(x,y,z,nx,ny,nz) -> [u,v,class,w] and F.fin is the finish: 0 satin paint, 1 gloss paint, 2 bare metal, 3 stealth coat */
+ const SK=F.skin?body.map((G,i)=>geoSkinUV(G,F.skin,i>0&&F.skinCS!=null?F.skinCS:null)):null,fin=F.fin??(gl===9?1:0);
+ body.forEach((G,gi)=>{geoGloss(G,gl);const S=SK&&SK[gi];for(let i=0;i<G.k.length;i++){const q=F.kind?F.kind(G.p[i*3],G.p[i*3+1],G.p[i*3+2],G.c[i*3],G.c[i*3+1],G.c[i*3+2]):null;if(q!=null){G.k[i]=q;continue}if(S&&S.m[i]&&G.k[i]!==5)G.k[i]=70+fin*10+(S.m[i]-1)}if(S)G.u=S.a});
  wheels.forEach(G=>geoGloss(G,0));
  return M}
-
+/* v156: per-vertex coordinates for the skin shader of kind 70+: fn gives [u,v,class,w] for a point on the model (class + 1 is stored in m) */
+function geoSkinUV(G,fn,cls){const P=G.p,N=G.n,n=P.length/3,U=new Array(n*4).fill(0),m=new Uint8Array(n);
+ for(let i=0;i<n;i++){const q=fn(P[i*3],P[i*3+1],P[i*3+2],N[i*3],N[i*3+1],N[i*3+2]);if(q){U[i*4]=q[0];U[i*4+1]=q[1];U[i*4+3]=q[3]||0;m[i]=(cls!=null?cls:q[2])+1}}
+ return {a:U,m}}
+/* the fuselage by its stations S=[[z,w,h,yc]..] (u along z, v = turns round the axis x NP); a fin above it and every wing or tail surface as span panels */
+function skinMk(S,o={}){const NP=o.np||8,ex=o.ex||1.25,Z=S.map(a=>a[0]),sq=o.chk?o.chk.sq:0;
+ const at=z=>{let i=0;while(i<S.length-2&&z>Z[i+1])i++;const f=Math.max(0,Math.min(1,(z-Z[i])/(Z[i+1]-Z[i]||1)));return [S[i][1]+(S[i+1][1]-S[i][1])*f,S[i][2]+(S[i+1][2]-S[i][2])*f,S[i][3]+(S[i+1][3]-S[i][3])*f]};
+ return (x,y,z)=>{if(z<Z[0]-.012)return null;if(z<=Z[Z.length-1]+.006){const [w,h,yc]=at(z),a=x/(w/2+1e-4),b=(y-yc)/(h/2+1e-4);
+   if(a*a+b*b<ex*ex){const t=Math.atan2(y-yc,x)/(Math.PI*2),k=o.chk&&z<o.chk.z0+6.3*sq?4:0;return [z,t*NP,k,k===4?(z-o.chk.z0)/sq:0]}
+   if(Math.abs(x)<(o.finX||.04)&&b>.9)return [z,y,1,0]}
+  return [z,Math.abs(x),1,0]}}
 /* a rod or tube with closed ends, for exhaust stacks, antennas, struts and gun barrels */
 function acRod(g,a,b,r,col,seg=8,r2=null,caps=2){r2=r2??r;const d=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],L=Math.hypot(d[0],d[1],d[2])||1,w=[d[0]/L,d[1]/L,d[2]/L],t=Math.abs(w[1])>.9?[1,0,0]:[0,1,0];
  let ux=w[1]*t[2]-w[2]*t[1],uy=w[2]*t[0]-w[0]*t[2],uz=w[0]*t[1]-w[1]*t[0];const ul=Math.hypot(ux,uy,uz)||1;ux/=ul;uy/=ul;uz/=ul;const vx=w[1]*uz-w[2]*uy,vy=w[2]*ux-w[0]*uz,vz=w[0]*uy-w[1]*ux;
@@ -12092,158 +12145,268 @@ ACFIN.p51={gloss:9,refine:.03,soft:56,
 /* the two trainers: the number of the aircraft on both sides of the fuselage */
 ACFIN.tr1={gloss:9,decals:(M)=>{const G=M.g,N=wbNum('07',.055,[.12,.12,.14]);acDecal(G,{c:[0,.046,.2],d:[-1,0,0],u:[0,0,-1],H:.3,parts:N,step:.011});acDecal(G,{c:[0,.046,.2],d:[1,0,0],u:[0,0,1],H:.3,parts:N,step:.011})}};
 ACFIN.tr2={gloss:9,decals:(M)=>{const G=M.g,N=wbNum('21',.055,[.1,.25,.65]);acDecal(G,{c:[0,.046,.22],d:[-1,0,0],u:[0,0,-1],H:.3,parts:N,step:.011});acDecal(G,{c:[0,.046,.22],d:[1,0,0],u:[0,0,1],H:.3,parts:N,step:.011})}};
-/* the fighter: two greys, darker radome and nozzle, a bronze-tinted canopy, a subdued national marking on each wing */
-const JTK={UP:[.45,.48,.52],LO:[.63,.66,.69],RAD:[.2,.21,.24],CAN:[.2,.14,.06],NOZ:[.3,.26,.22]};
-ACFIN.jet={gloss:6,refine:.035,soft:50,
+/* ===== F-35A Lightning II: a blended body with chines, diverterless intakes, a bubble canopy, canted twin fins and all-moving stabilators; RAM grey with low-visibility markings.
+   1 real metre = .0925 units, nose at z = -.82; drawn at VS 1.465, so the span is the 1.45 m of the flight model ===== */
+const F35={M:.0925,Z0:-.82,GR:[.43,.43,.41],RAD:[.54,.55,.56],GL:[.17,.12,.06],DK:[.055,.055,.065],NZ:[.3,.26,.22],FR:[.15,.15,.16]};
+const f35z=x=>F35.Z0+x*F35.M,f35m=m=>m*F35.M;
+/* the body by stations: [metres from the nose tip, width, top, bottom, height of the widest line (the chine)] */
+const F35T=[[0,.04,-.27,-.33,-.3],[.35,.4,.02,-.42,-.2],[.9,.74,.26,-.5,-.15],[1.6,1.02,.46,-.56,-.12],[2.4,1.24,.62,-.62,-.1],[3.3,1.4,.72,-.66,-.1],[4.3,1.58,.84,-.7,-.12],[5.3,1.84,.93,-.74,-.14],[6.4,2.16,.99,-.76,-.16],[7.6,2.44,1,-.76,-.2],[9,2.6,1,-.75,-.22],[10.4,2.5,.97,-.72,-.2],[11.8,2.2,.88,-.66,-.16],[13.2,1.86,.74,-.57,-.1],[14.4,1.52,.62,-.49,-.05],[15.2,1.28,.56,-.45,0]];
+const F35S=F35T.map(([x,w,t,b])=>[f35z(x),f35m(w),f35m(t-b),f35m((t+b)/2)]);
+const f35Top=x=>{let i=0;while(i<F35T.length-2&&x>F35T[i+1][0])i++;const A=F35T[i],B=F35T[i+1],f=Math.max(0,Math.min(1,(x-A[0])/(B[0]-A[0])));return A[2]+(B[2]-A[2])*f};
+/* a cross-section that is widest at the chine: a dome above it and a flatter belly below */
+function f35Ring(z,w,t,b,ch,pT,pB,n=36){const eT=2/pT,eB=2/pB;return [...Array(n)].map((_,k)=>{const a=k/n*Math.PI*2,c=Math.cos(a),s=Math.sin(a),e=s>=0?eT:eB;return [w/2*Math.sign(c)*Math.pow(Math.abs(c),e),s>=0?ch+(t-ch)*Math.pow(s,e):ch+(b-ch)*Math.pow(-s,e),z]})}
+/* the canopy: [metres from the nose tip, width, height above the deck] */
+const F35C=[[2.9,.2,.04],[3.15,.8,.17],[3.6,1.06,.36],[4.2,1.16,.5],[4.9,1.14,.56],[5.6,1.04,.5],[6.3,.84,.38],[6.95,.52,.2],[7.45,.2,.06]];
+function f35Can(p,u,v){const fr=Math.abs(v-1.15)<.14||Math.abs(v-5.15)<.08||v>6.85;return fr?F35.FR:F35.GL}
+/* the intakes: [x, width, height, centre sideways, centre height] */
+const F35I=[[5.35,.44,.86,.98,-.2],[5.85,.6,.94,1.03,-.2],[6.7,.78,1,1.1,-.2],[7.7,.88,.96,1.16,-.2],[8.5,.7,.8,1.1,-.18]];
+const F35A=.35;/* the cant of the fins */
+function geoJet(){const g=new Geo(),K=acKit2(g),cs=[],{GR,RAD,GL,DK,NZ,FR}=F35,m=f35m,zz=f35z;
+ /* the body, from the radome to the tail booms */
+ const F=F35T.map(([x,w,t,b,ch],i)=>f35Ring(zz(x),m(w),m(t),m(b),m(ch),2.2,i<3?2.2:3,36));
+ loftS(g,F,{sub:3,col:GR});K.cap(F[0],[0,m(-.3),zz(0)-.006],RAD);K.cap(F[F.length-1],[0,m(.05),zz(15.5)],DK);
+ /* the nozzle: a short dark barrel that sticks out between the tail booms */
+ {const N=[[14.95,1.22,1,.03],[15.4,1.12,.95,.03],[15.85,1.02,.9,.03]].map(a=>K.ring(zz(a[0]),m(a[1]),m(a[2]),m(a[3]),2,32));loftS(g,N,{sub:2,col:NZ});K.cap(N[0],[0,m(.03),zz(15.1)],NZ);K.cap(N[2],[0,m(.03),zz(15.45)],[.025,.022,.02])}
+ /* the bubble canopy with its bow frame */
+ {const C=F35C.map(([x,W,H])=>{const T=f35Top(x),D=m(T-.32);return K.ring(zz(x),m(W),2*(m(T+H)-D),D,2,22,D)});loftS(g,C,{sub:3,col:f35Can});K.cap(C[0],[0,m(f35Top(2.9)-.32),zz(2.9)-.004],FR);K.cap(C[C.length-1],[0,m(f35Top(7.45)-.32),zz(7.45)+.004],GR)}
+ /* the diverterless intakes with their bumps */
+ [1,-1].forEach(sd=>{const R=F35I.map(([x,w,h,xc,yc])=>K.ring(zz(x),m(w),m(h),m(yc),2.4,28).map(p=>[p[0]+sd*m(xc),p[1],p[2]]));
+  loftS(g,R,{sub:3,col:GR});K.cap(R[0],[sd*m(1),m(-.2),zz(6.2)],DK);K.cap(R[R.length-1],[sd*m(1.1),m(-.2),zz(9)],GR);
+  const B=[[4.7,.04,.1,.86,-.1],[5.1,.22,.38,.88,-.12],[5.5,.3,.56,.9,-.15],[5.9,.22,.5,.92,-.18],[6.3,.06,.2,.95,-.2]].map(([x,w,h,xc,yc])=>K.ring(zz(x),m(w),m(h),m(yc),2,16).map(p=>[p[0]+sd*m(xc),p[1],p[2]]));
+  loftS(g,B,{sub:2,col:GR});K.cap(B[0],[sd*m(.86),m(-.1),zz(4.6)],GR);K.cap(B[B.length-1],[sd*m(.95),m(-.2),zz(6.4)],GR)});
+ /* the sensor window under the nose */
+ g.box(0,m(-.69),zz(3.7),m(.34),m(.1),m(.5),[.09,.09,.11],0);
+ /* wing: 33 degrees of sweep on the leading edge, the trailing edge a little forward; flaperons inboard, ailerons outboard */
+ cs.push(...K.surf({st:[{s:m(.9),le:zz(6.3),c:m(5.53),t:.05},{s:m(5.35),le:zz(9.27),c:m(1.7),t:.04}],cam:[.012,.4],P:PH(m(-.26),0),col:()=>GR,cuts:[{s0:m(1.7),s1:m(3.4),u:.72,ch:'flp',sgn:1,max:.8,k:.8},{s0:m(3.5),s1:m(5.2),u:.72,ch:'ail',sgn:-1,mir:true,col:GR}]}));
+ /* the stabilators: the whole surface moves */
+ cs.push(...K.surf({st:[{s:m(.8),le:zz(12.4),c:m(2.8),t:.04},{s:m(3.37),le:zz(14),c:m(1),t:.03}],P:PH(m(-.12),-.06),col:()=>GR,cut:{s0:m(.85),s1:m(3.3),u:.05,ch:'ele',sgn:1,col:GR,gap:.004}}));
+ /* the two fins lean outwards */
+ cs.push(...K.surf({st:[{s:0,le:zz(11),c:m(3.3),t:.045},{s:m(2.05),le:zz(13.3),c:m(1.2),t:.03}],P:PC(m(.95),m(.72),F35A),col:()=>GR,cut:{s0:m(.1),s1:m(2),u:.64,ch:'rud',sgn:1,mir:true,col:GR}}));
+ acWheelGear(K,g,cs,{mains:[1,-1].map(sd=>({top:[sd*m(1),m(-.62),zz(9.1)],x:sd*m(1.5),y:-.14,z:zz(9.1),r:.028,w:.022})),steer:{top:[0,m(-.6),zz(3.9)],x:0,y:-.14,z:zz(3.9),r:.022,w:.016},leg:[.62,.63,.66],rt:{main:{dir:'in',k:1.5},steer:{sgn:1,k:1.5}}});
+ return {g,cs,prop:null,gm:[-.168,zz(9.1)],gt:null}}
+/* the surface coordinates for the stealth coat: panels along the body and round it, panels along the chord and the span on the wings, panels up the fins; the cells are a metre and a half */
+function f35Skin(x,y,z){const m=F35.M;if(z<F35.Z0-.012)return null;const ax=Math.abs(x),sc=2.3;
+ if(z<=f35z(15.9)+.006){let i=0;const Z=F35S;while(i<Z.length-2&&z>Z[i+1][0])i++;const f=Math.max(0,Math.min(1,(z-Z[i][0])/(Z[i+1][0]-Z[i][0]||1))),w=Z[i][1]+(Z[i+1][1]-Z[i][1])*f,h=Z[i][2]+(Z[i+1][2]-Z[i][2])*f,yc=Z[i][3]+(Z[i+1][3]-Z[i][3])*f,a=x/(w/2+1e-4),b=(y-yc)/(h/2+1e-4);
+  if(a*a+b*b<1.2)return [z*sc,Math.atan2(x,y-yc)/(Math.PI*2)*1.8,3,0];
+  if(z>f35z(10.8)&&y>m*.62&&ax>m*.8&&ax<m*2.4)return [z*sc,y*sc,3,0]}
+ return [z*sc,ax*sc,3,0]}
+ACFIN.jet={gloss:6,skinCS:3,soft:50,
+ refine:(x,y,z)=>{const ax=Math.abs(x);return (ax>f35m(.9)&&y>f35m(.5)&&z>f35z(11.5))||(ax>f35m(2.4)&&ax<f35m(4.2)&&z>f35z(8.3)&&z<f35z(11))?.012:.042},
+ skin:f35Skin,
+ /* the grey of the coat: a lighter radome, a little variation from panel to panel, a lighter belly */
  paint:(x,y,z,r,g,b,nx,ny)=>{
-  if(r>.5&&g>.4&&b<.3&&r-b>.25)return JTK.CAN.map(v=>v*(.9+.2*acF(x*30,y*30,z*30,2)));
-  if(r<.15&&g<.16&&b<.18)return null;
-  const k=.95+.09*acF(x*12,y*12,z*8,2)+.03*acN(x*50,y*50,z*20);
-  if(Math.abs(r-.24)<.02&&Math.abs(g-.24)<.02&&Math.abs(b-.26)<.02)return JTK.NOZ.map(v=>v*(.85+.3*acN(x*60,y*60,z*60)));
-  if(Math.abs(r-.32)<.012&&Math.abs(g-.34)<.012&&Math.abs(b-.37)<.012)return [.4*k,.42*k,.46*k];
-  if(z<-.6)return JTK.RAD.map(v=>v*k);
-  const u=Math.max(0,Math.min(1,.5+ny*1.1)),m=(a,c)=>a+(c-a)*u;
-  return [m(JTK.LO[0],JTK.UP[0])*k,m(JTK.LO[1],JTK.UP[1])*k,m(JTK.LO[2],JTK.UP[2])*k]},
- kind:(x,y,z,r,g,b)=>(r-b>.08&&r<.24&&g<.2)?9:null,
- decals:(M)=>{const G=M.g,R=.06,P=[{ring:[0,R],col:[.2,.26,.38],lay:0},{poly:wbStar(R*.82),col:[.78,.8,.85],lay:1}];
-  [-1,1].forEach(sd=>acDecal(G,{c:[sd*.34,.3,.125],d:[0,-1,0],u:[1,0,0],H:.3,parts:P,step:.011}))}};
-function geoJet(){const g=new Geo(),K=acKit2(g),cs=[],GR=[.46,.49,.52],GD=[.39,.41,.44],GL=[.58,.46,.2],DK=[.12,.13,.15],NZ=[.24,.24,.26],AC=[.32,.34,.37];
- const sec=(z,w,h,yc,ch=.38)=>{const P=[[w/2,yc+h*.05],[w/2*(1-ch),yc+h/2],[0,yc+h*.56],[-w/2*(1-ch),yc+h/2],[-w/2,yc+h*.05],[-w/2*(1-ch*.7),yc-h/2],[0,yc-h*.52],[w/2*(1-ch*.7),yc-h/2]];return P.map(([x,y])=>[x,y,z])};
- const F=[sec(-.78,.01,.01,0),sec(-.7,.07,.05,.002),sec(-.56,.13,.09,.008),sec(-.38,.2,.12,.012),sec(-.18,.27,.13,.012),sec(.12,.28,.13,.012),sec(.36,.24,.12,.012),sec(.5,.15,.11,.01)];
- K.loft(F,(i,k)=>k===1||k===2||k===3?GR:k===6?GD:AC);K.cap(F[0],[0,0,-.82],GR);
- K.loft([[.5,.12,.105,.01],[.6,.1,.09,.01],[.63,.094,.085,.01]].map(a=>K.ring(...a,2,16)),[NZ]);{const R=K.ring(.63,.094,.085,.01,2,16);K.cap(R,[0,.01,.58],DK)}
- K.loft([[-.52,.02,.01,.05],[-.44,.075,.07,.06],[-.3,.08,.075,.065],[-.18,.05,.03,.06]].map(a=>K.ring(...a,2,14,.055)),[GL]);
- [1,-1].forEach(sd=>{const x=sd*.1;g.quad([x,.04,-.3],[x+sd*.045,.03,-.28],[x+sd*.045,-.035,-.28],[x,-.045,-.3],DK);g.quad([x+sd*.045,.03,-.28],[x+sd*.03,.04,-.02],[x+sd*.03,-.04,-.02],[x+sd*.045,-.035,-.28],GD);g.quad([x,.04,-.3],[x+sd*.045,.03,-.28],[x+sd*.03,.04,-.02],[x,.05,-.05],GR)});
- cs.push(...K.surf({st:[{s:.1,le:-.2,c:.52,t:.05},{s:.36,le:-.02,c:.3,t:.045},{s:.56,le:.13,c:.13,t:.04}],P:PH(.0,-1*Math.PI/180),col:(s,u,sd,up)=>up?GR:GD,cuts:[{s0:.13,s1:.3,u:.7,ch:'flp',sgn:1,max:.8,k:.8},{s0:.32,s1:.54,u:.7,ch:'ail',sgn:-1,mir:true,col:AC}]}));
- cs.push(...K.surf({st:[{s:.08,le:.38,c:.24,t:.04},{s:.32,le:.5,c:.11,t:.04}],P:PH(.008,0),col:()=>GR,cut:{s0:.085,s1:.32,u:.08,ch:'ele',sgn:1,col:GR,gap:.01}}));
- cs.push(...K.surf({st:[{s:0,le:.26,c:.24,t:.05},{s:.22,le:.43,c:.11,t:.045}],P:PC(.085,.06,.45),col:()=>GR,cut:{s0:.02,s1:.2,u:.66,ch:'rud',sgn:1,mir:true,col:AC}}));
- acWheelGear(K,g,cs,{mains:[1,-1].map(sd=>({top:[sd*.12,-.005,.02],x:sd*.13,y:-.14,z:.02,r:.032,w:.022})),steer:{top:[0,0,-.42],x:0,y:-.14,z:-.43,r:.027,w:.018},leg:[.62,.63,.66],rt:{main:{dir:'in',k:1.5},steer:{sgn:1,k:1.5}}});
- return {g,cs,prop:null,gm:[-.172,.02],gt:null}}
-/* ===== P-47D Thunderbolt (the "Jug"), 1/6 scale; modelled at k=.1333 of the real metres and drawn at VS 1.25 ===== */
-const P47K={OD:[.27,.285,.16],NG:[.6,.615,.61],RED:[.78,.1,.09],WHT:[.92,.92,.89]};
-/* fuselage: [x real m, width, top above the thrust line, bottom below it] -> ring rows [z, w, h, yc] in model units */
-const P47S=[[.6,1.3,.65,-.65],[.85,1.38,.69,-.69],[1.4,1.46,.73,-.73],[1.95,1.42,.71,-.76],[2.3,1.36,.7,-.88],[3,1.3,.66,-1],[3.8,1.3,.6,-1.08],[4.6,1.2,.55,-1.08],[5.6,1.02,.48,-.95],[6.6,.86,.4,-.78],[7.6,.7,.32,-.62],[8.6,.54,.26,-.42],[9.6,.38,.2,-.2],[10.5,.22,.18,-.04],[10.95,.14,.15,.04]]
+  if(r-b>.08&&r<.25&&g<.2)return null;
+  if(r<.12&&g<.12&&b<.13)return null;
+  if(Math.abs(r-F35.NZ[0])<.02&&Math.abs(g-F35.NZ[1])<.02)return F35.NZ.map(v=>v*(.8+.4*acN(x*70,y*70,z*30)));
+  const k=.96+.08*acF(x*14,y*14,z*9,2)+.03*acN(x*55,y*55,z*22),rf=1-acSS(f35z(1.85),f35z(2.2),z),tip=1-acSS(f35z(.2),f35z(.55),z),ul=ny<-.3?1.05:1;
+  let c=acMix(F35.GR,F35.RAD,rf);c=acMix(c,[.34,.34,.35],tip);return [c[0]*k*ul,c[1]*k*ul,c[2]*k*ul]},
+ /* weathering: the heat of the engine on the rear body, dirt on the belly, a little fade on top, grime on the leading edges */
+ wear:(x,y,z,r,g,b,nx,ny,nz)=>{const lum=.3*r+.59*g+.11*b;if(lum<.14||(r-b>.08&&r<.25&&g<.2))return;let c=[r,g,b],ch=0;
+  const mix=(col,f)=>{f=Math.max(0,Math.min(1,f));if(f>.004){c=[c[0]+(col[0]-c[0])*f,c[1]+(col[1]-c[1])*f,c[2]+(col[2]-c[2])*f];ch=1}},ax=Math.abs(x);
+  mix([.2,.17,.14],acSS(f35z(12.6),f35z(15.3),z)*(1-acSS(f35m(1.3),f35m(2.6),ax)*.75)*.5*(.6+.8*acN(x*24,y*24,z*10)));
+  if(ny<-.4)mix([.16,.15,.13],.18+.2*acN(x*7,y*7,z*7));
+  if(ny>.6){const f=acN(x*6+9,y*6,z*6)-.5;mix(f>0?[.52,.52,.5]:[.3,.3,.28],Math.abs(f)*.28)}
+  if(nz<-.55)mix([.19,.19,.2],.22*acN(x*40,y*40,z*40));
+  return ch?c:undefined},
+ kind:(x,y,z,r,g,b)=>(r-b>.08&&r<.25&&g<.2)?9:null,
+ /* the national marking in tones of grey on the upper left and lower right wing, the unit code on both fins */
+ decals:(M)=>{const m=F35.M,R=f35m(.52),P=[{rect:[-R*2.5,-R*.31,R*2.5,R*.31],col:[.27,.28,.3],lay:0},{ring:[0,R],col:[.27,.28,.3],lay:1},{poly:wbStar(R*.82),col:[.64,.65,.66],lay:2}];
+  acDecalAll(M,{c:[-f35m(3.3),.3,f35z(9.6)],d:[0,-1,0],u:[1,0,0],H:.3,parts:P,step:.006});
+  acDecalAll(M,{c:[f35m(3.3),-.3,f35z(9.6)],d:[0,1,0],u:[-1,0,0],H:.3,parts:P,step:.006});
+  const T=wbTxt('EG',f35m(.6),[.17,.17,.18],1,.16),TP=wbShift(T.parts,-T.w/2,0),ca=Math.cos(F35A),sa=Math.sin(F35A);
+  [1,-1].forEach(sd=>acDecalAll(M,{c:[sd*f35m(.95+1.25*sa),f35m(.72+1.25*ca),f35z(12.9)],d:[-sd*ca,sa,0],u:[0,0,-sd],H:.3,parts:TP,step:.0045}))}};
+/* ===== P-47D Thunderbolt, the "Jug": bare aluminium, an olive drab anti-glare panel, the 78th Fighter Group's checkerboard cowling (84th FS, code WZ) and black tail bands. 1/7.5 scale: nominal units = real metres x .1333, drawn at VS 1.25 ===== */
+const P47K={MT:[.71,.7,.67],OD:[.115,.13,.07],BK:[.045,.045,.05],WHT:[.92,.92,.88],BLU:[.06,.11,.27],SP:[.82,.82,.84],NG:[.6,.615,.61],TIP:[.96,.66,.1]};
+/* fuselage: [x real m from the cowl lip, width, top, bottom] relative to the thrust line -> ring rows [z, w, h, yc] in model units */
+const P47S=[[0,1.1,.55,-.55],[.09,1.34,.67,-.67],[.2,1.46,.73,-.74],[.4,1.52,.76,-.77],[.9,1.53,.77,-.78],[1.35,1.5,.76,-.8],[1.8,1.44,.74,-.88],[2.6,1.37,.72,-.98],[3.4,1.34,.68,-1.06],[4.4,1.26,.62,-1.12],[5.4,1.1,.5,-1],[6.4,.92,.42,-.8],[7.4,.74,.34,-.6],[8.4,.56,.27,-.42],[9.4,.4,.2,-.25],[10.4,.26,.14,-.1],[11,.14,.1,0]]
  .map(([x,w,t,b])=>[(x-4)*.1333,w*.1333,(t-b)*.1333,(t+b)/2*.1333+.02]);
-const p47L=(v,j)=>{const i=Math.min(P47S.length-2,Math.max(0,Math.floor(v))),f=Math.min(1,Math.max(0,v-i));return P47S[i][j]+(P47S[i+1][j]-P47S[i][j])*f};
-function p47Mark(x,y,z){const w=acN(x*3.3+5,y*3.3,z*3.3+1)-.5;return .97+.05*acF(x*9+w,y*9,z*9,2)}
-/* olive drab over neutral grey: the demarcation runs along the middle of the fuselage; a red ring round the front of the cowling */
-function p47Fus(p,u,v){const x=p[0],y=p[1],z=p[2],yc=p47L(v,3),h=p47L(v,2),yd=yc-h*.06,up=acSS(-.02,.02,y-yd);
- const m=p47Mark(x,y,z);let c=acMix(P47K.NG,P47K.OD,up);c=[c[0]*m,c[1]*m,c[2]*m];
- if(z<-.405){const f=acSS(-.46,-.45,z);c=acMix(c,[P47K.RED[0]*m,P47K.RED[1]*m,P47K.RED[2]*m],f)}
- /* cowl flaps: a ring of slightly darker segments at the rear of the cowling */
- if(z>-.38&&z<-.27){const s=Math.abs(Math.sin(Math.atan2(x,y-.02)*14));c=c.map(q=>q*(.97+.03*s))}
- /* a dark band for the oil and turbo-charger scoop under the cowl, blended into the belly */
- const so=Math.exp(-Math.pow((y-.06)/.03,2))*acSS(-.5,-.45,z)*(1-acSS(-.3,-.15,z))*acSS(.03,.07,Math.abs(x));return [c[0]*(1-.1*so),c[1]*(1-.1*so),c[2]*(1-.1*so)]}
-const P47C=[[-.2,.05,.02,.088,.086],[-.16,.115,.07,.1,.088],[-.1,.138,.12,.128,.088],[-.04,.142,.146,.138,.088],[.04,.136,.15,.142,.086],[.12,.116,.11,.124,.08],[.2,.075,.06,.1,.07],[.28,.034,.026,.08,.062]];
-function p47Can(p,u,v){const fr=Math.abs(v-1.1)<.16||Math.abs(v-3.3)<.1||Math.abs(v-4.9)<.1||v>6.3||(v<2&&Math.abs(p[0])<.004);return fr?[P47K.OD[0]*.9,P47K.OD[1]*.9,P47K.OD[2]*.9]:WB.GL}
-function geoP47(){const g=new Geo(),K=acKit2(g),cs=[],CM=WB.CM,OD=P47K.OD,NG=P47K.NG,BK=WB.BK,AL=[.62,.63,.66];
- /* fuselage and cowling, one smooth loft; the dark mouth of the cowling behind the propeller hub */
- const F=P47S.map(a=>K.ring(a[0],a[1],a[2],a[3],2.15,40));loftS(g,F,{sub:5,col:p47Fus});K.cap(F[F.length-1],[0,.036,p47L(14,0)+.004],NG);K.cap(F[0],[0,.02,-.47],[.05,.05,.055]);
- /* the dome of the propeller hub and a short spinner */
- loftS(g,[[-.452,.088,.088],[-.468,.082,.082],[-.495,.066,.066],[-.52,.04,.04],[-.532,.014,.014]].map(a=>K.ring(a[0],a[1],a[2],.02,2,22)),{sub:2,col:P47K.RED});
- /* the deep chin scoop under the cowling (oil cooler and the turbo-charger intercooler air) */
- {const R=[[-.42,.03,.012,-.062],[-.37,.09,.04,-.082],[-.28,.11,.055,-.094],[-.16,.1,.055,-.106],[-.05,.08,.04,-.116],[.04,.04,.015,-.118]].map(a=>K.ring(...a,2,16));loftS(g,R,{sub:2,col:(p,u,v)=>v<.5?[.08,.08,.09]:p47Fus(p,u,3.2)});K.cap(R[0],[0,-.062,-.435],[.08,.08,.09])}
- /* the exhaust waste gates of the turbo-charger on both flanks of the rear belly, with their long flap */
- [1,-1].forEach(sd=>{acRod(g,[sd*.052,-.06,.3],[sd*.056,-.045,.42],.0095,[.18,.17,.16],8,.0065)});
- /* the bubble canopy: a framed windscreen, the dome of the hood and a faired rear */
+/* width, height and centre line of the fuselage at z */
+const p47At=z=>{const S=P47S;let i=0;while(i<S.length-2&&z>S[i+1][0])i++;const f=Math.max(0,Math.min(1,(z-S[i][0])/(S[i+1][0]-S[i][0])));return [S[i][1]+(S[i+1][1]-S[i][1])*f,S[i][2]+(S[i+1][2]-S[i][2])*f,S[i][3]+(S[i+1][3]-S[i][3])*f]};
+const p47Top=z=>{const a=p47At(z);return a[2]+a[1]/2};
+/* the bubble canopy: [z, width, height, centre, floor] */
+const P47C=[[-.16,.05,.02,.112,.105],[-.13,.105,.05,.122,.105],[-.08,.135,.085,.13,.104],[-.02,.145,.105,.134,.1],[.05,.14,.105,.134,.098],[.12,.122,.085,.126,.094],[.19,.092,.055,.112,.088],[.25,.05,.025,.098,.084],[.29,.02,.01,.088,.082]];
+function p47Can(p,u,v){const fr=Math.abs(v-1.1)<.2||Math.abs(v-3.4)<.1||Math.abs(v-5.1)<.1||v>6.3||(v<2&&Math.abs(p[0])<.004);return fr?[.5,.52,.5]:[.17,.25,.31]}
+/* block letters and slanted strokes for markings: a glyph is .6 wide and 1 high, scaled by h; 'r' x0 y0 x1 y1 is a bar, 'd' x0 y0 x1 y1 a slanted stroke */
+const WBG={
+ B:[['r',0,0,.16,1],['r',0,.84,.46,1],['r',0,.42,.44,.58],['r',0,0,.48,.16],['r',.36,.52,.56,.92],['r',.4,.08,.6,.5]],
+ E:[['r',0,0,.16,1],['r',0,.84,.56,1],['r',0,.42,.5,.58],['r',0,0,.56,.16]],
+ G:[['r',0,.1,.16,.9],['r',0,.84,.5,1],['r',0,0,.5,.16],['r',.36,.1,.52,.5],['r',.26,.42,.52,.58]],
+ W:[['d',.08,1,.2,0],['d',.2,0,.3,.72],['d',.3,.72,.4,0],['d',.4,0,.52,1]],
+ Z:[['r',0,.84,.56,1],['r',0,0,.56,.16],['d',.46,.86,.1,.14]],
+ H:[['r',0,0,.16,1],['r',.4,0,.56,1],['r',0,.42,.56,.58]],
+ L:[['r',0,0,.16,1],['r',0,0,.52,.16]],
+ M:[['r',0,0,.15,1],['r',.45,0,.6,1],['d',.12,1,.3,.4],['d',.48,1,.3,.4]],
+ X:[['d',.04,1,.52,0],['d',.52,1,.04,0]],
+ '1':[['r',.2,0,.38,1],['d',.2,.98,.02,.78]],
+ '4':[['r',.34,0,.5,1],['r',0,.3,.6,.46],['d',.34,1,.02,.36]],
+ '5':[['r',0,.84,.54,1],['r',0,.5,.16,.84],['r',0,.42,.5,.58],['r',.38,.1,.54,.5],['r',0,0,.5,.16]],
+ '9':[['r',0,.84,.5,1],['r',0,.5,.16,.9],['r',.36,.1,.52,.9],['r',0,.42,.5,.58],['r',0,0,.5,.16]],
+ '3':[['r',0,.84,.5,1],['r',.36,.1,.52,.9],['r',.12,.42,.5,.58],['r',0,0,.5,.16]],
+ '8':[['r',0,.84,.5,1],['r',0,.1,.16,.9],['r',.36,.1,.52,.9],['r',.1,.42,.42,.58],['r',0,0,.5,.16]],
+ '2':[['r',0,.84,.5,1],['r',.36,.5,.52,.9],['r',0,.42,.5,.58],['r',0,.1,.16,.5],['r',0,0,.52,.16]],
+ '7':[['r',0,.84,.54,1],['d',.46,.86,.2,0]],
+ '0':[['r',0,.1,.16,.9],['r',.36,.1,.52,.9],['r',0,.84,.5,1],['r',0,0,.5,.16]],
+ '6':[['r',0,.1,.16,.9],['r',.36,.1,.52,.5],['r',0,.84,.5,1],['r',0,.42,.5,.58],['r',0,0,.5,.16]]};
+function wbTxt(s,h,col,lay=0,sp=.16){const P=[];let x=0;for(const ch of s){const G=WBG[ch];if(!G){x+=.4;continue}
+  for(const q of G){if(q[0]==='r')P.push({rect:[(x+q[1])*h,(q[2]-.5)*h,(x+q[3])*h,(q[4]-.5)*h],col,lay});
+   else{const t=.17,ax=q[1],ay=q[2],bx=q[3],by=q[4],cx=(ax+bx)/2,cy=(ay+by)/2,pts=[[ax-t/2,ay],[ax+t/2,ay],[bx+t/2,by],[bx-t/2,by]];
+    P.push({poly:pts.map(p=>[(p[0]-cx)*h,(p[1]-cy)*h]),at:[(x+cx)*h,(cy-.5)*h],col,lay})}}
+  x+=.6+sp}
+ return {parts:P,w:(x-sp)*h}}
+/* move a pattern: every bar and stroke by (dx,dy) */
+function wbShift(parts,dx,dy){return parts.map(q=>{const o={...q};if(q.rect)o.rect=[q.rect[0]+dx,q.rect[1]+dy,q.rect[2]+dx,q.rect[3]+dy];else o.at=[(q.at?q.at[0]:0)+dx,(q.at?q.at[1]:0)+dy];return o})}
+/* the US national insignia of 1943-45: a blue disc with a white star, white bars on a blue ground */
+function wbUS(r){return [{rect:[-r*2.55,-r*.34,r*2.55,r*.34],col:P47K.BLU,lay:0},{ring:[0,r],col:P47K.BLU,lay:1},{rect:[r*.98,-r*.19,r*2.3,r*.19],col:P47K.WHT,lay:2},{rect:[-r*2.3,-r*.19,-r*.98,r*.19],col:P47K.WHT,lay:2},{poly:wbStar(r*.82),col:P47K.WHT,lay:3}]}
+function acDecalAll(M,o){[M.g,...M.cs.filter(c=>c.ch!=='gear'&&c.max!==.45).map(c=>c.g)].forEach(G=>acDecal(G,o))}
+function geoP47(){const g=new Geo(),K=acKit2(g),cs=[],CM=WB.CM,AL=[.62,.63,.66],z0=P47S[0][0];
+ /* fuselage and cowling, one smooth loft: the first rows curve over the lip of the cowling, the dark recess behind the hub closes the front */
+ const F=P47S.map(a=>K.ring(a[0],a[1],a[2],a[3],2.15,40));loftS(g,F,{sub:5,col:CM});K.cap(F[F.length-1],[0,.036,P47S[P47S.length-1][0]+.004],CM);K.cap(F[0],[0,.02,z0+.045],[.03,.03,.034]);
+ /* the polished hub of the propeller: a short dome */
+ loftS(g,[[z0+.02,.112,.112],[z0-.012,.114,.114],[z0-.042,.098,.098],[z0-.064,.07,.07],[z0-.078,.034,.034],[z0-.084,.008,.008]].map(a=>K.ring(a[0],a[1],a[2],.02,2,24)),{sub:2,col:P47K.SP});
+ /* the exhaust waste gates of the turbo-charger on both flanks of the rear belly */
+ [1,-1].forEach(sd=>{acRod(g,[sd*.05,-.062,.3],[sd*.054,-.05,.42],.0095,[.18,.17,.16],8,.0065)});
+ /* the bubble canopy with its framing */
  loftS(g,P47C.map(a=>K.ring(a[0],a[1],a[2],a[3],2,18,a[4])),{sub:3,col:p47Can});
- /* the long dorsal fillet that runs from the canopy back into the fin (D-25 and later) */
- loftS(g,[[.24,.008,.006,.083],[.32,.016,.04,.088],[.4,.022,.066,.094],[.48,.024,.084,.098],[.54,.02,.07,.1]].map(a=>K.ring(...a,2,10)),{sub:2,col:P47K.OD});
+ /* the dorsal fillet from the canopy back to the fin */
+ loftS(g,[[.28,.008,.006],[.36,.016,.034],[.44,.02,.056],[.52,.022,.07],[.58,.018,.06]].map(a=>K.ring(a[0],a[1],a[2],p47Top(a[0])-a[2]*.35,2,10)),{sub:2,col:CM});
  /* gun barrels: four in the leading edge of each wing; antenna mast behind the canopy; pitot on the left wing */
  const sec=ellSt(.828,.393,-.113,.15,.09,.25,10),dh=4.5*Math.PI/180,y0=-.07;
  [1,-1].forEach(sd=>{[.27,.325,.375,.42].forEach(s=>{const e=Math.sqrt(1-(s/.828)**2),le=-.113+.393*.25*(1-e);acRod(g,[sd*s,y0+s*Math.tan(dh)-.002,le+.014],[sd*s,y0+s*Math.tan(dh)-.002,le-.075],.0044,[.18,.18,.2],8,.0038)})});
- acRod(g,[0,.1,.32],[0,.18,.345],.0032,[.14,.14,.15],6);
+ acRod(g,[0,p47Top(.3)-.004,.3],[0,p47Top(.3)+.07,.33],.0032,[.14,.14,.15],6);
  acRod(g,[-.6,y0+.6*Math.tan(dh)-.012,-.1],[-.6,y0+.6*Math.tan(dh)-.012,-.215],.0024,[.16,.16,.17],6);
  /* wing: elliptical, straight quarter-chord, slightly cambered; split flaps inboard, ailerons outboard */
- cs.push(...K.surf({st:sec,cam:[.02,.4],P:PH(y0,dh),col:(s,u,sd,up)=>up?CM:NG,cuts:[{s0:.12,s1:.45,u:.72,ch:'flp',sgn:1,max:.9,k:.9},{s0:.475,s1:.77,u:.76,ch:'ail',sgn:-1,mir:true,col:CM}]}));
+ cs.push(...K.surf({st:sec,cam:[.02,.4],P:PH(y0,dh),col:(s,u,sd,up)=>CM,cuts:[{s0:.12,s1:.45,u:.72,ch:'flp',sgn:1,max:.9,k:.9},{s0:.475,s1:.77,u:.76,ch:'ail',sgn:-1,mir:true,col:CM}]}));
  [1,-1].forEach(sd=>g.box(sd*.822,y0+.822*Math.tan(dh)+.002,-.1,.012,.008,.02,sd>0?[.1,.8,.2]:[.9,.1,.08],0,5));
  /* tail plane: elliptical, elevator behind the hinge; fin and rudder, tall with a long dorsal fillet */
- cs.push(...K.surf({st:ellSt(.287,.25,.573,.09,.07,.25,6),P:PH(.026,0),col:(s,u,sd,up)=>up?CM:NG,cut:{s0:.015,s1:.28,u:.6,ch:'ele',sgn:1,col:CM}}));
+ cs.push(...K.surf({st:ellSt(.287,.25,.573,.09,.07,.25,6),P:PH(.026,0),col:()=>CM,cut:{s0:.015,s1:.28,u:.6,ch:'ele',sgn:1,col:CM}}));
  cs.push(...K.surf({st:[{s:0,le:.45,c:.46,t:.09},{s:.08,le:.53,c:.36,t:.09},{s:.2,le:.61,c:.27,t:.08},{s:.29,le:.65,c:.2,t:.07},{s:.315,le:.68,c:.14,t:.05}],P:PV(.012),sides:[1],col:()=>CM,cut:{s0:.03,s1:.3,u:.62,ch:'rud',sgn:1,mir:true,col:CM}}));
  /* wide, tall main gear that folds inward; the tail wheel steers with the rudder */
- acWheelGear(K,g,cs,{mains:[1,-1].map(sd=>({top:[sd*.25,-.07,-.12],x:sd*.34,y:-.2043,z:-.067,r:.0457,w:.03,lr:.011,door:[[sd*.28,-.08,-.16],[sd*.28,-.08,-.07],[sd*.337,-.185,-.07],[sd*.337,-.185,-.16]],dcol:NG})),steer:{top:[0,.03,.74],x:0,y:-.05,z:.78,r:.02,w:.014,tail:true},leg:AL,tyre:[.08,.08,.09],rt:{main:{dir:'in',k:1.5},steer:{sgn:1,k:1.5}}});
- return {g,cs,prop:{n:4,r:.25,p:.28,z:-.496,y:.02,col:[.08,.08,.09],tip:WB.YEL},gm:[-.25,-.067],gt:[-.07,.78]}}
-ACFIN.p47={gloss:6,refine:.032,soft:56,
- paint:(x,y,z,r,g,b,nx,ny)=>{if(r>.45&&g<.14&&Math.abs(r-b)<.06){const m=p47Mark(x,y,z);if(ny<-.3)return P47K.NG.map(v=>v*m);return acMix(P47K.NG,P47K.OD,acSS(-.4,.1,ny)).map(v=>v*m)}},
+ acWheelGear(K,g,cs,{mains:[1,-1].map(sd=>({top:[sd*.25,-.07,-.12],x:sd*.34,y:-.2043,z:-.067,r:.0457,w:.03,lr:.011,door:[[sd*.28,-.08,-.16],[sd*.28,-.08,-.07],[sd*.337,-.185,-.07],[sd*.337,-.185,-.16]],dcol:P47K.NG})),steer:{top:[0,.03,.74],x:0,y:-.05,z:.78,r:.02,w:.014,tail:true},leg:AL,tyre:[.08,.08,.09],rt:{main:{dir:'in',k:1.5},steer:{sgn:1,k:1.5}}});
+ return {g,cs,prop:{n:4,r:.265,p:.3,z:z0-.03,y:.02,col:[.055,.055,.06],tip:P47K.TIP},gm:[-.25,-.067],gt:[-.07,.78]}}
+ACFIN.p47={gloss:6,fin:2,skinCS:2,soft:56,
+ /* a finer mesh round the anti-glare panel, where the paint has an edge */
+ refine:(x,y,z)=>(z>-.39&&z<.26&&y>-.03&&Math.abs(x)<.13)?.013:.034,
+ skin:skinMk(P47S,{chk:{z0:P47S[0][0],sq:.0265}}),
+ paint:(x,y,z,r,g,b,nx,ny)=>{if(!(r>.45&&g<.14&&Math.abs(r-b)<.06))return;
+  const m=.965+.07*acF(x*5+3,y*5,z*5,3)+.02*acN(x*38,y*38,z*38);let c=P47K.MT.map(v=>v*m);
+  /* the olive drab anti-glare panel: the top of the nose from behind the checkerboard to the windscreen, then a strip along the base of the canopy that thins out */
+  const A=p47At(z),bb=(y-A[2])/(A[1]/2+1e-4),fz=acSS(-.381,-.371,z),thr=z<-.16?-.1:.18+.5*acSS(-.1,.25,z),od=fz*(1-acSS(.2,.26,z))*acSS(thr-.035,thr+.035,bb)*acSS(-.01,.02,y)*(Math.abs(x)<.14?1:0);
+  if(od>0)c=acMix(c,P47K.OD.map(v=>v*(.92+.16*acN(x*30,y*30,z*30))),od);
+  return c},
  kind:(x,y,z,r,g,b)=>(b>r+.04&&b>g&&r<.2)?9:null,
- decals:(M)=>{const G=M.g,rd=(c,d,u,parts)=>acDecal(G,{c,d,u,H:.34,parts,step:.005});
-  const SB=(r)=>[{rect:[-r*2.5,-r*.31,r*2.5,r*.31],col:[.1,.2,.5],lay:0},{ring:[0,r],col:[.1,.2,.5],lay:1},{rect:[r*.98,-r*.17,r*2.3,r*.17],col:WB.WHT,lay:1},{rect:[-r*2.3,-r*.17,-r*.98,r*.17],col:WB.WHT,lay:1},{poly:wbStar(r*.82),col:WB.WHT,lay:2}];
-  const S=SB(.05);rd([0,.0,.47],[-1,0,0],[0,0,-1],S);rd([0,.0,.47],[1,0,0],[0,0,1],S);
-  const W=SB(.055);rd([-.5,.3,-.05],[0,-1,0],[1,0,0],W);rd([.5,-.3,-.05],[0,1,0],[-1,0,0],W);
-  /* the white recognition bands on the fin */
-  rd([0,.3,.69],[-1,0,0],[0,0,-1],[{rect:[-.02,-.05,.02,.05],col:WB.WHT,lay:0}])}};
+ decals:(M)=>{const all=o=>acDecalAll(M,o),US=wbUS(.05),sideD=sd=>sd>0?{d:[-1,0,0],u:[0,0,-1]}:{d:[1,0,0],u:[0,0,1]};
+  /* fuselage: the national insignia, the individual letter behind it and the squadron code in front of it; both sides read from left to right */
+  [1,-1].forEach(sd=>{const B=wbTxt('B',.075,P47K.BK,5),W=wbTxt('WZ',.075,P47K.BK,5),pb=wbShift(B.parts,sd>0?-(.15+B.w):.15,0),pw=wbShift(W.parts,sd>0?.15:-(.15+W.w),0);
+   all({c:[0,0,.36],...sideD(sd),H:.34,parts:[...US,...wbShift(pb,0,.005),...wbShift(pw,0,.03)],step:.005})});
+  /* the national insignia on the wings: top of the left wing, underside of the right */
+  const W5=wbUS(.056);all({c:[-.5,.3,-.05],d:[0,-1,0],u:[1,0,0],H:.34,parts:W5,step:.005});all({c:[.5,-.3,-.05],d:[0,1,0],u:[-1,0,0],H:.34,parts:W5,step:.005});
+  /* the black band round the fin and rudder, and across the tailplane */
+  [1,-1].forEach(sd=>all({c:[0,.18,.74],...sideD(sd),H:.3,parts:[{rect:[-.2,-.022,.2,.022],col:P47K.BK,lay:4}],step:.004}));
+  [-1,1].forEach(sd=>[1,-1].forEach(dy=>all({c:[sd*.2,dy*.2,.66],d:[0,-dy,0],u:[sd,0,0],H:.3,parts:[{rect:[-.018,-.16,.018,.16],col:P47K.BK,lay:4}],step:.004})));
+  /* the serial number on the fin */
+  const SN=wbTxt('549385',.026,P47K.BK,6,.2);[1,-1].forEach(sd=>all({c:[0,.258,.76],...sideD(sd),H:.3,parts:wbShift(SN.parts,-SN.w/2,0),step:.0035}))}};
+ACFIN.p47.wear=wxMake({bare:[.5,.5,.49],ex:[[.1,-.03,-.285],[-.1,-.03,-.285],[.08,-.1,-.22],[-.08,-.1,-.22],[.054,-.07,.34],[-.054,-.07,.34]],oil:[[.1,-.02],[-.1,-.02]],guns:[.27,.325,.375,.42].flatMap(s=>[[s,-.065+s*.0787,-.13],[-s,-.065+s*.0787,-.13]]),s:1.1});
 
-/* ===== Messerschmitt Bf 109 G-6 (Gustav), ~1/5.5 scale; nominal units = real metres x .144, drawn at VS 1.25 ===== */
-const BFK={U74:[.30,.33,.29],U75:[.40,.42,.46],B76:[.66,.72,.75],YEL:[.9,.76,.12],SPN:[.09,.11,.09],BK:[.06,.06,.07]};
-/* fuselage: [x real m, width, top, bottom] relative to the thrust line */
-const BFS=[[.55,.66,.36,-.36],[1.0,.76,.42,-.42],[1.9,.86,.5,-.5],[2.8,.88,.56,-.55],[3.6,.86,.68,-.6],[4.5,.8,.62,-.62],[5.5,.66,.5,-.58],[6.5,.52,.4,-.46],[7.5,.38,.3,-.32],[8.4,.24,.24,-.2],[8.95,.12,.2,-.12]]
+/* ===== Messerschmitt Bf 109 E-4 "Emil" of the Battle of France and Britain, ~1/6.9 scale: nominal units = real metres x .144, drawn at VS 1.25. Dark green and grey-green splinter above, light blue below, yellow cowling, rudder and wing tips. (No swastika on the fin: the tail is left plain.) ===== */
+const BFK={G71:[.17,.21,.14],G02:[.5,.54,.43],B65:[.63,.7,.72],YEL:[.94,.7,.07],SPN:[.07,.09,.07],BK:[.05,.05,.055],WHT:[.9,.9,.85],TAN:[.9,.86,.62]};
+/* fuselage: [x real m from the cowl, width, top, bottom] relative to the thrust line -> ring rows [z, w, h, yc] in model units; the wing root sits at z = 0 */
+const BFS=[[0,.5,.26,-.26],[.08,.66,.33,-.33],[.2,.76,.38,-.38],[.5,.82,.42,-.42],[1,.86,.46,-.46],[1.5,.88,.5,-.5],[2,.88,.56,-.52],[2.7,.86,.58,-.56],[3.4,.8,.54,-.58],[4.2,.72,.5,-.54],[5,.62,.44,-.48],[5.8,.52,.38,-.42],[6.6,.42,.32,-.34],[7.4,.34,.26,-.26],[8.1,.24,.2,-.17],[8.64,.12,.15,-.1]]
  .map(([x,w,t,b])=>[(x-3)*.144,w*.144,(t-b)*.144,(t+b)/2*.144+.02]);
-const bfL=(v,j)=>{const i=Math.min(BFS.length-2,Math.max(0,Math.floor(v))),f=Math.min(1,Math.max(0,v-i));return BFS[i][j]+(BFS[i+1][j]-BFS[i][j])*f};
-function bfCam(x,y,z,sd){/* RLM 74/75: two close greys in big soft patches, with a faint mottle */
- const f=acSS(.3,.7,acN(x*3.2+2,y*3.2,z*3.2+7)),c=acMix(BFK.U74,BFK.U75,f*.8),k=.97+.05*acF(x*9,y*9,z*9,2);return [c[0]*k,c[1]*k,c[2]*k]}
-function bfFus(p,u,v){const x=p[0],y=p[1],z=p[2],yc=bfL(v,3),h=bfL(v,2),yd=yc-h*.12;
- let c;const dn=acSS(-.025,.025,y-yd);
- c=acMix(BFK.B76,bfCam(x,y,z),dn);
- /* the yellow lower cowling of the Mediterranean and Eastern fronts */
- if(z<-.2&&y<yc+.004){c=acMix(c,BFK.YEL,acSS(-.2,-.215,z)*acSS(.012,-.004,y-yc))}
- /* the dark exhaust stain and the cowl gun troughs */
- return c}
-const BFC=[[-.07,.06,.03,.115,.112],[-.03,.11,.08,.13,.11],[.03,.125,.13,.15,.11],[.1,.12,.125,.145,.11],[.17,.09,.07,.13,.11],[.24,.04,.025,.12,.11]];
-function bfCan(p,u,v){const fr=Math.abs(v-1.4)<.14||Math.abs(v-2.6)<.1||Math.abs(v-3.7)<.1||Math.abs(v-4.7)<.1||v>4.9||(v<2&&Math.abs(p[0])<.004);return fr?bfCam(p[0],p[1],p[2]):WB.GL}
-function geoBf109(){const g=new Geo(),K=acKit2(g),cs=[],CM=WB.CM,AL=[.5,.52,.55],y0=-.05,dh=5.5*Math.PI/180;
- const F=BFS.map(a=>K.ring(a[0],a[1],a[2],a[3],2.2,36));loftS(g,F,{sub:5,col:bfFus});
- K.cap(F[F.length-1],[0,.025,bfL(10,0)+.004],BFK.U74);K.cap(F[0],[0,.02,-.38],[.05,.05,.055]);
- /* the pointed spinner, black-green */
- loftS(g,[[-.40,.07,.07],[-.43,.068,.068],[-.47,.058,.058],[-.51,.038,.038],[-.53,.012,.012]].map(a=>K.ring(a[0],a[1],a[2],.02,2,20)),{sub:2,col:BFK.SPN});
- /* the two MG 131 bulges on top of the cowling */
- [1,-1].forEach(sd=>acRod(g,[sd*.032,.088,-.31],[sd*.032,.1,-.12],.016,BFK.U74,8,.012));
+const bfAt=z=>{const S=BFS;let i=0;while(i<S.length-2&&z>S[i+1][0])i++;const f=Math.max(0,Math.min(1,(z-S[i][0])/(S[i+1][0]-S[i][0])));return [S[i][1]+(S[i+1][1]-S[i][1])*f,S[i][2]+(S[i+1][2]-S[i][2])*f,S[i][3]+(S[i+1][3]-S[i][3])*f]};
+const bfTop=z=>{const a=bfAt(z);return a[2]+a[1]/2};
+/* the framed canopy: [z, width, height above the deck] */
+const BFC=[[-.135,.05,.004],[-.115,.092,.026],[-.08,.112,.058],[-.03,.12,.076],[.02,.116,.076],[.065,.098,.058],[.1,.064,.032],[.125,.026,.008]];
+/* cells with straight-ish edges: the splinter pattern of the 1940 upper surfaces */
+function acW2(x,z){const ix=Math.floor(x),iz=Math.floor(z);let d1=9,id=0;for(let a=-1;a<=1;a++)for(let c=-1;c<=1;c++){const cx=ix+a,cz=iz+c,px=cx+acH(cx,7,cz),pz=cz+acH(cx,13,cz),d=(px-x)*(px-x)+(pz-z)*(pz-z);if(d<d1){d1=d;id=acH(cx,3,cz)}}return id}
+/* paint of the upper surfaces: wings and tailplanes in big angular patches, the fuselage in a soft mottle */
+function bfTopCol(x,y,z,k){const w=acN(x*4+1,y*4,z*4)*.3,id=acW2((Math.abs(x)*1.1+z*.45)*6.2+w,(z*.9-Math.abs(x)*.5)*6.2+w),dk=acSS(.44,.5,id),m=.96+.08*acF(x*14,y*14,z*14,2);
+ const c=acMix(BFK.G02,BFK.G71,dk);return [c[0]*m,c[1]*m,c[2]*m]}
+function bfSideCol(x,y,z,bb){/* fuselage: dark spine, pale sides with small dark spots, and a soft blue-grey underside */
+ const sp=acF(x*26+3,y*26,z*26,3),dots=acSS(.54,.6,sp),up=acSS(.28,.78,bb+.12*(acN(z*9,y*9,x*9)-.5)),dn=1-acSS(-.55,-.2,bb+.18*(acN(z*7+3,y*7,x*7)-.5));
+ let c=acMix(BFK.G02,BFK.G71,Math.min(1,up*.9+dots*.55*(1-dn)));c=acMix(c,BFK.B65,dn);const m=.96+.08*acF(x*12,y*12,z*12,2);return [c[0]*m,c[1]*m,c[2]*m]}
+function bfCan(p,u,v){const fr=Math.abs(v-1.2)<.22||Math.abs(v-2.4)<.12||Math.abs(v-3.5)<.12||Math.abs(v-4.6)<.12||v>5.6||(v<2&&Math.abs(p[0])<.004);return fr?[.3,.34,.28]:[.17,.25,.31]}
+/* a flared Balkenkreuz: the black cross with a white edge */
+function wbBK(r,k=1){const arm=(a,s)=>{const P=[[.3,-.3],[1,-.4],[1,.4],[.3,.3]].map(([x,y])=>[x*s,y*s]),c=[.65*s,0],q=P.map(([x,y])=>[x-c[0],y-c[1]]);const R=([x,y])=>a===0?[x,y]:a===1?[-y,x]:a===2?[-x,-y]:[y,-x];return {pts:q.map(R),at:R(c)}};
+ const out=[];[0,1,2,3].forEach(a=>{const o=arm(a,r*1.2);out.push({poly:o.pts,at:o.at,col:BFK.WHT,lay:0})});out.push({rect:[-r*.38,-r*.38,r*.38,r*.38],col:BFK.WHT,lay:0});
+ [0,1,2,3].forEach(a=>{const o=arm(a,r);out.push({poly:o.pts,at:o.at,col:BFK.BK,lay:1})});out.push({rect:[-r*.3,-r*.3,r*.3,r*.3],col:BFK.BK,lay:1});return out}
+function geoBf109(){const g=new Geo(),K=acKit2(g),cs=[],CM=WB.CM,AL=[.5,.52,.55],y0=-.05,dh=5.5*Math.PI/180,z0=BFS[0][0];
+ const F=BFS.map(a=>K.ring(a[0],a[1],a[2],a[3],2.2,36));loftS(g,F,{sub:5,col:CM});
+ K.cap(F[F.length-1],[0,.025,BFS[BFS.length-1][0]+.004],CM);K.cap(F[0],[0,.02,z0+.04],[.04,.04,.045]);
+ /* the rounded spinner, black-green */
+ loftS(g,[[z0+.03,.085,.085],[z0,.088,.088],[z0-.03,.08,.08],[z0-.058,.062,.062],[z0-.078,.036,.036],[z0-.088,.01,.01]].map(a=>K.ring(a[0],a[1],a[2],.02,2,22)),{sub:2,col:BFK.SPN});
+ /* the two MG 17 troughs on top of the cowling, and the six exhaust stubs along each side of it */
+ [1,-1].forEach(sd=>acRod(g,[sd*.03,bfTop(-.3)-.006,-.33],[sd*.03,bfTop(-.2)+.004,-.17],.013,CM,8,.011));
+ [1,-1].forEach(sd=>{for(let q=0;q<6;q++){const z=-.31+q*.026;acRod(g,[sd*.071,.025,z],[sd*.084,.018,z+.012],.0075,[.3,.2,.14],7,.0068)}});
  /* the oil cooler under the nose */
- {const R=[[-.3,.04,.02,-.066],[-.22,.07,.04,-.074],[-.12,.07,.04,-.078],[-.04,.05,.02,-.07]].map(a=>K.ring(...a,2,14));loftS(g,R,{sub:2,col:(p)=>BFK.B76})}
- /* the framed canopy and the faired rear */
- loftS(g,BFC.map(a=>K.ring(a[0],a[1],a[2],a[3],2,16,a[4])),{sub:3,col:bfCan});
- /* tapered wing with slightly forward-swept trailing edge; flaps inboard, Frise ailerons outboard */
+ {const R=[[-.34,.04,.02,-.07],[-.26,.07,.04,-.08],[-.16,.07,.04,-.084],[-.07,.05,.02,-.076]].map(a=>K.ring(...a,2,14));loftS(g,R,{sub:2,col:CM})}
+ /* the framed canopy and the faired rear, sitting on the deck */
+ loftS(g,BFC.map(a=>{const t=bfTop(a[0]),y1=t+a[2],yb=t-.016;return K.ring(a[0],a[1],y1-yb,(y1+yb)/2,2,16,yb)}),{sub:3,col:bfCan});
+ /* the radio mast behind the canopy, leaning forward, and the aerial wire to the fin */
+ acRod(g,[0,bfTop(.17)-.004,.17],[0,bfTop(.17)+.075,.145],.0034,[.18,.18,.17],6);
+ acRod(g,[0,bfTop(.17)+.073,.146],[0,.172,.86],.0009,[.1,.1,.1],4);
+ /* tapered wing with a slightly forward-swept trailing edge; flaps inboard, ailerons outboard */
  const sec=[{s:0,le:.0,c:.34,t:.13},{s:.15,le:.012,c:.3,t:.12},{s:.4,le:.045,c:.24,t:.11},{s:.6,le:.075,c:.19,t:.095},{s:.7,le:.095,c:.14,t:.085},{s:.72,le:.105,c:.07,t:.06}];
- cs.push(...K.surf({st:sec,cam:[.025,.4],P:PH(y0,dh),col:(s,u,sd,up)=>up?CM:BFK.B76,cuts:[{s0:.06,s1:.38,u:.72,ch:'flp',sgn:1,max:.9,k:.9},{s0:.42,s1:.69,u:.78,ch:'ail',sgn:-1,mir:true,col:CM}]}));
- /* leading-edge slats: a faint dark line along the outer half of each wing */
+ cs.push(...K.surf({st:sec,cam:[.025,.4],P:PH(y0,dh),col:()=>CM,cuts:[{s0:.06,s1:.38,u:.72,ch:'flp',sgn:1,max:.9,k:.9},{s0:.42,s1:.69,u:.78,ch:'ail',sgn:-1,mir:true,col:CM}]}));
+ /* the leading-edge slats: a dark line along the outer half of each wing, the 20 mm cannon barrels and the radiators under the wing roots */
  [1,-1].forEach(sd=>acRod(g,[sd*.25,y0+.25*Math.tan(dh)-.004,.044],[sd*.6,y0+.6*Math.tan(dh)-.004,.078],.003,[.2,.2,.22],6,.0025));
- /* the wing radiators and the 20 mm gondolas */
  [1,-1].forEach(sd=>{g.box(sd*.14,y0+.14*Math.tan(dh)-.034,.14,.05,.016,.085,[.16,.16,.18],0,5)});
- [1,-1].forEach(sd=>{acRod(g,[sd*.33,y0+.33*Math.tan(dh)-.052,.06],[sd*.33,y0+.33*Math.tan(dh)-.048,-.05],.012,BFK.B76,8,.01)});
- /* tailplane (cantilevered), elevator, tall fin and rudder with the mass balance */
- cs.push(...K.surf({st:[{s:0,le:.72,c:.13,t:.09},{s:.23,le:.76,c:.07,t:.07}],P:PH(.04,0),col:(s,u,sd,up)=>up?CM:BFK.B76,cut:{s0:.015,s1:.23,u:.58,ch:'ele',sgn:1,col:CM}}));
+ [1,-1].forEach(sd=>{acRod(g,[sd*.33,y0+.33*Math.tan(dh)-.012,.04],[sd*.33,y0+.33*Math.tan(dh)-.012,-.075],.0042,[.18,.18,.2],8,.0036)});
+ /* tailplane (carried on two struts), elevator, tall fin and rudder with its mass balance */
+ cs.push(...K.surf({st:[{s:0,le:.72,c:.13,t:.09},{s:.23,le:.76,c:.07,t:.07}],P:PH(.04,0),col:()=>CM,cut:{s0:.015,s1:.23,u:.58,ch:'ele',sgn:1,col:CM}}));
+ [1,-1].forEach(sd=>acRod(g,[sd*.02,-.016,.8],[sd*.13,.038,.76],.0042,AL,6,.0036));
  cs.push(...K.surf({st:[{s:0,le:.7,c:.24,t:.08},{s:.08,le:.745,c:.17,t:.07},{s:.16,le:.79,c:.1,t:.05},{s:.2,le:.83,c:.05,t:.04}],P:PV(.01),sides:[1],col:()=>CM,cut:{s0:.02,s1:.2,u:.6,ch:'rud',sgn:1,mir:true,col:CM}}));
  /* narrow-track, outward-folding gear and a fixed tail wheel */
- acWheelGear(K,g,cs,{mains:[1,-1].map(sd=>({top:[sd*.1,-.06,.05],x:sd*.15,y:-.175,z:.02,r:.047,w:.028,lr:.01,door:[[sd*.11,-.07,.0],[sd*.11,-.07,.09],[sd*.15,-.17,.09],[sd*.15,-.17,.0]],dcol:BFK.B76})),steer:{top:[0,.01,.79],x:0,y:-.042,z:.81,r:.016,w:.012,tail:true},leg:AL,tyre:[.08,.08,.09],rt:{main:{dir:'out',k:1.5},steer:{sgn:0,k:1}}});
- return {g,cs,prop:{n:3,r:.215,p:.26,z:-.44,y:.02,col:[.08,.09,.08],tip:BFK.BK},gm:[-.222,.02],gt:[-.058,.81]}}
+ acWheelGear(K,g,cs,{mains:[1,-1].map(sd=>({top:[sd*.1,-.06,.05],x:sd*.15,y:-.175,z:.02,r:.047,w:.028,lr:.01,door:[[sd*.11,-.07,.0],[sd*.11,-.07,.09],[sd*.15,-.17,.09],[sd*.15,-.17,.0]],dcol:BFK.B65})),steer:{top:[0,.01,.79],x:0,y:-.042,z:.81,r:.016,w:.012,tail:true},leg:AL,tyre:[.08,.08,.09],rt:{main:{dir:'out',k:1.5},steer:{sgn:0,k:1}}});
+ return {g,cs,prop:{n:3,r:.216,p:.26,z:z0-.026,y:.02,col:[.06,.08,.06],tip:[.06,.08,.06]},gm:[-.222,.02],gt:[-.058,.81]}}
+const BFSKIN=skinMk(BFS,{finX:.035});
+ACFIN.bf109={gloss:6,fin:0,skinCS:2,soft:56,
+ /* a finer mesh gives the splinter, the mottle and the yellow their edges */
+ refine:(x,y,z)=>(z>-.45&&z<.55)||Math.abs(x)>.55?.018:.026,
+ skin:BFSKIN,
+ paint:(x,y,z,r,g,b,nx,ny,nz)=>{if(!(r>.45&&g<.14&&Math.abs(r-b)<.06))return;
+  const A=bfAt(z),bb=(y-A[2])/(A[1]/2+1e-4),a2=x/(A[0]/2+1e-4),inBody=z>-.45&&z<.94&&a2*a2+bb*bb<1.4,inFin=Math.abs(x)<.03&&bb>.8&&z>.65;let c;
+  if(inBody&&!inFin){c=bfSideCol(x,y,z,bb);
+   /* the yellow cowling, up to the firewall, with a crisp edge; the colour fades out a little lower down where it meets the wing root */
+   const yc=1-acSS(-.208,-.2,z);if(yc>0)c=acMix(c,BFK.YEL.map(v=>v*(.96+.05*acN(x*20,y*20,z*20))),yc)}
+  else{const top=ny>-.1;c=top?bfTopCol(x,y,z):BFK.B65.map(v=>v*(.97+.05*acF(x*10,y*10,z*10,2)));
+   if(inFin)c=BFK.G71.map(v=>v*(.96+.08*acF(x*14,y*14,z*14,2)));
+   /* the yellow rudder and the yellow wing tips, above and below */
+   const rud=inFin&&z>.842&&y>.03?1:0,tip=Math.abs(x)>.63&&!inFin?1:0,yy=Math.max(rud,tip);if(yy>0)c=BFK.YEL.map(v=>v*(.95+.06*acN(x*20,y*20,z*20)))}
+  return c},
+ kind:(x,y,z,r,g,b)=>(b>r+.04&&b>g&&r<.2)?9:null,
+ decals:(M)=>{const all=o=>acDecalAll(M,o),sideD=sd=>sd>0?{d:[-1,0,0],u:[0,0,-1]}:{d:[1,0,0],u:[0,0,1]};
+  /* fuselage: the cross, and the white number in front of it */
+  [1,-1].forEach(sd=>{const N=wbTxt('14',.075,BFK.TAN,2,.2);all({c:[0,0,.405],...sideD(sd),H:.34,parts:[...wbBK(.058),...wbShift(N.parts,sd>0?.1:-(.1+N.w),.045)],step:.004})});
+  /* wings: a cross above and below, near the tip */
+  const X=wbBK(.06);[-1,1].forEach(sd=>{all({c:[sd*.46,.3,.14],d:[0,-1,0],u:[1,0,0],H:.34,parts:X,step:.004});all({c:[sd*.46,-.3,.14],d:[0,1,0],u:[1,0,0],H:.34,parts:X,step:.004})})}};
+ACFIN.bf109.wear=wxMake({bare:[.42,.43,.38],ex:[0,1,2,3,4,5].flatMap(q=>[[.084,.018,-.31+q*.026+.012],[-.084,.018,-.31+q*.026+.012]]),oil:[[.17,.02],[-.17,.02]],s:.9});
+
 /* ---- weathering for the warbirds: exhaust soot that trails back from the stacks, oil on the wing root, chipped paint on the leading edges, a dirtier belly and a little sun fade.
    Every layer is a soft, noisy mix of at most a third, so the paint still reads first. o.ex: exhaust ports [x,y,z] (the streak runs aft, +z); o.oil: wing-root oil origins [x,z]; o.guns: gun ports [x,y,z] ---- */
-function wxMake(o){const SOOT=[.09,.08,.075],OIL=[.17,.12,.08],BARE=[.66,.66,.64],s=o.s??1;
+function wxMake(o){const SOOT=[.09,.08,.075],OIL=[.17,.12,.08],BARE=o.bare||[.66,.66,.64],s=o.s??1;
  return (x,y,z,r,g,b,nx,ny,nz)=>{const lum=.3*r+.59*g+.11*b;if(lum<.13)return;let c=[r,g,b],ch=0;
   const mix=(col,f)=>{f=Math.max(0,Math.min(1,f))*s;if(f>.003){c=[c[0]+(col[0]*(.9+.2*lum)-c[0])*f,c[1]+(col[1]*(.9+.2*lum)-c[1])*f,c[2]+(col[2]*(.9+.2*lum)-c[2])*f];ch=1}};
   const stripe=(a,k)=>.55+.9*acN(a*k,y*7,z*5);
   (o.ex||[]).forEach(e=>{if(x*e[0]<0)return;const t=z-e[2];if(t<0||t>.6)return;const w=(y-(e[1]-t*.03))/(.012+t*.07),dx=Math.abs(x)-Math.abs(e[0]);if(Math.abs(dx)>.09)return;mix(SOOT,.55*Math.exp(-t/.2)*Math.exp(-w*w)*stripe(x,38)*(1-.5*Math.min(1,Math.abs(dx)/.09)))});
   (o.guns||[]).forEach(e=>{if(Math.abs(x-e[0])>.02)return;const t=z-e[2];if(t<0||t>.3)return;const w=(y-e[1])/(.012+t*.03);mix(SOOT,.5*Math.exp(-t/.09)*Math.exp(-w*w))});
   if(ny>.45)(o.oil||[]).forEach(e=>{if(x*e[0]<0)return;const t=z-e[1],dx=Math.abs(x)-Math.abs(e[0]);if(t<0||t>.5||Math.abs(dx)>.11)return;mix(OIL,.38*Math.exp(-t/.25)*Math.exp(-dx*dx/.0016)*acSS(0,.04,t)*stripe(x,44))});
+  if(o.film){const f=o.film,t=z-f[2];if(t>-.05&&t<f[3]*2.4){const sd=Math.exp(-Math.pow((x-f[0])/.11,2)),bl=Math.max(0,-ny)*Math.exp(-Math.pow(x/.16,2));mix(OIL,.36*Math.exp(-Math.max(0,t)/f[3])*(.6*sd+.7*bl)*(.5+.8*acN(x*20+4,y*20,z*6)))}}
   if(nz<-.5&&Math.abs(x)>.05){const n=acN(x*46+3,y*46,z*46);if(n>.76)mix(BARE,(n-.76)*5)}
   if(ny<-.45)mix([.12,.1,.09],.2+.25*acN(x*9,y*9,z*9));
   if(ny>.6){const f=acN(x*5+9,y*5,z*5)-.5;mix(f>0?[.78,.76,.68]:[.2,.2,.17],Math.abs(f)*.3)}
   return ch?c:undefined}}
-ACFIN.bf109={gloss:6,refine:.03,soft:56,
- paint:(x,y,z,r,g,b,nx,ny)=>{if(r>.45&&g<.14&&Math.abs(r-b)<.06){if(ny<-.3)return BFK.B76;return bfCam(x,y,z)}},
- kind:(x,y,z,r,g,b)=>(b>r+.04&&b>g&&r<.2)?9:null,
- decals:(M)=>{const G=M.g,rd=(c,d,u,parts)=>acDecal(G,{c,d,u,H:.34,parts,step:.005});
-  const BK=(r)=>[{rect:[-r*1.12,-r*.38,r*1.12,r*.38],col:WB.WHT,lay:0},{rect:[-r*.38,-r*1.12,r*.38,r*1.12],col:WB.WHT,lay:0},{rect:[-r,-r*.28,r,r*.28],col:BFK.BK,lay:1},{rect:[-r*.28,-r,r*.28,r],col:BFK.BK,lay:1}];
-  const S=BK(.055);rd([0,.0,.38],[-1,0,0],[0,0,-1],S);rd([0,.0,.38],[1,0,0],[0,0,1],S);
-  const W=BK(.05);rd([-.45,.3,.17],[0,-1,0],[1,0,0],W);rd([.45,.3,.17],[0,-1,0],[1,0,0],W);rd([-.45,-.3,.17],[0,1,0],[1,0,0],W);rd([.45,-.3,.17],[0,1,0],[1,0,0],W);
-  /* the Eastern-front white band round the rear fuselage */
-  rd([0,.0,.56],[-1,0,0],[0,0,-1],[{rect:[-.03,-.09,.03,.09],col:WB.WHT,lay:0}]);rd([0,.0,.56],[1,0,0],[0,0,1],[{rect:[-.03,-.09,.03,.09],col:WB.WHT,lay:0}])}};
-
-ACFIN.p47.wear=wxMake({ex:[[.12,.02,-.27],[-.12,.02,-.27],[.054,-.055,.36],[-.054,-.055,.36]],oil:[[.1,-.02],[-.1,-.02]],guns:[.27,.325,.375,.42].flatMap(s=>[[s,-.065+s*.0787,-.13],[-s,-.065+s*.0787,-.13]])});
-ACFIN.bf109.wear=wxMake({ex:[[.074,.0,-.28],[-.074,.0,-.28],[.074,.0,-.24],[-.074,.0,-.24],[.074,.0,-.2],[-.074,.0,-.2]],oil:[[.17,.02],[-.17,.02]],s:.9});
 if(ACFIN.p51)ACFIN.p51.wear=wxMake({ex:[[.075,.03,-.385],[-.075,.03,-.385],[.075,.0,-.34],[-.075,.0,-.34]],oil:[[.14,-.2],[-.14,-.2]],s:.9});
 if(ACFIN.spit)ACFIN.spit.wear=wxMake({ex:[[.066,.036,-.388],[-.066,.036,-.388],[.066,.02,-.33],[-.066,.02,-.33]],oil:[[.14,-.2],[-.14,-.2]],s:.9});
+/* v156: rivets, panel lines and covering on every model; the metal Mustang like the Jug, the camouflaged Spitfire in satin paint with fabric control surfaces, the two trainers in film with hatch lines and ribs and an oil mist from the nitro engine */
+{const skC=(f,a,b)=>(x,y,z)=>{const q=f(x,y,z);return q&&[q[0],q[1],q[2]?b:a,q[3]]};
+ Object.assign(ACFIN.p51,{gloss:6,fin:2,skinCS:2,skin:skinMk(PMS,{})});
+ Object.assign(ACFIN.spit,{fin:0,skinCS:2,skin:skinMk(SPS,{})});
+ const T1=[[-.62,.07,.07,0],[-.605,.12,.12,0],[-.56,.15,.16,.004],[-.47,.155,.175,.008],[-.3,.152,.18,.014],[-.1,.146,.176,.02],[.1,.12,.14,.028],[.3,.085,.1,.036],[.5,.05,.064,.042],[.63,.026,.036,.046]],
+  T2=[[-.66,.06,.06,0],[-.645,.115,.115,0],[-.58,.14,.15,.004],[-.4,.145,.17,.012],[-.15,.135,.165,.018],[.12,.1,.12,.026],[.42,.055,.07,.036],[.62,.024,.034,.042]];
+ Object.assign(ACFIN.tr1,{fin:1,refine:.03,skinCS:2,skin:skC(skinMk(T1,{}),5,2),wear:wxMake({ex:[[.05,-.075,-.51]],film:[.05,-.08,-.5,.42],s:1})});
+ Object.assign(ACFIN.tr2,{fin:1,refine:.03,skinCS:2,skin:skC(skinMk(T2,{}),5,2),wear:wxMake({ex:[[.05,-.07,-.52]],film:[.05,-.07,-.52,.4],s:1})})}
 /* ---- build, scale and cache a model; the wheel contact points set the physics gear height and the tail-dragger rest attitude ---- */
-const PLVS={tr1:1.25,tr2:1.2,p51:1.25,spit:1.25,p47:1.25,bf109:1.25,jet:1.3};
+const PLVS={tr1:1.25,tr2:1.2,p51:1.25,spit:1.25,p47:1.25,bf109:1.25,jet:1.465};
 const PLGEO2={tr1:geoTr1,tr2:geoTr2,p51:geoP51,spit:geoSpit,p47:geoP47,bf109:geoBf109,jet:geoJet};
 /* models drawn with the origin at the wing root: slide everything so the origin sits at the centre of gravity (the wing's quarter chord, a little aft) */
 const PLDZ={bf109:-.09};
@@ -12302,8 +12465,8 @@ const PLINFO={
  p51:['P-51D מוסטנג','לוחם ארוך טווח של 1944 עם מנוע רולס-רויס מרלין. הכנף הלמינרית הדקה והגוף הנקי נותנים מהירות גבוהה (כ-700 קמ״ש במקור). דורש מצערת עדינה בהמראה בגלל מומנט המדחף.'],
  spit:['ספיטפייר Mk IX','הכנף האליפטית המפורסמת: הזדקרות רכה ומתרה, גלגול קל וזריז. מנוע מרלין, גלגלים ומדפים נשלפים. מקבל טעויות יותר מהמוסטנג.'],
  p47:['P-47D ת׳אנדרבולט','"הקנקן": לוחם כבד עם מנוע רדיאלי של 18 צילינדרים ומגדש טורבו, שמונה מקלעים בכנפיים וגוף רחב. כבד, יציב ומהיר בצלילה, אבל איטי להאיץ ולהסתובב.'],
- bf109:['Messerschmitt Bf 109 G','לוחם גרמני קל עם מנוע DB 605 הפוך, דגלי קצה כנף ומסלול גלגלים צר. מטפס מצוין, אבל בהמראה נוטה לסחרר ולהישאר עם האף הצידה אם לא מתקנים בהגה.'],
- jet:['לוחם חמקן בסגנון F-35','טורבינה במקום מדחף: אין זרימת מדחף על הזנב, התאוצה איטית בהתחלה וחדה אחר כך, מהיר מאוד. דורש תכנון מראש של כל תמרון.']};
+ bf109:['Messerschmitt Bf 109 E · אמיל','לוחם גרמני קל של 1940 עם מנוע DB 601 הפוך, חרטום, הגה וקצות כנפיים צהובים וסימוני הסוואה בצורת פיצולים. מטפס מצוין עם מסלול גלגלים צר, אבל בהמראה נוטה לסחרר ולהישאר עם האף הצידה אם לא מתקנים בהגה.'],
+ jet:['F-35A ברק II','לוחם חמקן חד-מנועי: גוף משולב עם קווי צ׳יין, כניסות אוויר בלי מפריד, חופה בועתית, שני זנבות מוטים ומייצבים נעים בכל המשטח. טורבינה במקום מדחף: אין זרימת מדחף על הזנב, התאוצה איטית בהתחלה וחדה אחר כך, מהיר מאוד. דורש תכנון מראש של כל תמרון.']};
 const QINFO={
  fs5:['5″ פריסטייל','רחפן המירוץ והפריסטייל הקלאסי: מנועים חזקים, תאוצה אנכית עצומה ותגובה מיידית. בלי סיוע, כל תנועה של הסטיק היא תנועה של הרחפן.'],
  tr3:['3″ אימון','קטן ואיטי יותר, עם דחף מתון ועמידות גבוהה. מתאים לטוס בתוך בניין או שטח קטן, ומסלח על התרסקויות.'],
