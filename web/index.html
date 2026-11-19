@@ -7311,9 +7311,10 @@ function cnDrone(accent,S0){const T=THREE,k=quadKey(),S=S0||6.2,K=S/3.4,grp=new 
  grp.userData={props,leds:L,kind:'quad',span:1.4};
  grp.userData.spin=(t,t0)=>{const dt=Math.max(0,t-t0),ramp=1.4,W=260;const w=dt<ramp?W*dt/ramp:W,ang=dt<ramp?W*dt*dt/(2*ramp):W*(dt-ramp/2);props.forEach(p=>{p.pv.rotation.y=ang*p.d;p.bl.material.opacity=1;p.bl.visible=w<70;p.ds.material.opacity=cnClamp((w-30)/120,0,1)*.32;p.ds.visible=w>=30})};
  return grp}
-function cnPlane(accent,pk){const T=THREE;pk=pk||planeKey();const M=acBuild(pk),G=new Geo(),Ga=new Geo();geoAdd(G,M.g);geoAdd(Ga,M.g);M.cs.forEach(c=>geoAdd(Ga,c.g));
+function cnPlane(accent,pk){const T=THREE;pk=pk||planeKey();const M=acBuild(pk),G=new Geo(),Ga=new Geo();geoAdd(G,M.g);if(M.pl)geoAdd(G,M.pl);geoAdd(Ga,M.g);M.cs.forEach(c=>geoAdd(Ga,c.g));
  const body=new T.Mesh(cnGeo(G,{flip:1}),cnMat({roughness:.45,metalness:.2,side:T.DoubleSide})),gb=cnGeo(Ga,{flip:1});gb.computeBoundingBox();const bb=gb.boundingBox,sz=new T.Vector3();bb.getSize(sz);gb.dispose();
  const sc=4.2/Math.max(sz.x,sz.z*.9,.1),rig=new T.Group(),grp=new T.Group();rig.add(body);let prop=null;
+ if(M.gl){const gm=new T.Mesh(cnGeo(M.gl,{flip:1}),cnMat({roughness:.08,metalness:.35,transparent:true,opacity:.3,depthWrite:false,side:T.DoubleSide}));gm.renderOrder=2;rig.add(gm)}
  /* hinged parts (control surfaces, flaps, retractable gear) are meshes of their own, posed by the same hinge maths as the simulator */
  const fg=new T.Group();fg.rotation.y=Math.PI;rig.add(fg);const pmat=cnMat({roughness:.45,metalness:.2,side:T.DoubleSide}),parts=M.cs.map(c=>{const m=new T.Mesh(cnGeo(c.g),pmat);m.matrixAutoUpdate=false;fg.add(m);return {m,a:c.a,ax:V.norm(V.sub(c.b,c.a)),ch:c.ch,sgn:c.sgn,max:c.max||.45,k:c.k||1,h2:c.h2||null}});
  const dd={ail:0,ele:0,rud:0,flp:0,gear:0},pose=d=>{d=d||{};dd.ail=(d.rol||0)*.4;dd.ele=(d.pit||0)*.4;dd.rud=(d.yaw||0)*.45;dd.flp=d.flap||0;dd.gear=1-(d.gear==null?1:d.gear);
@@ -11613,7 +11614,7 @@ in vec3 aP;in vec3 aN;in vec3 aC;in float aK;in vec4 aU;uniform mat4 uVP,uM;unif
 void main(){vec4 w=uM*vec4(aP,1.);float sw=aU.z*aU.w;if(sw>0.){float ph=w.x*.31+w.z*.23,s=sin(uT*1.7+ph)*.65+sin(uT*3.1+ph*2.1+1.3)*.35,gs=.6+.4*sin(uT*.43+ph*.2);w.xz+=uWnd.xy*(s*gs*sw*uWnd.z);w.y-=abs(s)*sw*uWnd.z*.18;}
 vW=w.xyz;vN=mat3(uM)*aN;vC=aC;vK0=aK;vKf=aK;vU=aU;gl_Position=uVP*w;}`;
 const SIMFS=`#version 300 es
-precision highp float;precision highp sampler2DArray;in vec3 vC,vN,vW;in float vK0;in vec4 vU;flat in float vKf;uniform vec3 uEye,uSun,uFog,uTint,uLp,uLd;uniform float uGlow,uAlpha,uTac,uNight,uFK,uGfx,uTexOn,uGL,uMS,uT;uniform vec4 uWx,uPad;uniform sampler2DArray uTex;out vec4 o;
+precision highp float;precision highp sampler2DArray;in vec3 vC,vN,vW;in float vK0;in vec4 vU;flat in float vKf;uniform vec3 uEye,uSun,uFog,uTint,uLp,uLd;uniform float uGlow,uAlpha,uTac,uNight,uFK,uGfx,uTexOn,uGL,uMS,uT,uGlass;uniform vec4 uWx,uPad;uniform sampler2DArray uTex;out vec4 o;
 float spc;float TS(int l){return l==0?2.5:l==1?2.5:l==2?3.2:l==3?3.:l==4?3.5:l==5?3.:l==6?1.3:l==7?2.4:l==8?2.:l==21?12.:3.;}
 vec3 lamp(vec3 n){vec3 L=vW-uLp;float d=length(L);vec3 Ld=L/max(d,1e-3);float cone=smoothstep(.62,.93,dot(Ld,uLd));float near=smoothstep(2.2,0.,d)*.35;return vec3(1.,.96,.88)*(cone*7.+near)*max(dot(n,-Ld),0.)/(1.+d*d*.09);}
 float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
@@ -11667,7 +11668,7 @@ void main(){float vK=vK0;if(vKf>9.5)vK=0.;if(vKf>6.5&&vKf<7.5){if(uTac<.5)discar
  if(gk>0.&&uTac<.5){vec3 V2=normalize(uEye-vW),R2=reflect(-V2,n);float nv=max(dot(n,V2),0.),fr2=.05+.95*pow(1.-nv,4.),up=smoothstep(-.12,.3,R2.y);
   vec3 env=mix(vec3(.2,.21,.18),mix(vec3(.8,.87,.93),vec3(.38,.58,.86),clamp(R2.y*1.4,0.,1.)),up);
   spc+=pow(max(dot(R2,uSun),0.),mix(34.,120.,gk))*mix(.3,1.6,gk)*(1.-uWx.x*.75);rfl=env*(fr2*mix(.4,.85,gk)+.05*gk)*(1.-uWx.x*.4)*(1.-uWx.y*.3)+env*c*met*.3*(1.-uWx.x*.4);}
- vec3 col=c*(amb*.75+l*vec3(1.,.96,.88)*.75);if(uNight<.5)col+=c*tr*vec3(1.,.95,.55)+vec3(1.,.95,.8)*spc+rfl;if(uNight>.5)col=c*(amb*.055+l*vec3(.55,.6,.8)*.045+lamp(n));col=mix(col,uTint,uGlow);col*=1.-uWx.y*.16;float d=length(vW-uEye);float fg=1.-exp(-d*d*uFK);col=mix(col,uFog,clamp(fg,0.,1.));o=vec4(col,oa);}`;
+ vec3 col=c*(amb*.75+l*vec3(1.,.96,.88)*.75);if(uNight<.5)col+=c*tr*vec3(1.,.95,.55)+vec3(1.,.95,.8)*spc+rfl;if(uNight>.5)col=c*(amb*.055+l*vec3(.55,.6,.8)*.045+lamp(n));col=mix(col,uTint,uGlow);col*=1.-uWx.y*.16;float d=length(vW-uEye);float fg=1.-exp(-d*d*uFK);col=mix(col,uFog,clamp(fg,0.,1.));/* v165: glass: nearly clear face-on, more and more of a mirror towards the edges, the sun's glint solid */if(uGlass>.5){float nv3=max(dot(n,normalize(uEye-vW)),0.);oa=clamp(.1+.5*pow(1.-nv3,3.)+min(spc,1.)*.3,0.,.85)*uAlpha;}o=vec4(col,oa);}`;
 /* v160 · the graphics card can be taken away in the middle of a flight (a driver reset, GPU memory, too many GL views). The simulator is then rebuilt on a fresh canvas, in the same mission. The browser needs a moment before it hands out a new context, so the rebuild asks again with growing pauses and says "reconnecting" instead of reporting "no WebGL2" at the first refusal. After a loss the next contexts are lighter (no multisampling, fewer pixels), so the same load is less likely to take the card down again. */
 const SIMGPU={keep:null,n:(()=>{try{return +sessionStorage.getItem('fpv-gpu-n')||0}catch(e){return 0}})(),why:'',rend:'',tm:0,t0:0,tries:0,scene:null,hg:0,
  aa(){return !SIMGPU.n},budget(){return SIMGPU.n?2.2e6:3.6e6},
@@ -11696,7 +11697,7 @@ class SimGL{
   cv.addEventListener('webglcontextlost',e=>{e.preventDefault();cv.__lost=true;SIMGPU.lost(cv)});
   const sh=(t,s)=>{const x=gl.createShader(t);gl.shaderSource(x,s);gl.compileShader(x);if(!gl.getShaderParameter(x,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(x));return x};
   const p=this.pr=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,SIMVS));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,SIMFS));gl.linkProgram(p);gl.useProgram(p);
-  this.u={};['uVP','uM','uEye','uSun','uFog','uTint','uGlow','uAlpha','uTac','uNight','uLp','uLd','uFK','uWx','uGfx','uT','uWnd','uTex','uTexOn','uGL','uMS','uPad'].forEach(k=>this.u[k]=gl.getUniformLocation(p,k));this.a={P:gl.getAttribLocation(p,'aP'),N:gl.getAttribLocation(p,'aN'),C:gl.getAttribLocation(p,'aC'),K:gl.getAttribLocation(p,'aK'),U:gl.getAttribLocation(p,'aU')};
+  this.u={};['uVP','uM','uEye','uSun','uFog','uTint','uGlow','uAlpha','uTac','uNight','uLp','uLd','uFK','uWx','uGfx','uT','uWnd','uTex','uTexOn','uGL','uMS','uPad','uGlass'].forEach(k=>this.u[k]=gl.getUniformLocation(p,k));this.a={P:gl.getAttribLocation(p,'aP'),N:gl.getAttribLocation(p,'aN'),C:gl.getAttribLocation(p,'aC'),K:gl.getAttribLocation(p,'aK'),U:gl.getAttribLocation(p,'aU')};
   gl.enable(gl.DEPTH_TEST);gl.uniform3fv(this.u.uSun,V.norm([.4,.8,.35]));gl.uniform3fv(this.u.uFog,[.74,.82,.86]);gl.uniform1f(this.u.uFK,.000018);gl.uniform4f(this.u.uWx,0,0,0,0);
    /* v154: the material textures (one 2D array, filled as SimTex paints the layers), the sway attribute's default, multisampling for cut-out edges */
    gl.vertexAttrib4f(this.a.U,0,0,0,0);this.ms=(gl.getParameter(gl.SAMPLES)||0)>1;this.texOK=false;
@@ -11711,7 +11712,7 @@ class SimGL{
   if(g.L.length){lv=gl.createVertexArray();gl.bindVertexArray(lv);put(g.L,this.a.P,3);put(new Array(g.L.length).fill(0).map((_,i)=>i%3===1?1:0),this.a.N,3);put(g.LC,this.a.C,3);put(new Array(g.L.length/3).fill(5),this.a.K,1);gl.bindVertexArray(null);ln=g.L.length/3}
   const M={vao,n:g.p.length/3,bufs,lv,ln};(this.res||(this.res=[])).push(M);return M}
  free(){const gl=this.gl;(this.res||[]).forEach(m=>{m.bufs.forEach(b=>gl.deleteBuffer(b));gl.deleteVertexArray(m.vao);if(m.lv)gl.deleteVertexArray(m.lv)});this.res=[]}
- draw(m,M,o={}){const gl=this.gl;gl.uniformMatrix4fv(this.u.uM,false,M);gl.uniform1f(this.u.uGlow,o.glow||0);gl.uniform3fv(this.u.uTint,o.tint||[1,1,1]);gl.uniform1f(this.u.uAlpha,o.alpha??1);gl.bindVertexArray(m.vao);if(o.only!=='lines')gl.drawArrays(gl.TRIANGLES,0,m.n);if((this.tac||o.lines==='force')&&m.lv&&o.lines!==false){gl.bindVertexArray(m.lv);gl.drawArrays(gl.LINES,0,m.ln)}}
+ draw(m,M,o={}){const gl=this.gl;gl.uniformMatrix4fv(this.u.uM,false,M);gl.uniform1f(this.u.uGlow,o.glow||0);gl.uniform3fv(this.u.uTint,o.tint||[1,1,1]);gl.uniform1f(this.u.uAlpha,o.alpha??1);gl.uniform1f(this.u.uGlass,o.glass?1:0);gl.bindVertexArray(m.vao);if(o.only!=='lines')gl.drawArrays(gl.TRIANGLES,0,m.n);if((this.tac||o.lines==='force')&&m.lv&&o.lines!==false){gl.bindVertexArray(m.lv);gl.drawArrays(gl.LINES,0,m.ln)}}
  dispose(){const gl=this.gl;SimTex.unhook(this);try{gl.getExtension('WEBGL_lose_context')?.loseContext()}catch(e){}}}
 const I4=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];
 /* ---- simulator instance ---- */
@@ -12063,7 +12064,7 @@ class FPVSim{
    for(let a=0;a<4;a++){const an=a/4*Math.PI*2+Math.PI/4,rd=V.add(V.mul(U,Math.cos(an)),V.mul(Wv,Math.sin(an))),tg=V.add(V.mul(U,-Math.sin(an)),V.mul(Wv,Math.cos(an))),b=V.add(p,V.mul(rd,RR*1.1)),tip=V.add(b,V.mul(N,RR*.1)),bk=V.add(b,V.mul(N,-RR*.08));G.edge(tip,V.add(bk,V.mul(tg,RR*.09)),ac);G.edge(tip,V.add(bk,V.mul(tg,-RR*.09)),ac)}
    if(p[1]>RR+.1)G.edge([p[0],.04,p[2]],[p[0],Math.max(.04,p[1]-RR),p[2]],[.35,.42,.4]);return {G:[p[0],p[1],p[2],0],m:gl.mesh(G),wp:true,n:c.n,N,R:RR,side:null}});
   this.qk=quadKey();this.dm=gl.mesh(droneGeo(this.qk));this.pm=gl.mesh(propGeo(this.qk));this.bm=gl.mesh(bladeGeo(this.qk));const sh=new Geo();for(let i=0;i<16;i++){const a0=i/16*Math.PI*2,a1=(i+1)/16*Math.PI*2;sh.tri([0,0,0],[Math.cos(a1)*.22,0,Math.sin(a1)*.22],[Math.cos(a0)*.22,0,Math.sin(a0)*.22],[0,0,0],4)}this.shm=gl.mesh(sh);
-  if(this.plane){const PK=planeKey();this.PK=PK;this.PP=PLANES[PK].P;const AM=acBuild(PK);this.AM=AM;this.planeM=gl.mesh(AM.g);this.planeCS=AM.cs.map(c=>({m:gl.mesh(c.g),a:c.a,ax:V.norm(V.sub(c.b,c.a)),ch:c.ch,sgn:c.sgn,max:c.max||.45,k:c.k||1,h2:c.h2||null}));this.planeP=AM.propG?gl.mesh(AM.propG):null;this.planeD=AM.propG?gl.mesh(discGeo(AM.propR)):null;this.csd={ail:0,ele:0,rud:0,flp:0,gear:0}}
+  if(this.plane){const PK=planeKey();this.PK=PK;this.PP=PLANES[PK].P;const AM=acBuild(PK);this.AM=AM;this.planeM=gl.mesh(AM.g);this.planeG=AM.gl?gl.mesh(AM.gl):null;this.planeK=AM.pl?gl.mesh(AM.pl):null;this.planeCS=AM.cs.map(c=>({m:gl.mesh(c.g),a:c.a,ax:V.norm(V.sub(c.b,c.a)),ch:c.ch,sgn:c.sgn,max:c.max||.45,k:c.k||1,h2:c.h2||null}));this.planeP=AM.propG?gl.mesh(AM.propG):null;this.planeD=AM.propG?gl.mesh(discGeo(AM.propR)):null;this.csd={ail:0,ele:0,rud:0,flp:0,gear:0}}
   this.reset();this.camIntro=camIntroFor(this,l.id||'__m');this.chase=null;if(!window.THREE&&!this.att){const me=this;load3().then(()=>{if(me.cv.__owner===me&&me.mis&&me.mis.id===lid&&!me.mSolid)me.loadMis(lid)}).catch(()=>{})}}
 
  /* ---- pre-drone drills: a soft ball on rails, one stick axis at a time ---- */
@@ -12428,13 +12429,15 @@ class FPVSim{
   if(cam!=='fpv'){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);const s=1+this.p[1]*.25;R.draw(this.shm,[s,0,0,0,0,1,0,0,0,0,s,0,this.p[0],.01,this.p[2],1],{alpha:Math.max(.08,.45-this.p[1]*.05),tint:TAC?[.3,.75,.5]:[0,0,0],glow:1,lines:false});
    /* spectator: the vehicle is seen through a much thinner haze than the scenery, so it does not melt into the distance (the view is zoomed on it) */
    if(cam==='los')gl.uniform1f(R.u.uFK,Math.min((wxK(WX,this.plane)+ic*.14)*.2,.3/Math.max(100,LD*LD)));
-   const qk=quadKey();if(qk!==this.qk||!this.bm){this.qk=qk;this.dm=this.r.mesh(droneGeo(qk));this.pm=this.r.mesh(propGeo(qk));this.bm=this.r.mesh(bladeGeo(qk))}const M=M4.fromQT(this.q,this.p),Sc=M4.mul(M,[2.2,0,0,0,0,2.2,0,0,0,0,2.2,0,0,0,0,1]);const BALL=this.mis&&this.mis.ball;if(BALL){const BM=M4.fromQT(this.q,[this.p[0],this.p[1]+.14,this.p[2]]);R.draw(this.ballM,BM,{lines:false});R.draw(this.ballN,BM,{lines:false});gl.depthMask(false);R.draw(this.ballH,BM,{alpha:.18,lines:false});gl.depthMask(true)}else if(this.plane&&this.planeM){R.draw(this.planeM,M,{lines:false});const now2=t,pdt2=Math.min(.05,Math.max(0,(now2-(this.pt2||now2))/1000));this.pt2=now2;
+   const qk=quadKey();if(qk!==this.qk||!this.bm){this.qk=qk;this.dm=this.r.mesh(droneGeo(qk));this.pm=this.r.mesh(propGeo(qk));this.bm=this.r.mesh(bladeGeo(qk))}const M=M4.fromQT(this.q,this.p),Sc=M4.mul(M,[2.2,0,0,0,0,2.2,0,0,0,0,2.2,0,0,0,0,1]);const BALL=this.mis&&this.mis.ball;if(BALL){const BM=M4.fromQT(this.q,[this.p[0],this.p[1]+.14,this.p[2]]);R.draw(this.ballM,BM,{lines:false});R.draw(this.ballN,BM,{lines:false});gl.depthMask(false);R.draw(this.ballH,BM,{alpha:.18,lines:false});gl.depthMask(true)}else if(this.plane&&this.planeM){R.draw(this.planeM,M,{lines:false});if(this.planeK&&cam!=='fpv')R.draw(this.planeK,M,{lines:false});const now2=t,pdt2=Math.min(.05,Math.max(0,(now2-(this.pt2||now2))/1000));this.pt2=now2;
      /* control surfaces follow the sticks through a servo lag, on the ground and in the air */
      const IN=this.Is||this.I||{rol:0,pit:0,yaw:0},AX=this.auxA||{gear:1,flap:0},dd=this.csd||(this.csd={ail:0,ele:0,rud:0,flp:0,gear:0}),kf=1-Math.exp(-pdt2/.07),tg={ail:(IN.rol||0)*.4,ele:(IN.pit||0)*.4,rud:(IN.yaw||0)*.45,flp:AX.flap,gear:1-AX.gear};for(const c in tg)dd[c]=(dd[c]||0)+(tg[c]-(dd[c]||0))*kf;
      (this.planeCS||[]).forEach(c=>{const th=c.sgn*Math.max(-c.max,Math.min(c.max,(dd[c.ch]||0)*c.k));const qq=Q.axis(c.ax,th);let LM=M4.fromQT(qq,V.sub(c.a,Q.rot(qq,c.a)));if(c.h2){const t2=c.h2.sgn*c.h2.k*(dd.gear||0),q2=Q.axis(c.h2.ax,t2);LM=M4.mul(M4.fromQT(q2,V.sub(c.h2.a,Q.rot(q2,c.h2.a))),LM)}R.draw(c.m,M4.mul(M,LM),{lines:false})});
      const rp=this.rpm||0;this.pa2=((this.pa2||0)+(this.armed&&!this.crash?Math.min(9+80*rp,38):0)*pdt2)%(Math.PI*2);const AM=this.AM;
      if(this.planeP&&AM){const c=Math.cos(this.pa2),sn=Math.sin(this.pa2),PM=M4.mul(M,[c,sn,0,0,-sn,c,0,0,0,0,1,0,0,AM.propY,AM.propZ-.004,1]);/* v164: at speed the blades fade into the disc: a propeller is a blur, not six distinct turns a second sampled at the frame rate (that read as a flicker at full throttle) */const bl2=this.armed&&!this.crash?Math.min(1,Math.max(0,(rp-.28)/.5)):0;R.draw(this.planeP,PM,{alpha:1-bl2*.72,lines:false});
-      if(this.planeD&&rp>.12&&this.armed&&!this.crash){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);R.draw(this.planeD,PM,{alpha:Math.min(.3,.06+rp*.1+bl2*.14),lines:false});gl.depthMask(true);gl.disable(gl.BLEND)}}}else R.draw(this.dm,Sc,{lines:false});
+      if(this.planeD&&rp>.12&&this.armed&&!this.crash){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);R.draw(this.planeD,PM,{alpha:Math.min(.3,.06+rp*.1+bl2*.14),lines:false});gl.depthMask(true);gl.disable(gl.BLEND)}}
+     /* v165: the canopy glass, last and see-through in both looks (a plain tint in the tactical one, mirror and glint in the real one); not in the pilot's own view */
+     if(this.planeG&&cam!=='fpv'){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);R.draw(this.planeG,M,TAC?{alpha:.3,lines:false}:{glass:1,lines:false});gl.depthMask(true);gl.disable(gl.BLEND)}}else R.draw(this.dm,Sc,{lines:false});
    /* props: still while disarmed, idle spin once armed, faster and blurrier with throttle */
    if(!BALL&&!this.plane){const now=t,pdt=Math.min(.05,Math.max(0,(now-(this.pt||now))/1000));this.pt=now;const w=this.armed&&!this.crash?24+170*Math.min(1,Math.max(0,this.rpm||0)):0;this.pw=(this.pw||0)+(w-(this.pw||0))*(1-Math.exp(-pdt/(w>this.pw?.08:.35)));this.pa=((this.pa||0)+Math.min(this.pw,46)*pdt)%(Math.PI*2);
     const bl=Math.min(1,Math.max(0,(this.pw-40)/110)),ba=1-bl*.75,da=bl*.42;
@@ -14012,19 +14015,72 @@ const PLGEO2={tr1:geoTr1,tr2:geoTr2,p51:geoP51,spit:geoSpit,p47:geoP47,bf109:geo
 const PLDZ={bf109:-.09,fw190:-.088};
 function geoDz(M,dz){const sh=G=>{for(let i=2;i<G.p.length;i+=3)G.p[i]+=dz;for(let i=2;i<G.L.length;i+=3)G.L[i]+=dz};sh(M.g);M.cs.forEach(c=>{sh(c.g);c.a=[c.a[0],c.a[1],c.a[2]+dz];c.b=[c.b[0],c.b[1],c.b[2]+dz];if(c.h2)c.h2={...c.h2,a:[c.h2.a[0],c.h2.a[1],c.h2.a[2]+dz]}});
  if(M.gm)M.gm=[M.gm[0],M.gm[1]+dz];if(M.gt)M.gt=[M.gt[0],M.gt[1]+dz];if(M.prop)M.prop={...M.prop,z:M.prop.z+dz}}
+/* ---- v165: transparent canopies with a pilot and a cockpit under them. The glass of each warbird (its colour, ACGL) is cut out of the body into a mesh of its own, drawn last and see-through, so that what is under it shows: the cockpit (floor, side consoles, instrument panel with dials, gun sight, control stick, seat armour) and the pilot (helmet, goggles, mask, shoulders) are built here, in the model's final coordinates (nose towards -z), from the numbers of ACPK. They are drawn with the body, but not in the pilot's own first-person view. ---- */
+const ACGL={p51:[.1,.16,.22],spit:[.1,.16,.22],p47:[.17,.25,.31],bf109:[.17,.25,.31],fw190:[.17,.25,.31]};
+function acGlassSplit(G,gc){const n=G.p.length/3,hu=G.u.length>0,gl=new Geo();if(hu)G.padU();let w=0;
+ const isG=i=>Math.abs(G.c[i*3]-gc[0])<.03&&Math.abs(G.c[i*3+1]-gc[1])<.03&&Math.abs(G.c[i*3+2]-gc[2])<.03&&Math.abs(G.p[i*3])<.16&&G.p[i*3+1]>.09;
+ for(let t=0;t+2<n;t+=3){const g3=isG(t)&&isG(t+1)&&isG(t+2);
+  for(let j=0;j<3;j++){const i=t+j;
+   if(g3){gl.p.push(G.p[i*3],G.p[i*3+1],G.p[i*3+2]);gl.n.push(G.n[i*3],G.n[i*3+1],G.n[i*3+2]);gl.c.push(G.c[i*3],G.c[i*3+1],G.c[i*3+2]);gl.k.push(9)}
+   else{const o=w++;for(let a=0;a<3;a++){G.p[o*3+a]=G.p[i*3+a];G.n[o*3+a]=G.n[i*3+a];G.c[o*3+a]=G.c[i*3+a]}G.k[o]=G.k[i];if(hu)for(let a=0;a<4;a++)G.u[o*4+a]=G.u[i*4+a]}}}
+ G.p.length=G.n.length=G.c.length=w*3;G.k.length=w;if(hu)G.u.length=w*4;gl.kd=9;return gl}
+/* dy: the deck under the canopy, hy and hz: the head, zi: the instrument panel, hw: half the width of the cockpit, S: the size of the pilot against a real one at this scale (a little over, so that he can be seen from the chase camera), N: the nation */
+const ACPK={
+ p51:{dy:.134,hy:.205,hz:-.05,zi:-.292,hw:.05,S:1.2,N:'us'},
+ spit:{dy:.136,hy:.172,hz:-.15,zi:-.3,hw:.042,S:1.15,N:'gb'},
+ p47:{dy:.136,hy:.198,hz:-.02,zi:-.17,hw:.066,S:1.2,N:'us'},
+ bf109:{dy:.127,hy:.188,hz:-.1,zi:-.235,hw:.05,S:1.12,N:'de'},
+ fw190:{dy:.146,hy:.184,hz:-.04,zi:-.2,hw:.05,S:1.12,N:'de'}};
+const ACPN={
+ us:{hel:[.5,.36,.2],jak:[.36,.22,.12],vest:null,mask:[.22,.26,.18],gog:[.1,.1,.11],lens:[.5,.62,.55],intc:[.36,.42,.18]},
+ gb:{hel:[.5,.42,.28],jak:[.38,.36,.26],vest:[.9,.72,.12],mask:[.1,.1,.1],gog:[.1,.1,.11],lens:[.5,.62,.55],intc:[.28,.32,.26]},
+ de:{hel:[.36,.26,.17],jak:[.3,.29,.24],vest:null,mask:null,gog:[.1,.1,.11],lens:[.55,.6,.5],intc:[.22,.23,.25]}};
+/* an ellipsoid (or a cap of one: a0..a1 are the latitudes), faces outwards, without the empty triangles at the poles */
+function acEll(G,c,r,col,o={}){const sg=o.seg||10,rg=o.rings||6,a0=o.a0??-Math.PI/2,a1=o.a1??Math.PI/2,P=(i,j)=>{const f=a0+(a1-a0)*i/rg,t=j/sg*Math.PI*2;return [c[0]+r[0]*Math.cos(f)*Math.cos(t),c[1]+r[1]*Math.sin(f),c[2]+r[2]*Math.cos(f)*Math.sin(t)]};
+ const T=(a,b,d)=>{const u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],v=[d[0]-a[0],d[1]-a[1],d[2]-a[2]];if(Math.hypot(u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0])>1e-12)G.tri(a,b,d,col)};
+ for(let i=0;i<rg;i++)for(let j=0;j<sg;j++){const a=P(i,j),b=P(i+1,j),d=P(i+1,j+1),e=P(i,j+1);T(a,b,d);T(a,d,e)}}
+/* a flat disc facing +z (towards the pilot): a dial */
+function acDisc(G,c,r,col,seg=9){for(let i=0;i<seg;i++){const a=i/seg*Math.PI*2,b=(i+1)/seg*Math.PI*2;G.tri(c,[c[0]+Math.cos(a)*r,c[1]+Math.sin(a)*r,c[2]],[c[0]+Math.cos(b)*r,c[1]+Math.sin(b)*r,c[2]],col)}}
+function acPilot(k,M){const q=ACPK[k],pn=ACPN[q.N],G=new Geo(),{dy,hy,hz,zi,hw,S}=q,sk=[.78,.55,.42],fy=dy+.0015,gp=M.gl.p;let z1=-1e9;for(let i=2;i<gp.length;i+=3)z1=Math.max(z1,gp[i]);
+ const zb=Math.min(z1-.02,hz+.07),dk=(c,f)=>c.map(v=>v*f),o=(x,y,z)=>[x*S,hy+y*S,hz+z*S],rr=(a,b,c)=>[a*S,b*S,c*S];
+ /* the tub: floor, two side consoles with a throttle lever on the left */
+ const fw=hw*.74;G.quad([-fw,fy,zi],[fw,fy,zi],[fw,fy,zb],[-fw,fy,zb],dk(pn.intc,.5));
+ for(const sd of [-1,1])G.box(sd*hw*.8,fy+.007,(zi+zb)/2+.02,.012,.014,zb-zi-.06,dk(pn.intc,.85));
+ acRod(G,[-hw*.8,fy+.014,hz-.04],[-hw*.8,fy+.03,hz-.052],.0017,[.06,.06,.06],6);G.box(-hw*.8,fy+.031,hz-.053,.006,.006,.006,[.55,.1,.08]);
+ /* the instrument panel, its dials, the glare shield and the gun sight */
+ const ph=.042;G.box(0,dy+ph/2,zi,hw*1.9,ph,.006,[.06,.06,.065]);
+ [[-.62,.72,.0062],[-.21,.72,.0062],[.21,.72,.0062],[.62,.72,.0062],[-.62,.26,.0055],[-.21,.26,.0055],[.21,.26,.0055],[.62,.26,.0055],[0,.49,.0078]].forEach(([fx,fv,r])=>{const c=[fx*hw*.8,dy+ph*(.1+.82*fv),zi+.0033];acDisc(G,c,r,[.16,.16,.17]);acDisc(G,[c[0],c[1],c[2]+.0004],r*.76,[.86,.86,.8])});
+ G.box(0,dy+ph+.002,zi-.012,hw*1.9,.004,.032,[.05,.05,.055]);G.box(0,dy+ph+.011,zi-.004,.016,.014,.02,[.05,.05,.055]);G.box(0,dy+ph+.025,zi+.004,.018,.0015,.014,[.5,.62,.58]);
+ /* the stick between the knees, the seat armour and the headrest behind the head */
+ acRod(G,[0,fy,hz-.04*S],[0,fy+.036,hz-.034*S],.0026,[.08,.08,.08],6);G.box(0,fy+.04,hz-.034*S,.007,.012,.007,[.05,.05,.05]);
+ G.box(0,(dy+hy-.02)/2,hz+.036*S,hw*.8,hy-.02-dy,.006,[.22,.25,.22]);G.box(...o(0,-.002,.027),.034*S,.034*S,.01*S,[.2,.15,.1]);G.box(0,dy+.012,hz+.004,.05,.014,.05,[.18,.14,.1]);
+ /* the pilot: head, helmet, goggles, mask, neck, chest, arms, and a Mae West where the nation wore one */
+ acEll(G,o(0,0,0),rr(.0148,.0192,.0172),sk);acEll(G,o(0,-.011,-.004),rr(.0125,.011,.0135),sk);
+ acEll(G,o(0,.0035,.0025),rr(.0166,.0198,.0186),pn.hel,{rings:5,a0:-.2});for(const sd of [-1,1])acEll(G,o(sd*.0158,-.0035,.0025),rr(.0042,.0095,.0085),pn.hel,{seg:8,rings:4});
+ G.box(...o(0,.0025,-.0172),.034*S,.008*S,.005*S,pn.gog);for(const sd of [-1,1])G.box(...o(sd*.0085,.0025,-.0192),.011*S,.0075*S,.003*S,pn.lens);
+ if(pn.mask){G.box(...o(0,-.0115,-.0168),.017*S,.012*S,.007*S,pn.mask);acRod(G,o(.004,-.016,-.02),o(.016,-.045,-.016),.0018*S,pn.mask,6)}
+ acRod(G,o(0,-.014,.002),o(0,-.031,.003),.0086*S,sk,8);
+ acEll(G,o(0,-.043,.003),rr(.04,.021,.016),pn.jak,{seg:12});
+ if(pn.vest)acEll(G,o(0,-.042,.002),rr(.0415,.0225,.0172),pn.vest,{seg:12,a0:-.1,a1:.7});
+ for(const sd of [-1,1]){acEll(G,o(sd*.037,-.04,.003),rr(.013,.0125,.0125),pn.jak,{seg:8,rings:5});acRod(G,o(sd*.037,-.042,.004),o(sd*.032,-.06,-.015),.0085*S,pn.jak,8)}
+ geoSmooth(G,50);return G}
 const ACC={};
 function acBuild(k){k=PLANES[k]?k:planeKey();if(ACC[k])return ACC[k];const vs=PLVS[k],M=acFinish(k,PLGEO2[k]());if(PLDZ[k])geoDz(M,PLDZ[k]);geoScale(M.g,vs);M.cs.forEach(c=>{geoScale(c.g,vs);c.a=c.a.map(v=>v*vs);c.b=c.b.map(v=>v*vs);if(c.h2)c.h2={...c.h2,a:c.h2.a.map(v=>v*vs)}});
  const P=PLANES[k].P,gm=[M.gm[0]*vs,M.gm[1]*vs];P.gm=gm;if(M.gt){const gt=[M.gt[0]*vs,M.gt[1]*vs];P.tail=true;P.gp0=Math.atan((gm[0]-gt[0])/(gm[1]-gt[1]))}
  const r0=P.tail?P.gp0:0;P.gear=-(gm[0]*Math.cos(r0)-gm[1]*Math.sin(r0));
  if(M.prop){const p=M.prop;M.propG=geoScale(acKit2(new Geo()).prop(p.n,p.r,p.p,p.col,p.tip),vs);M.propZ=p.z*vs;M.propY=p.y*vs;M.propR=p.r*vs}
+ if(ACGL[k]){const gl=acGlassSplit(M.g,ACGL[k]);if(gl.p.length){M.gl=gl;if(ACPK[k])M.pl=acPilot(k,M)}}
  return ACC[k]=M}
 function planeGeo(k){return acBuild(k).g}
 function geoAdd(G,S,d=[0,0,0]){if(S.u&&S.u.length){G.padU();S.padU();for(let i=0;i<S.u.length;i++)G.u.push(S.u[i])}for(let i=0;i<S.p.length;i+=3){G.p.push(S.p[i]+d[0],S.p[i+1]+d[1],S.p[i+2]+d[2])}for(let i=0;i<S.n.length;i++)G.n.push(S.n[i]);for(let i=0;i<S.c.length;i++)G.c.push(S.c[i]);for(let i=0;i<S.k.length;i++)G.k.push(S.k[i]);return G}
-function acMerged(k){const M=acBuild(k),G=new Geo();geoAdd(G,M.g);M.cs.forEach(c=>geoAdd(G,c.g));if(M.propG)geoAdd(G,M.propG,[0,M.propY,M.propZ]);return G}
+function acMerged(k){const M=acBuild(k),G=new Geo();geoAdd(G,M.g);if(M.pl)geoAdd(G,M.pl);M.cs.forEach(c=>geoAdd(G,c.g));if(M.propG)geoAdd(G,M.propG,[0,M.propY,M.propZ]);return G}
 function discGeo(r){const g=new Geo();for(let i=0;i<28;i++){const a0=i/28*Math.PI*2,a1=(i+1)/28*Math.PI*2;g.tri([0,0,0],[Math.cos(a0)*r,Math.sin(a0)*r,0],[Math.cos(a1)*r,Math.sin(a1)*r,0],[.86,.9,.94])}return g}
 /* the same model for three.js (briefing, hangar renders): nose towards +Z there */
 function planeThree(T,k,pk){const G=acMerged(pk),pos=new Float32Array(G.p.length),nor=new Float32Array(G.n.length),col=new Float32Array(G.c.map(v=>Math.pow(v,2.2)));for(let i=0;i<G.p.length;i+=3){pos[i]=-G.p[i]*k;pos[i+1]=G.p[i+1]*k;pos[i+2]=-G.p[i+2]*k;nor[i]=-G.n[i];nor[i+1]=G.n[i+1];nor[i+2]=-G.n[i+2]}const bg=new T.BufferGeometry();bg.setAttribute('position',new T.BufferAttribute(pos,3));bg.setAttribute('normal',new T.BufferAttribute(nor,3));bg.setAttribute('color',new T.BufferAttribute(col,3));
- return new T.Mesh(bg,new T.MeshStandardMaterial({vertexColors:true,roughness:.4,metalness:.1,side:T.DoubleSide}))}
+ const body=new T.Mesh(bg,new T.MeshStandardMaterial({vertexColors:true,roughness:.4,metalness:.1,side:T.DoubleSide})),A=acBuild(pk);if(!A.gl)return body;
+ const gg=new T.BufferGeometry(),gn=A.gl.p.length,gp=new Float32Array(gn),gq=new Float32Array(gn),gc=new Float32Array(A.gl.c.map(v=>Math.pow(v,2.2)));for(let i=0;i<gn;i+=3){gp[i]=-A.gl.p[i]*k;gp[i+1]=A.gl.p[i+1]*k;gp[i+2]=-A.gl.p[i+2]*k;gq[i]=-A.gl.n[i];gq[i+1]=A.gl.n[i+1];gq[i+2]=-A.gl.n[i+2]}
+ gg.setAttribute('position',new T.BufferAttribute(gp,3));gg.setAttribute('normal',new T.BufferAttribute(gq,3));gg.setAttribute('color',new T.BufferAttribute(gc,3));
+ const gm=new T.Mesh(gg,new T.MeshStandardMaterial({vertexColors:true,transparent:true,opacity:.3,roughness:.08,metalness:.4,side:T.DoubleSide,depthWrite:false})),grp=new T.Group();gm.renderOrder=2;grp.add(body);grp.add(gm);return grp}
 
 /* ---- hangar: the learner picks which plane to fly ---- */
 const PLSTAT={tr1:[.45,1,.4,1],tr2:[.6,.75,.6,2],spit:[.75,.62,.75,3],p51:[.82,.5,.8,4],bf109:[.84,.48,.8,4],p47:[.8,.58,.7,4],fw190:[.86,.46,.88,4],jet:[1,.55,.95,5]};
@@ -14100,7 +14156,7 @@ function hgLoad(){const R=HG.R;if(!R)return;const veh=HG.veh,k=HG.key,parts=[];l
  const Gs=[],ext=G=>{Gs.push(G);for(let i=0;i<G.p.length;i+=3)for(let a=0;a<3;a++){mn[a]=Math.min(mn[a],G.p[i+a]);mx[a]=Math.max(mx[a],G.p[i+a])}};
  try{if(veh==='plane'){const G=acMerged(k);ext(G);parts.push({m:R.mesh(G),M:I4,o:{}})}
   else{const G=droneGeo(k);ext(G);parts.push({m:R.mesh(G),M:I4,o:{}});const bm=R.mesh(bladeGeo(k)),pm=R.mesh(propGeo(k));motorPos(k).forEach(([x,z,d],i)=>{const a=i*.9,c=Math.cos(a),sn=Math.sin(a);parts.push({m:bm,M:[c,0,-sn,0,0,1,0,0,sn,0,c,0,x,0,z,1],o:{lines:false}});parts.push({m:pm,M:[1,0,0,0,0,1,0,0,0,0,1,0,x,0,z,1],o:{alpha:.14,lines:false},blend:true})});const P=propSpec(k);mn[0]-=P.pr;mx[0]+=P.pr;mn[2]-=P.pr;mx[2]+=P.pr}}catch(e){console.error(e)}
- const ct=[0,1,2].map(a=>(mn[a]+mx[a])/2),rad=Math.max(mx[0]-mn[0],mx[2]-mn[2],mx[1]-mn[1])*.62||1,fl=new Geo();fl.cyl(ct[0],ct[2],rad*.95,.004,mn[1]-.004,[.1,.11,.13],72);fl.cyl(ct[0],ct[2],rad*.98,.003,mn[1]-.007,[.82,.6,.2],72);parts.push({m:R.mesh(fl),M:I4,o:{lines:false}});
+ const ct=[0,1,2].map(a=>(mn[a]+mx[a])/2),rad=Math.max(mx[0]-mn[0],mx[2]-mn[2],mx[1]-mn[1])*.62||1,fl=new Geo();fl.cyl(ct[0],ct[2],rad*.95,.004,mn[1]-.004,[.1,.11,.13],72);fl.cyl(ct[0],ct[2],rad*.98,.003,mn[1]-.007,[.82,.6,.2],72);parts.push({m:R.mesh(fl),M:I4,o:{lines:false}});if(veh==='plane'){const A=acBuild(k);if(A.gl)parts.push({m:R.mesh(A.gl),M:I4,o:{glass:1,lines:false},blend:true})}
  let r2=0;Gs.forEach(G=>{for(let i=0;i<G.p.length;i+=3){const dx=G.p[i]-ct[0],dz=G.p[i+2]-ct[2];r2=Math.max(r2,dx*dx+dz*dz)}});let rh=Math.sqrt(r2);
  if(veh==='quad'){try{const pr=propSpec(k).pr;motorPos(k).forEach(([x,z])=>{rh=Math.max(rh,Math.hypot(x-ct[0],z-ct[2])+pr)})}catch(e){}}
  HG.parts=parts;HG.ct=ct;HG.rad=rad;HG.rh=rh||rad;HG.rv=Math.max(mx[1]-ct[1],ct[1]-mn[1])||rad*.4;HG.k0=veh+'|'+k}
