@@ -13166,7 +13166,7 @@ const PLANES={
   P:Object.assign({},PLBASE,{m:3,S:.49,b:1.75,c:.28,Ix:.2,Iy:.3,Iz:.47,cl0:.2,cla:4.6,stall:.217,cd0:.038,k:.064,tmax:34,vprop:44,wash:120,cm0:.0564,cma:-1.1,clb:-.15,clp:-.46,da:.3,cnd:.09,gear:.253,cr:15,rtq:.8,ptq:.4,swg:.04,sf:.4,sd:.02,wh:-.03,spool:[.28,.32],fb0:.04,fb1:.26,vcr:3.8,vhd:2.2}),ex:[[.05,-.08,-.5]],sm:1},
  p51:{n:'מוסטנג P-51 · סקייל',sub:'מוטה 2.05 מ׳ · 5.8 ק״ג · מנוע בנזין · שיוט 20 מ׳/ש׳ · גלגלים ומדפים נשלפים, גלגל זנב ומומנט מדחף · מלחמת העולם השנייה',cr:20,cls:'סקייל WWII',
   P:Object.assign({},PLBASE,{m:5.8,S:.69,b:2.05,c:.337,Ix:.53,Iy:.79,Iz:1.25,cl0:.1,cla:4.6,stall:.217,cd0:.032,k:.067,tmax:62,vprop:72,wash:105,cm0:.0617,cma:-1.2,cmq:-13,clb:-.15,clp:-.45,da:.245,cnb:.1,cnd:.085,tail:true,gp0:.17,vtl:11,gear:.222,cr:20,
-   rg:true,fl:true,gcd:.014,fcl:.42,fst:.015,fcd:.055,fcm:.05,vle:24,vfe:22,belly:.17,cdp:.014,rtq:1.9,ptq:1,swg:.18,sf:.28,sd:.05,wh:0,spool:[.4,.5],fb0:.03,fb1:.22,vcr:3.4,vhd:2}),ex:[[.075,.03,-.385],[-.075,.03,-.385]],sm:1},
+   rg:true,fl:true,gcd:.014,fcl:.42,fst:.015,fcd:.055,fcm:.05,vle:24,vfe:22,belly:.17,cdp:.014,rtq:1.9,ptq:1,swg:.18,sf:.28,sd:.05,wh:0,spool:[.4,.5],fb0:.03,fb1:.22,vcr:3.4,vhd:2}),ex:[[.068,.032,-.29],[-.068,.032,-.29]],sm:1},
  spit:{n:'ספיטפייר · סקייל',sub:'מוטה 2 מ׳ · 5.2 ק״ג · מנוע בנזין · שיוט 18 מ׳/ש׳ · גלגלים ומדפים נשלפים, כנף אליפטית והזדקרות רכה · מלחמת העולם השנייה',cr:18,cls:'סקייל WWII',
   P:Object.assign({},PLBASE,{m:5.2,S:.75,b:2,c:.375,Ix:.46,Iy:.67,Iz:1.06,cl0:.12,cla:4.5,stall:.24,cd0:.03,k:.063,tmax:56,vprop:64,wash:105,cm0:.0594,cma:-1.2,cmq:-13,clb:-.15,clp:-.48,da:.3,cnb:.1,cnd:.085,tail:true,gp0:.18,vtl:10,gear:.219,cr:18,
    rg:true,fl:true,gcd:.013,fcl:.38,fst:.015,fcd:.05,fcm:.045,vle:22,vfe:20,belly:.095,cdp:.014,rtq:1.65,ptq:.9,swg:.15,sf:.6,sd:.015,wh:0,spool:[.4,.5],fb0:.03,fb1:.22,vcr:3.2,vhd:1.9}),ex:[[.066,.036,-.388],[-.066,.036,-.388]],sm:1},
@@ -13638,43 +13638,99 @@ ACFIN.spit={gloss:6,refine:.03,soft:56,
   rd([0,.034,.19],[-1,0,0],[0,0,1],C1);rd([0,.034,.19],[1,0,0],[0,0,-1],C1);
   [1,-1].forEach(sd=>{rd([sd*.52,.3,-.205],[0,-1,0],[1,0,0],B);rd([sd*.5,-.3,-.2],[0,1,0],[1,0,0],B);
    rd([0,.13,.472],[-sd,0,0],[0,0,1],[{rect:[-.037,-.052,-.0125,.052],col:WB.BLU},{rect:[-.0125,-.052,.0125,.052],col:WB.WHT},{rect:[.0125,-.052,.037,.052],col:WB.RED}])})}};
-/* ===== P-51 Mustang ===== */
-const PMK={NM:[.6,.62,.66],AG:[.24,.27,.14]};
-const PMS=[[-.76,.084,.098,.012],[-.735,.112,.13,.012],[-.64,.122,.158,.014],[-.5,.124,.168,.017],[-.34,.124,.172,.02],[-.18,.118,.17,.022],[-.02,.108,.158,.026],[.14,.086,.128,.031],[.3,.066,.1,.036],[.45,.048,.076,.04],[.56,.032,.054,.044],[.645,.02,.036,.046]];
-const pmL=(v,j)=>{const i=Math.min(PMS.length-2,Math.max(0,Math.floor(v))),f=Math.min(1,Math.max(0,v-i));return PMS[i][j]+(PMS[i+1][j]-PMS[i][j])*f};
+/* ===== North American P-51D Mustang (the bubble-canopy version), ~1/5.5 scale: nominal units = real metres x .1454, drawn at VS 1.25 (the span is the 2.05 m of the flight model). x runs from the tip of the spinner, y from the thrust line, and the origin of the model (z = 0) is the centre of gravity, 4.45 m behind the tip. Bare polished aluminium, an olive-drab anti-glare panel, a red spinner and rudder, the black-and-white invasion stripes of June 1944, the star and bars with the blue surround of 1943-45 and a four-blade propeller. The chin scoop, the belly scoop and the dorsal fillet grow out of the fuselage; the legs are the short ones of the real aircraft. ===== */
+const PMU=.1454,PMX0=4.45;
+const pmz=x=>(x-PMX0)*PMU,pmy=y=>y*PMU+.02;
+const PMK={NM:[.6,.62,.66],AG:[.24,.27,.14],RD:[.78,.12,.1],DK:[.045,.045,.05],FR:[.42,.43,.46],BK:[.06,.06,.07],WH:[.9,.9,.88],IN:[.1,.13,.085],GL:[.07,.12,.17]};
+/* fuselage: [x, width, top, bottom] -> ring rows [z, w, h, yc]; the cowling ring is the first one */
+const PMF=[[.62,.56,.29,-.29],[.7,.66,.35,-.35],[.88,.73,.41,-.43],[1.25,.77,.46,-.49],[1.85,.8,.5,-.54],[2.5,.82,.55,-.58],[3.1,.84,.58,-.62],[3.8,.85,.6,-.65],[4.5,.84,.6,-.66],[5.2,.8,.56,-.64],[5.9,.72,.51,-.58],[6.7,.6,.45,-.46],[7.5,.47,.39,-.34],[8.3,.35,.33,-.22],[9,.22,.27,-.1],[9.55,.1,.21,-.02]];
+const PMS=PMF.map(([x,w,t,b])=>[pmz(x),w*PMU,(t-b)*PMU,(t+b)/2*PMU+.02]);
+/* width, height and centre line of the fuselage at z; its top; and where its skin is at the side edge of a canopy of width wc */
+const pmAt=z=>{const S=PMS;let i=0;while(i<S.length-2&&z>S[i+1][0])i++;const f=Math.max(0,Math.min(1,(z-S[i][0])/(S[i+1][0]-S[i][0])));return [S[i][1]+(S[i+1][1]-S[i][1])*f,S[i][2]+(S[i+1][2]-S[i][2])*f,S[i][3]+(S[i+1][3]-S[i][3])*f]};
+const pmTop=z=>{const a=pmAt(z);return a[2]+a[1]/2};
+const pmSurf=(z,wc)=>{const a=pmAt(z),q=Math.min(.95,wc/a[0]);return a[2]+a[1]/2*Math.pow(1-Math.pow(q,2.1),1/2.1)};
+/* the invasion stripes of June 1944: five bands of 18 inches (white, black, white, black, white), round the rear fuselage from x = 6.95 m and across both wings from s = .82 m. The loft of the fuselage gets a pair of rows at every edge, so the bands are crisp and every row knows its band (b) */
+const PMB0=6.95,PMB1=.82,PMBW=.457;
+const PMLR=(()=>{const L=PMS.map(a=>({z:a[0],row:a}));for(let k=0;k<6;k++){const z=pmz(PMB0+PMBW*k);[z-.0006,z+.0006].forEach(zz=>{const a=pmAt(zz);L.push({z:zz,row:[zz,a[0],a[1],a[2]]})})}
+ L.sort((p,q)=>p.z-q.z);L.forEach(r=>{const t=(r.z/PMU+PMX0-PMB0)/PMBW,b=Math.floor(t+1e-9);r.b=(t>-1e-6&&b>=0&&b<5)?b:-1});return L})();
+/* the spinner: [x, radius] from the tip */
+const PMP=[[0,.012],[.05,.075],[.14,.15],[.28,.21],[.42,.25],[.55,.27],[.65,.275]];
+/* the bubble canopy: [x, width, height of the glass above the deck] */
+const PMC=[[3.1,.42,.02],[3.25,.7,.22],[3.5,.76,.42],[3.85,.78,.58],[4.3,.76,.66],[4.75,.7,.6],[5.15,.6,.48],[5.5,.44,.34],[5.85,.26,.16],[6.05,.1,.04]].map(([x,w,u])=>[pmz(x),w*PMU,u*PMU]);
+const pmCw=z=>{let i=0;while(i<PMC.length-2&&z>PMC[i+1][0])i++;const A=PMC[i],B=PMC[i+1],f=Math.max(0,Math.min(1,(z-A[0])/(B[0]-A[0])));return A[1]+(B[1]-A[1])*f};
+/* the wing: [s, leading edge x, chord, thickness] in real metres from the centre line; straight taper, rounded tip, 5 degrees of dihedral, the chord line 0.46 m under the thrust line at the root (21.8 m2) */
+const PMW=[[0,3.5,2.8,.15],[.42,3.54,2.66,.15],[1,3.62,2.5,.145],[2,3.74,2.25,.14],[3,3.88,1.98,.13],[4,4.02,1.72,.12],[5,4.16,1.42,.115],[5.4,4.22,1.2,.11],[5.6,4.25,.85,.1],[5.66,4.26,.5,.08]];
+const pmWat=s=>{let i=0;while(i<PMW.length-2&&s>PMW[i+1][0])i++;const A=PMW[i],B=PMW[i+1],f=Math.max(0,Math.min(1,(s-A[0])/(B[0]-A[0])));return {le:A[1]+(B[1]-A[1])*f,c:A[2]+(B[2]-A[2])*f,t:A[3]+(B[3]-A[3])*f}};
+const PMD=5*Math.PI/180,PMYW=-.46,pmWy=s=>pmy(PMYW+s*Math.tan(PMD));
 /* bare polished metal: panels that differ a little from each other, streaks along the flow */
 function pmMetal(x,y,z){const k=.94+.1*acF(x*13,y*13,z*7,2)+.04*acN(x*40,y*40,z*9),w=.97+.06*acN(Math.floor(z*14)+.5,Math.floor(x*10)+.5,Math.floor(y*10)+.5);return [PMK.NM[0]*k*w,PMK.NM[1]*k*w,PMK.NM[2]*k*w]}
-function pmFus(p,u,v){const x=p[0],y=p[1],z=p[2],yc=pmL(v,3),h=pmL(v,2);let c=pmMetal(x,y,z);
- /* olive-drab anti-glare panel on top of the nose */const ag=acSS(0,.016,y-(yc+h*.2))*(1-acSS(-.41,-.35,z))*acSS(.07,.052,Math.abs(x)*1.2)*1;c=acMix(c,PMK.AG,Math.min(1,ag));
- /* the alternating bands of the invasion stripes round the rear fuselage */
- const sb=(z-.215)/.052,si=Math.floor(sb);if(sb>0&&si<5){const fr=sb-si,e=acSS(0,.08,fr)*(1-acSS(.92,1,fr));c=acMix(c,si%2?[.06,.06,.07]:[.9,.9,.88],e)}
- const so=Math.exp(-Math.pow((y-.04)/.026,2))*acSS(-.62,-.56,z)*(1-acSS(-.36,-.26,z))*acSS(.03,.06,Math.abs(x));return [c[0]*(1-.35*so),c[1]*(1-.35*so),c[2]*(1-.32*so)]}
-const PMC=[[-.3,.04,.02,.09],[-.27,.08,.075,.108],[-.2,.1,.115,.13],[-.1,.1,.12,.135],[0,.09,.1,.132],[.07,.06,.06,.12],[.12,.028,.02,.102]];
-function pmCan(p,u,v){const fr=Math.abs(v-1.1)<.16||Math.abs(v-3.4)<.1||v>5.35||p[1]<.094||(v<2&&Math.abs(p[0])<.0045);return fr?pmMetal(p[0],p[1],p[2]).map(c=>c*.8):WB.GL}
-function geoP51(){const g=new Geo(),K=acKit2(g),cs=[],CM=WB.CM,NM=PMK.NM,BK=WB.BK,RD=[.78,.12,.1];
- const F=PMS.map(a=>K.ring(a[0],a[1],a[2],a[3],2.2,28));loftS(g,F,{sub:3,col:pmFus});K.cap(F[F.length-1],[0,.046,.66],pmMetal(0,.046,.66));K.cap(F[0],[0,.012,-.715],[.05,.05,.055]);
- loftS(g,[[-.762,.088,.088],[-.79,.08,.08],[-.82,.056,.056],[-.845,.028,.028],[-.858,.008,.008],[-.863,.002,.002]].map(a=>K.ring(a[0],a[1],a[2],.012,2,20)),{sub:2,col:RD});
- /* the radiator scoop under the belly, the long dorsal fillet, the bubble canopy */
- {const R=[[-.16,.05,.03,-.07],[-.1,.09,.07,-.085],[.04,.09,.09,-.1],[.2,.07,.08,-.085],[.34,.032,.02,-.05]].map(a=>K.ring(...a,2,16));loftS(g,R,{sub:2,col:(p,u,v)=>v<.45?[.08,.08,.09]:pmMetal(p[0],p[1],p[2])});K.cap(R[0],[0,-.07,-.13],[.07,.07,.08])}
- loftS(g,[[.0,.01,.01,.092],[.14,.014,.05,.106],[.3,.014,.07,.112],[.46,.01,.07,.1],[.56,.006,.05,.086]].map(a=>K.ring(...a,2,10)),{sub:2,col:(p)=>pmMetal(p[0],p[1],p[2])});
- loftS(g,PMC.map(a=>K.ring(...a,2,18,.088)),{sub:3,col:pmCan});
- [1,-1].forEach(sd=>{for(let q=0;q<6;q++){const z=-.58+q*.034;acRod(g,[sd*.056,.036,z],[sd*.078,.03,z+.014],.0082,[.32,.22,.16],7,.0072)}});
- acRod(g,[0,.11,.3],[0,.17,.325],.003,[.14,.14,.15],6);
- const sec=[{s:0,le:-.4,c:.37,t:.15},{s:.25,le:-.37,c:.31,t:.14},{s:.8,le:-.285,c:.17,t:.1},{s:.82,le:-.28,c:.14,t:.06}];
- const stripe=s=>s>.18&&s<.4?(Math.floor((s-.18)/.044)%2?[.06,.06,.07]:[.9,.9,.88]):null;
- cs.push(...K.surf({st:sec,cam:[.02,.4],P:PH(-.065,6*Math.PI/180),col:(s,u,sd,up)=>stripe(s)||CM,cuts:[{s0:.14,s1:.43,u:.72,ch:'flp',sgn:1,max:.9,k:.9},{s0:.45,s1:.77,u:.76,ch:'ail',sgn:-1,mir:true,col:CM}]}));
- [1,-1].forEach(sd=>g.box(sd*.8,-.065+.8*Math.tan(6*Math.PI/180)+.002,-.265,.012,.008,.02,sd>0?[.1,.8,.2]:[.9,.1,.08],0,5));
- cs.push(...K.surf({st:[{s:0,le:.44,c:.18,t:.09},{s:.24,le:.5,c:.12,t:.08},{s:.3,le:.54,c:.07,t:.06}],P:PH(.035,0),col:()=>CM,cut:{s0:.015,s1:.28,u:.6,ch:'ele',sgn:1,col:CM}}));
- cs.push(...K.surf({st:[{s:0,le:.2,c:.44,t:.07},{s:.05,le:.34,c:.3,t:.08},{s:.22,le:.48,c:.15,t:.08},{s:.27,le:.53,c:.09,t:.06}],P:PV(.05),sides:[1],col:()=>CM,cut:{s0:.03,s1:.25,u:.62,ch:'rud',sgn:1,mir:true,col:RD}}));
- acWheelGear(K,g,cs,{mains:[1,-1].map(sd=>({top:[sd*.2,-.04,-.3],x:sd*.21,y:-.2,z:-.33,r:.055,w:.028,lr:.009,door:[[sd*.225,-.07,-.36],[sd*.225,-.07,-.27],[sd*.235,-.16,-.27],[sd*.235,-.16,-.36]],dcol:[.6,.62,.66]})),steer:{top:[0,.045,.58],x:0,y:-.025,z:.6,r:.024,w:.014,tail:true},leg:[.62,.64,.68],tyre:[.08,.08,.09],rt:{main:{dir:'in',k:1.5},steer:{sgn:1,k:1.5}}});
- return {g,cs,prop:{n:4,r:.22,p:.24,z:-.765,y:.012,col:[.08,.08,.09],tip:WB.YEL},gm:[-.255,-.33],gt:[-.049,.6]}}
-ACFIN.p51={gloss:9,refine:.03,soft:56,
- paint:(x,y,z,r,g,b)=>{if(r>.45&&g<.14&&Math.abs(r-b)<.06)return pmMetal(x,y,z)},
+/* clear glass; behind it (from the sixth ring on) the fairing is painted metal. The frames are thin rods laid over the glass (see geoP51) */
+function pmCan(p,u,v){return v>7.4?WB.CM:PMK.GL}
+function geoP51(){const g=new Geo(),K=acKit2(g),cs=[],CM=WB.CM,U=PMU,DK=PMK.DK,RD=PMK.RD;
+ /* the fuselage and the cowling in one smooth loft (the bands of the invasion stripes are coloured by their rows); a dark recess behind the spinner, the closed tail */
+ const F=PMLR.map(r=>K.ring(r.row[0],r.row[1],r.row[2],r.row[3],2.1,36));
+ loftS(g,F,{sub:3,col:(p,u,v)=>{const b=PMLR[Math.min(PMLR.length-1,Math.floor(v+1e-9))].b;return b<0?CM:b%2?PMK.BK:PMK.WH}});
+ K.cap(F[0],[0,.02,pmz(.62)+.05],DK);K.cap(F[F.length-1],[0,pmy(.095),pmz(9.55)+.004],CM);
+ /* the spinner */
+ {const SP=PMP.map(([x,r])=>K.ring(pmz(x),2*r*U,2*r*U,.02,2,28));loftS(g,SP,{sub:3,col:RD});K.cap(SP[0],[0,.02,pmz(-.03)],RD)}
+ /* the chin scoop under the nose: the air for the carburettor and the oil cooler */
+ {const R=[[1.4,.1,-.53,-.5],[1.47,.3,-.66,-.46],[1.75,.36,-.72,-.4],[2.25,.36,-.74,-.4],[2.7,.28,-.7,-.4],[3.05,.12,-.64,-.4]].map(([x,w,yb,yt])=>K.ring(pmz(x),w*U,(yt-yb)*U,pmy((yt+yb)/2),3,16));
+  loftS(g,R,{sub:2,col:(p,u,v)=>v<.45?DK:CM});K.cap(R[0],[0,pmy(-.52),pmz(1.36)],DK);K.cap(R[R.length-1],[0,pmy(-.5),pmz(3.1)],CM)}
+ /* the radiator scoop under the belly: the dark mouth in front, the long taper behind */
+ {const R=[[4.7,.46,-.76,-.5],[4.78,.58,-.84,-.5],[5.1,.62,-.89,-.48],[5.7,.62,-.9,-.46],[6.2,.56,-.8,-.44],[6.7,.4,-.64,-.4],[6.95,.2,-.52,-.38]].map(([x,w,yb,yt])=>K.ring(pmz(x),w*U,(yt-yb)*U,pmy((yt+yb)/2),3.2,18));
+  loftS(g,R,{sub:3,col:(p,u,v)=>v<.45?DK:CM});K.cap(R[0],[0,pmy(-.65),pmz(4.66)],DK);K.cap(R[R.length-1],[0,pmy(-.46),pmz(7)],DK)}
+ /* the dorsal fillet: a low, thin wedge that rises from the deck behind the canopy and runs into the leading edge of the fin ([x, width, height of the crest above the deck]) */
+ {const R=[[5.5,.08,.02],[5.95,.16,.13],[6.5,.24,.26],[7,.28,.38],[7.5,.27,.46],[7.95,.22,.5],[8.4,.14,.44]].map(([x,w,h])=>{const z=pmz(x),t=pmTop(z);return K.ring(z,w*U,2*h*U,t,1.6,14,t-.012)});loftS(g,R,{sub:3,col:CM});K.cap(R[R.length-1],[0,pmTop(pmz(8.4))+.03,pmz(8.55)],CM)}
+ /* the bubble canopy: the sill sinks into the skin of the fuselage at the sides; the frames are thin rods that follow the glass (24 points round each ring: 0 and 12 are the sill, 6 the crown) */
+ {const CR=loftS(g,PMC.map(([z,w,up])=>{const t=pmTop(z),fl=pmSurf(z,w)-.012;return K.ring(z,w,2*(t+up-fl),fl,2,24,fl)}),{sub:3,col:pmCan});
+  const FR=PMK.FR,out=(R,q,d)=>{const fl=R[0][1],a=q[0],b=q[1]-fl,l=Math.hypot(a,b)||1;return [q[0]+a/l*d,q[1]+b/l*d,q[2]]};
+  /* an arch round the glass at ring i, a post along it between two rings, the rails along both sills */
+  const arch=(i,r)=>{const R=CR[i*3];for(let k=0;k<12;k++)acRod(g,out(R,R[k],.0016),out(R,R[k+1],.0016),r,FR,6,r,0)};
+  const post=(k,j0,j1,r)=>{for(let j=j0;j<j1;j++)acRod(g,out(CR[j],CR[j][k],.0016),out(CR[j+1],CR[j+1][k],.0016),r,FR,6,r,0)};
+  arch(2,.0034);arch(7,.003);post(6,0,6,.0028);post(3,0,6,.0026);post(9,0,6,.0026);
+  for(const k of [0,12])for(let j=0;j<8*3;j++){const A=CR[j][k],B=CR[j+1][k],ya=A[1]+.0145,yb=B[1]+.0145;acRod(g,[A[0]*1.002,ya,A[2]],[B[0]*1.002,yb,B[2]],.0034,FR,6,.0034,0)}}
+ /* six exhaust stacks a side on the cowling (dark, heat-stained metal), and the short aerial mast on the fillet */
+ [1,-1].forEach(sd=>{for(let q=0;q<6;q++){const z=pmz(1.5+q*.17);acRod(g,[sd*.053,pmy(.1),z],[sd*.066,pmy(.075),z+.016],.0072,[.2,.15,.12],7,.0062)}});
+ acRod(g,[0,pmy(.6),pmz(6.7)],[0,pmy(.6)+.06,pmz(6.78)],.003,[.14,.14,.15],6);
+ /* the wing, from the centre line: flaps from the fuselage to the middle of the span, ailerons outboard; a station at every edge of an invasion stripe, so that the stripes are crisp */
+ const sw=[0,.42,1,1.5,1.95,2.6,3.2,3.8,4.4,5,5.4,5.6,5.66];for(let k=0;k<6;k++)sw.push(PMB1+PMBW*k);sw.sort((a,b)=>a-b);
+ const WS=sw.map(s=>{const q=pmWat(s);return {s:s*U,le:pmz(q.le),c:q.c*U,t:q.t}});
+ const wcol=(s)=>{const b=Math.floor((s/U-PMB1)/PMBW);return b>=0&&b<5?(b%2?PMK.BK:PMK.WH):CM};
+ cs.push(...K.surf({st:WS,cam:[.02,.4],P:PH(pmy(PMYW),PMD),col:wcol,cuts:[{s0:.5*U,s1:3*U,u:.73,ch:'flp',sgn:1,max:.9,k:.9},{s0:3.15*U,s1:5.3*U,u:.76,ch:'ail',sgn:-1,mir:true,col:CM}]}));
+ /* the six .50 inch guns: three muzzles in the leading edge of each wing; the pitot tube under the left wing; the wing tip lights */
+ [1,-1].forEach(sd=>[2.7,3.15,3.6].forEach(s=>{const x=sd*s*U,y=pmWy(s)-.003,zl=pmz(pmWat(s).le);acRod(g,[x,y,zl+.012],[x,y,zl-.02],.0034,[.15,.15,.16],7,.003)}));
+ {const s=3.9,y=pmWy(s)-.03,zl=pmz(pmWat(s).le);acRod(g,[-s*U,y,zl+.02],[-s*U,y,zl-.05],.0024,[.7,.7,.72],6,.0016)}
+ [1,-1].forEach(sd=>g.box(sd*5.6*U,pmWy(5.6)+.002,pmz(pmWat(5.6).le+.3),.012,.008,.02,sd>0?[.1,.8,.2]:[.9,.1,.08],0,5));
+ /* the tailplane with its elevators, the fin and its rudder (the root of the fin is the dorsal fillet) */
+ const T=a=>a.map(([s,x,c,t])=>({s:s*U,le:pmz(x),c:c*U,t}));
+ cs.push(...K.surf({st:T([[0,8,1.55,.1],[.7,8.12,1.35,.09],[1.4,8.3,1.05,.08],[1.85,8.42,.78,.07],[2,8.47,.55,.06]]),P:PH(pmy(.05),0),col:()=>CM,cut:{s0:.12*U,s1:1.95*U,u:.55,ch:'ele',sgn:1,col:CM}}));
+ cs.push(...K.surf({st:T([[0,7,2.8,.09],[.35,7.35,2.45,.09],[.8,7.9,1.95,.085],[1.25,8.4,1.45,.08],[1.65,8.8,1.02,.07],[1.85,9,.8,.06],[1.95,9.08,.62,.05]]),P:PV(pmy(.15)),sides:[1],col:()=>CM,cut:{s0:.12*U,s1:1.9*U,u:.6,ch:'rud',sgn:1,mir:true,col:RD}}));
+ /* the short legs from the wing, the wheels with the long door outside; the tail wheel steers with the rudder */
+ acWheelGear(K,g,cs,{mains:[1,-1].map(sd=>({top:[sd*1.65*U,pmy(-.45),pmz(3.95)],x:sd*1.78*U,y:pmy(-1.02),z:pmz(4.1),r:.345*U,w:.2*U,lr:.0085,door:[[sd*2.02*U,pmy(-.5),pmz(3.85)],[sd*2.02*U,pmy(-.5),pmz(4.25)],[sd*2.06*U,pmy(-.98),pmz(4.22)],[sd*2.06*U,pmy(-.98),pmz(3.88)]],dcol:[.6,.62,.66]})),
+  steer:{top:[0,pmy(-.14),pmz(8.85)],x:0,y:pmy(-.36),z:pmz(9.05),r:.115*U,w:.07*U,tail:true},leg:[.62,.64,.68],tyre:[.08,.08,.09],rt:{main:{dir:'in',k:1.5},steer:{sgn:1,k:1.5}}});
+ return {g,cs,prop:{n:4,r:1.7*U,p:.24,z:pmz(.5),y:.02,col:[.08,.08,.09],tip:WB.YEL},gm:[pmy(-1.02)-.345*U,pmz(4.1)],gt:[pmy(-.36)-.115*U,pmz(9.05)]}}
+ACFIN.p51={gloss:9,soft:56,
+ /* a finer mesh where the paint has an edge or a marking sits: the anti-glare panel and its edge, the soot behind the stacks, the floor of the cockpit, the rear fuselage with the insignia, the wing root, the fin with its number */
+ refine:(x,y,z)=>{const ax=Math.abs(x);
+  if(z<pmz(3.2)&&y>pmy(.1)&&ax<.07)return .01;
+  if(z>pmz(1.3)&&z<pmz(4)&&ax>.04&&ax<.075&&y>pmy(-.2)&&y<pmy(.5))return .016;
+  if(z>pmz(3)&&z<pmz(6.1)&&ax<.06&&y>pmy(.4))return .012;
+  if(z>pmz(5.3)&&z<pmz(9.6)&&y<pmy(.6)&&ax<.07)return .02;
+  if(ax>.13&&ax<.84&&z>pmz(3.3)&&z<pmz(6.5))return ax<.3?.016:.024;
+  if(ax<.02&&z>pmz(7.7)&&z<pmz(9.3)&&y>pmy(.5)&&y<pmy(1.6))return .012;
+  return .034},
+ paint:(x,y,z,r,g,b,nx,ny)=>{if(!(r>.45&&g<.14&&Math.abs(r-b)<.06))return;let c=pmMetal(x,y,z);const A=pmAt(z),ax=Math.abs(x);
+  /* the olive drab anti-glare panel on the top of the nose, from the cowling to the windscreen */
+  const od=acSS(0,.008,y-(A[2]+A[1]*.2))*(1-acSS(pmz(2.95),pmz(3.12),z))*acSS(pmz(.62),pmz(.7),z)*acSS(.0705,.0665,ax*1.2);if(od>0)c=acMix(c,PMK.AG.map(v=>v*(.92+.16*acN(x*30,y*30,z*30))),Math.min(1,od));
+  /* inside the canopy the top of the fuselage is the cockpit: interior green, not shiny aluminium */
+  if(z>pmz(3.1)&&z<pmz(5.55)&&y>A[2]+A[1]*.3&&ax<pmCw(z)/2-.002)c=acMix(c,PMK.IN.map(v=>v*(.9+.2*acN(x*25,y*25,z*25))),1);
+  return c},
  kind:(x,y,z,r,g,b)=>(b>r+.04&&b>g&&r<.2)?9:null,
- decals:(M)=>{const G=M.g,rd=(c,d,u,parts)=>acDecal(G,{c,d,u,H:.3,parts,step:.011});
-  const SB=(r)=>[{rect:[-r*2.5,-r*.31,r*2.5,r*.31],col:WB.RED,lay:0},{ring:[0,r],col:WB.BLU,lay:1},{rect:[r*.98,-r*.17,r*2.3,r*.17],col:WB.WHT,lay:1},{rect:[-r*2.3,-r*.17,-r*.98,r*.17],col:WB.WHT,lay:1},{poly:wbStar(r*.82),col:WB.WHT,lay:2}];
-  const S=SB(.043);rd([0,.03,.14],[-1,0,0],[0,0,-1],S);rd([0,.03,.14],[1,0,0],[0,0,1],S);
-  const W=SB(.05);rd([-.6,.3,-.2],[0,-1,0],[1,0,0],W);rd([.6,-.3,-.2],[0,1,0],[-1,0,0],W)}};
+ decals:(M)=>{const all=o=>acDecalAll(M,o),sideD=sd=>sd>0?{d:[-1,0,0],u:[0,0,-1]}:{d:[1,0,0],u:[0,0,1]},US=wbUS(.0395),W5=wbUS(.052);
+  /* the star and bars behind the canopy, both sides; the insignia on the top of the left wing and the underside of the right one; the serial number on the fin */
+  [1,-1].forEach(sd=>all({c:[0,pmy(0),pmz(6.1)],...sideD(sd),H:.34,parts:US,step:.005}));
+  const zw=pmz(pmWat(4.4).le+pmWat(4.4).c*.5);all({c:[-4.4*PMU,.3,zw],d:[0,-1,0],u:[1,0,0],H:.34,parts:W5,step:.005});all({c:[4.4*PMU,-.3,zw],d:[0,1,0],u:[-1,0,0],H:.34,parts:W5,step:.005});
+  const SN=wbTxt('463221',.026,PMK.BK,6,.2);[1,-1].forEach(sd=>all({c:[0,pmy(.9),pmz(8.5)],...sideD(sd),H:.3,parts:wbShift(SN.parts,-SN.w/2,0),step:.0035}))}};
 
 /* the two trainers: the number of the aircraft on both sides of the fuselage */
 ACFIN.tr1={gloss:9,decals:(M)=>{const G=M.g,N=wbNum('07',.055,[.12,.12,.14]);acDecal(G,{c:[0,.046,.2],d:[-1,0,0],u:[0,0,-1],H:.3,parts:N,step:.011});acDecal(G,{c:[0,.046,.2],d:[1,0,0],u:[0,0,1],H:.3,parts:N,step:.011})}};
@@ -14068,7 +14124,7 @@ function wxMake(o){const SOOT=[.09,.08,.075],OIL=[.17,.12,.08],BARE=o.bare||[.66
   if(ny<-.45)mix([.12,.1,.09],.2+.25*acN(x*9,y*9,z*9));
   if(ny>.6){const f=acN(x*5+9,y*5,z*5)-.5;mix(f>0?[.78,.76,.68]:[.2,.2,.17],Math.abs(f)*.3)}
   return ch?c:undefined}}
-if(ACFIN.p51)ACFIN.p51.wear=wxMake({ex:[[.075,.03,-.385],[-.075,.03,-.385],[.075,.0,-.34],[-.075,.0,-.34]],oil:[[.14,-.2],[-.14,-.2]],s:.9});
+if(ACFIN.p51)ACFIN.p51.wear=wxMake({ex:[[.068,.032,-.29],[-.068,.032,-.29],[.068,.014,-.25],[-.068,.014,-.25]],oil:[[.14,-.04],[-.14,-.04]],guns:[[.393,-.0125,-.089],[-.393,-.0125,-.089],[.458,-.0068,-.08],[-.458,-.0068,-.08],[.523,-.0011,-.071],[-.523,-.0011,-.071]],s:.9});
 if(ACFIN.spit)ACFIN.spit.wear=wxMake({ex:[[.066,.036,-.388],[-.066,.036,-.388],[.066,.02,-.33],[-.066,.02,-.33]],oil:[[.14,-.2],[-.14,-.2]],s:.9});
 /* v156: rivets, panel lines and covering on every model; the metal Mustang like the Jug, the camouflaged Spitfire in satin paint with fabric control surfaces, the two trainers in film with hatch lines and ribs and an oil mist from the nitro engine */
 {const skC=(f,a,b)=>(x,y,z)=>{const q=f(x,y,z);return q&&[q[0],q[1],q[2]?b:a,q[3]]};
@@ -14086,7 +14142,7 @@ const PLDZ={bf109:-.09,fw190:-.088,fg1d:-.135};
 function geoDz(M,dz){const sh=G=>{for(let i=2;i<G.p.length;i+=3)G.p[i]+=dz;for(let i=2;i<G.L.length;i+=3)G.L[i]+=dz};sh(M.g);M.cs.forEach(c=>{sh(c.g);c.a=[c.a[0],c.a[1],c.a[2]+dz];c.b=[c.b[0],c.b[1],c.b[2]+dz];if(c.h2)c.h2={...c.h2,a:[c.h2.a[0],c.h2.a[1],c.h2.a[2]+dz]}});
  if(M.gm)M.gm=[M.gm[0],M.gm[1]+dz];if(M.gt)M.gt=[M.gt[0],M.gt[1]+dz];if(M.prop)M.prop={...M.prop,z:M.prop.z+dz}}
 /* ---- v165: transparent canopies with a pilot and a cockpit under them. The glass of each warbird (its colour, ACGL) is cut out of the body into a mesh of its own, drawn last and see-through, so that what is under it shows: the cockpit (floor, side consoles, instrument panel with dials, gun sight, control stick, seat armour) and the pilot (helmet, goggles, mask, shoulders) are built here, in the model's final coordinates (nose towards -z), from the numbers of ACPK. They are drawn with the body, but not in the pilot's own first-person view. ---- */
-const ACGL={p51:[.1,.16,.22],spit:[.1,.16,.22],p47:[.17,.25,.31],bf109:[.17,.25,.31],fw190:[.17,.25,.31],fg1d:[.17,.25,.31]};
+const ACGL={p51:[.07,.12,.17],spit:[.1,.16,.22],p47:[.17,.25,.31],bf109:[.17,.25,.31],fw190:[.17,.25,.31],fg1d:[.17,.25,.31]};
 function acGlassSplit(G,gc){const n=G.p.length/3,hu=G.u.length>0,gl=new Geo();if(hu)G.padU();let w=0;
  const isG=i=>Math.abs(G.c[i*3]-gc[0])<.03&&Math.abs(G.c[i*3+1]-gc[1])<.03&&Math.abs(G.c[i*3+2]-gc[2])<.03&&Math.abs(G.p[i*3])<.16&&G.p[i*3+1]>.09;
  for(let t=0;t+2<n;t+=3){const g3=isG(t)&&isG(t+1)&&isG(t+2);
@@ -14096,7 +14152,7 @@ function acGlassSplit(G,gc){const n=G.p.length/3,hu=G.u.length>0,gl=new Geo();if
  G.p.length=G.n.length=G.c.length=w*3;G.k.length=w;if(hu)G.u.length=w*4;gl.kd=9;return gl}
 /* dy: the deck under the canopy, hy and hz: the head, zi: the instrument panel, hw: half the width of the cockpit, S: the size of the pilot against a real one at this scale (a little over, so that he can be seen from the chase camera), N: the nation */
 const ACPK={
- p51:{dy:.134,hy:.205,hz:-.05,zi:-.292,hw:.05,S:1.2,N:'us'},
+ p51:{dy:.134,hy:.205,hz:-.045,zi:-.185,hw:.052,S:1.2,N:'us'},
  spit:{dy:.136,hy:.172,hz:-.15,zi:-.3,hw:.042,S:1.15,N:'gb'},
  p47:{dy:.136,hy:.198,hz:-.02,zi:-.17,hw:.066,S:1.2,N:'us'},
  bf109:{dy:.127,hy:.188,hz:-.1,zi:-.235,hw:.05,S:1.12,N:'de'},
