@@ -8010,13 +8010,14 @@ const SFX={ctx:null,vol:(()=>{try{const v=parseFloat(localStorage.getItem('fpv-v
   else if(kind==='tree'){this.bnoise(.35+k*.2,.05*k,0,'bandpass',3200,.5,1.6);this.bnoise(.06,.07*k,.02,'highpass',1800,.9,5);this.tone(130,.08,'sine',.03*k,0,80)}
   else{this.tone(96,.12+k*.08,'sine',.07*k,0,50);this.bnoise(.1+k*.06,.08*k,0,'lowpass',700,.9,3)}},
  noise(d=.3,v=.05,t=0,hp=900){const c=this.ac();if(!c)return;const n=c.sampleRate*d,b=c.createBuffer(1,n,c.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=(Math.random()*2-1)*(1-i/n);const s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();s.buffer=b;f.type='highpass';f.frequency.value=hp;g.gain.value=v*this.vol*1.6;s.connect(f).connect(g).connect(c.destination);s.start(c.currentTime+t)},
- play(k,...a){if(!this.on||!cfg('sound'))return;if(this.ui&&this.ui[k]){try{this.ui[k].apply(this,a)}catch(e){}return}try{({
+ /* v167: one transition sound per transition: a mode switch used to play open, the mission card's whoosh and then open again as the stage screen arrived, three swishes inside a second */
+ once(k,ms){const n=performance.now(),o=this._o||(this._o={});if(n-(o[k]||-1e9)<ms)return false;o[k]=n;return true},
+ play(k,...a){if(!this.on||!cfg('sound'))return;if((k==='open'||k==='whoosh')&&!this.once('trans',1200))return;if(this.ui&&this.ui[k]){try{this.ui[k].apply(this,a)}catch(e){}return}try{({
   click:()=>this.tone(1250,.045,'square',.025,0,700),
   gear:()=>{this.tone(95,.62,'sawtooth',.022,0,70);this.bnoise(.62,.05,0,'bandpass',520,.9,.6);this.tone(60,.1,'sine',.09,.6,38);this.bnoise(.09,.09,.6,'lowpass',420,.8,4)},
   flap:()=>{this.tone(150,.4,'sawtooth',.016,0,118);this.bnoise(.4,.035,0,'bandpass',820,.9,.8);this.tone(120,.06,'sine',.05,.4,80)},
   gwarn:()=>{this.tone(980,.13,'square',.03);this.tone(740,.13,'square',.03,.17)},
   nav:()=>{this.tone(620,.06,'triangle',.05);this.tone(930,.07,'triangle',.045,.05)},
-  open:()=>{this.tone(320,.16,'triangle',.05,0,880);this.noise(.15,.02,0,2500)},
   select:()=>{this.tone(880,.07,'sine',.06);this.tone(1320,.12,'sine',.05,.06)},
   coin:()=>{this.tone(988,.07,'square',.035);this.tone(1319,.22,'square',.035,.07);this.tone(2637,.18,'sine',.02,.07)},
   combo:()=>{[988,1319,1568,2093].forEach((f,i)=>this.tone(f,.12,'square',.03,i*.05));this.noise(.18,.02,.15,5000)},
@@ -8075,7 +8076,9 @@ SFX.ui={
  stamp(){this.tone(110,.18,'sine',.1,0,46);this.bnoise(.1,.07,0,'lowpass',900,.8,3);this.tone(1760,.4,'triangle',.02,.02);this.tone(2637,.32,'sine',.012,.02)},
  xp(){this.tone(300,.8,'sine',.03,0,900);this.bnoise(.8,.014,0,'bandpass',2200,.9,.6);[1175,1480,1760].forEach((f,i)=>this.tone(f,.22,'sine',.018,.7+i*.06))},
  unlock(){[784,988,1175,1568].forEach((f,i)=>this.tone(f,.22,'triangle',.04,i*.07));this.bnoise(.3,.018,.2,'highpass',5000,.6,2)},
- whoosh(){this.bnoise(.26,.022,0,'bandpass',700,.6,1.4);this.tone(220,.24,'sine',.012,0,520)}
+ whoosh(){this.bnoise(.26,.022,0,'bandpass',700,.6,1.4);this.tone(220,.24,'sine',.012,0,520)},
+ /* a window, a mode or a mission opens: three quick square-wave notes climbing a D-major arpeggio over a soft low thump. No hiss; short, a touch quieter than the sweep it replaces */
+ open(){const r=UIX.rnd(.012);this.tone(147,.1,'sine',.045,0,82);this.tone(587*r,.06,'square',.013);this.tone(880*r,.06,'square',.013,.055);this.tone(1175*r,.16,'square',.011,.11)}
 };
 /* the debrief as a beat-by-beat reveal: score counts up with soft ticks, stars land one at a time (rising pitch, sparks, a tap on phones), a record gets a stamp, XP sweeps in. A tap or click anywhere on the card skips to the end state; the buttons never wait (and a keyboard user can simply press the focused button). */
 function uiReward(M,r,st,stamp,hasXp){
