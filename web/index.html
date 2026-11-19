@@ -10272,9 +10272,28 @@ function vgHorizon(g,seed,rim,flat){const G=g.R,R=srnd(Math.floor(seed*97)+11),N
   const PL=rim==='dry'||rim==='rock'?[[.3,.24,.17],[.52,.42,.3],[.26,.2,.13],[.45,.35,.24]]:rim==='urban'?[[.22,.24,.28],[.34,.36,.4],[.2,.22,.25],[.3,.32,.36]]:[[.13,.2,.19],[.22,.3,.27],[.09,.15,.09],[.17,.25,.13]];
   if(!flat){ridge(296,318,1,PL[0],PL[1],1.1);
   ridge(214,236,2,PL[2],PL[3],.9)}
-  else{const dry=rim==='dry',A=dry?[.62,.55,.4]:[.4,.5,.32],B=dry?[.74,.67,.5]:[.56,.64,.44],C=dry?[.55,.49,.36]:[.34,.44,.28],D=dry?[.68,.61,.46]:[.5,.58,.4];ridge(330,352,1,A,B,.62);ridge(262,282,2,C,D,.55)}
+  /* open flying fields (flat): no fixed ridges here, hzGeo() builds hills that travel with the camera */
   if(rim&&rim!=='rock'&&rim!=='urban'||rim==='rock'||rim==='urban'){const nT=rim==='dry'||rim==='rock'||rim==='urban'?0:70,conif=rim==='conifer';for(let i=0;i<nT;i++){const a=R()*6.2832,rr=224+R()*8,h=flat?0:Math.max(3,hf(a,2)*.9);if(vgNoise(Math.cos(a)*3+seed,Math.sin(a)*3)<.3)continue;vgFar(g,Math.sin(a)*rr,-Math.cos(a)*rr,(conif||R()<.4?11:8)+R()*7,R,conif||R()<.4?'fir':'oak',h*.7)}
    vgRim(g,R,{kinds:rim==='conifer'?['fir']:rim==='dry'?['shrub']:['oak','fir'],n:rim==='conifer'?150:rim==='dry'?40:rim==='temperate'?100:0,r0:rim==='dry'?70:108})}}
+
+/* the far hills of an open flying field (planes): two ridges in a ring that travels with the camera (see render). The old ridges stood at the field: an aircraft flew through them and out over the edge of the ground into an empty sky. Whole-number frequencies only, so the ring closes without a seam; the foot of every ridge fades into the haze colour. */
+function hzGeo(seed,rim){const g=new Geo(),G=g.R,TAU=6.2832,N=360,dry=rim==='dry'||rim==='rock',R=srnd(Math.floor(seed*131)+7),HZ=[.66,.76,.82],
+  RW=[[0,-1,0,1],[.25,.08,.15,.4],[.55,.38,.45,.06],[.8,.72,.8,0],[1,1,1,0],[1.5,-1,.9,.3]],nr=RW.length;
+ const ridge=(r0,r1,Hlo,Hhi,lo,hi,k)=>{const dR=r1-r0,ph=[0,0,0,0,0,0,0].map(()=>R()*TAU),fr=[2,3,5,8,13,21,34],am=[.34,.28,.22,.16,.1,.06,.04],
+   pf=a=>{let v=0;for(let i=0;i<7;i++)v+=am[i]*Math.sin(a*fr[i]+ph[i]);return Math.max(0,Math.min(1,.5+v/.9))},Hh=[];
+  for(let i=0;i<N;i++)Hh.push(Hlo+(Hhi-Hlo)*pf(i/N*TAU));
+  const Y=(q,h)=>q[1]<0?-3:h*q[1];
+  /* one vertex: position, a normal from the slope along the radius (never flatter than 0.9, or the crest would turn away from an eye below it and the shader would flip it dark) and along the arc (so the spurs catch the light), and a colour with patches of forest and pasture */
+  const vt=(i,j)=>{i=(i%N+N)%N;const a=i/N*TAU,q=RW[j],h=Hh[i],r=r0+dR*q[0],y=Y(q,h),rs=jj=>(Y(RW[jj+1],h)-Y(RW[jj],h))/((RW[jj+1][0]-RW[jj][0])*dR),
+    sr=Math.max(.9,j===0?rs(0):j===nr-1?rs(nr-2):(rs(j-1)+rs(j))/2),st=2.5*(Y(q,Hh[(i+1)%N])-Y(q,Hh[(i+N-1)%N]))/(2*r*TAU/N),
+    n=vgNrm(-sr*Math.sin(a)-st*Math.cos(a),1,sr*Math.cos(a)-st*Math.sin(a)),
+    nz=vgNoise(Math.cos(a)*7+seed+j*2.3,Math.sin(a)*7+seed*1.3+k*5)-.5,f=j===0?1:1+.34*nz+.07*Math.sin(a*37+ph[0])+.05*Math.sin(a*71+ph[1]);
+   return {p:[Math.sin(a)*r,y,-Math.cos(a)*r],n,c:vgSc(vgMix(vgMix(lo,hi,q[2]),HZ,q[3]),f)}};
+  for(let i=0;i<N;i++)for(let j=0;j<nr-1;j++){const A=vt(i,j),B=vt(i+1,j),C=vt(i+1,j+1),D=vt(i,j+1);
+   G.quadX(A.p,B.p,C.p,D.p,[A.c,B.c,C.c,D.c],0,[[0,0],[0,0],[0,0],[0,0]],[A.n,B.n,C.n,D.n])}};
+ if(dry){ridge(530,600,26,95,[.5,.4,.3],[.68,.56,.42],2);ridge(430,500,14,42,[.5,.38,.25],[.7,.56,.37],1)}
+ else{ridge(530,600,26,95,[.27,.35,.33],[.39,.48,.45],2);ridge(430,500,14,42,[.22,.32,.2],[.36,.46,.28],1)}
+ return G}
 
 /* stands of trees with bushes and a stone: [cx,cz,count,mix] -> collision entries pushed on T */
 function vgStands(g,R,T,list){if(g.nv)return;
@@ -10761,7 +10780,7 @@ const WXP={clear:{n:'בהיר',c:0,r:0,f:0,ceil:0},over:{n:'מעונן',c:65,r:0
 const wxLv=v=>v<=0?'ללא':v<25?'קל':v<50?'בינוני':v<75?'כבד':'קיצוני';
 function wxNorm(w){if(!w)return null;const o={c:+w.c||0,r:+w.r||0,f:+w.f||0,ceil:+w.ceil||0,w:+w.w||0};['c','r','f'].forEach(k=>o[k]=Math.max(0,Math.min(100,Math.round(o[k]))));o.ceil=o.c>0?Math.max(0,Math.min(40,o.ceil)):0;o.w=Math.max(0,Math.min(3,o.w|0));return o.c||o.r||o.f||o.w?o:null}
 function wxOf(l){return wxNorm(l?.cx?.wx||l?.wx)}
-function wxK(w){if(!w)return .000018;const f=w.f/100,r=w.r/100;return .000018+f*f*.03+r*.0016}
+function wxK(w,pl){const b=pl?.000006:.000018;if(!w)return b;const f=w.f/100,r=w.r/100;return b+f*f*.03+r*.0016}
 const wxVis=w=>Math.round(Math.sqrt(3/wxK(w)));
 function wxPreset(w){const n=wxNorm(w);if(!n)return 'clear';return Object.keys(WXP).find(k=>{const p=WXP[k];return p.c===n.c&&p.r===n.r&&p.f===n.f&&(p.ceil||0)===n.ceil&&(p.w||0)===(n.w||0)})||''}
 function wxTxt(w){w=wxNorm(w);if(!w)return 'בהיר, ראות מלאה';const a=[];if(w.c)a.push(`עננות ${w.c}%`);if(w.r)a.push(`גשם ${w.r}%`);if(w.f)a.push(`ערפל ${w.f}%`);if(w.ceil)a.push(`בסיס עננים ${w.ceil} מ׳`);if(w.w)a.push(`רוח ${CX_WIND[w.w].n}`);if(w.f||w.r)a.push(`ראות כ-${wxVis(w)} מ׳`);return a.join(' · ')}
@@ -10845,6 +10864,8 @@ class FPVSim{
     const gd=l.cx?.ground,bio=I.plane?(I.free&&SIM.plArea==='ruins'?'dry':'airfield'):BG?VS1.bio:(gd==='asphalt'||gd==='snow')?null:(gd==='sand'||gd==='dry')?'dry':'grass';
     if(!this.att&&bio&&SIM.gfx==='high'&&!l.cx?.terrain?.img){const RW_=I.free?RWYF:RWY;vgDress(g,{bio,cx:I.plane?0:st[0],cz:I.plane?(I.free?-115:-10):st[2]-8,R:srnd((l.no||1)*3+5),base:fc,pad:I.plane?null:[st[0],st[2],2.6],skip:I.plane?(x,z)=>Math.abs(x-RW_.x)<RW_.w/2+.6&&z<RW_.z0+1&&z>RW_.z1-1:null})}
     if(!this.att&&SIM.gfx==='high'&&M.trees.length){const rt=srnd((l.no||1)*7+3);M.trees.forEach(([tx,tz,th])=>vgTree(g,tx,tz,th*1.175,rt,'fir',{w:.235,t0:.33}))}this.vg=this.att?null:vgMesh(gl,g)}const sky=new Geo();sky.sphere(380,[1,1,1],24);this.sky=gl.mesh(sky);
+  /* open flying fields: the ground goes on for ever (one big sheet that travels with the camera) and the far hills travel with it too, so there is no edge of the world to fly off */
+  if(I.plane&&!this.att){const ap=new Geo();ap.quad([-1100,0,1100],[1100,0,1100],[1100,0,-1100],[-1100,0,-1100],fc,-1);this.world.aux={hz:gl.mesh(hzGeo((l.no||1)*1.7,I.free&&SIM.plArea==='ruins'?'dry':'temperate')),apron:gl.mesh(ap)}}
   if(bgS.p.length||bgS.L.length){bgS.padU();M.solid.padU();['p','n','c','k','u','L','LC'].forEach(f=>{for(const v of bgS[f])M.solid[f].push(v)})}this._sg=M.solid;{let ct=M.col.length?colCarve(M.col,misPath(I,K),.38):[];if(bgS.p.length){const P=bgS.p;for(let i=0;i+8<P.length;i+=9)ct.push([[P[i],P[i+1],P[i+2]],[P[i+3],P[i+4],P[i+5]],[P[i+6],P[i+7],P[i+8]]])}this.col=ct.length?colBuild(ct,Math.max(1,K)):null}if(I.plane){this.col=null;delete g.cyl;this.trees=g.cT||[];M.solid=new Geo();M.glass=new Geo()}this.mSolid=M.solid.p.length||M.solid.L.length?gl.mesh(M.solid):null;this.mGlass=M.glass.p.length?gl.mesh(M.glass):null;
   const rg=new Geo(),cp=I.free?[]:misPath(I,K),ac=[.89,.64,.23];this.cpath=I.free?null:cp;this.cpi=0;this.route=null;
   this.gates=l.basic?[]:I.ck.filter(c=>c.i>0&&pts[c.i]).map(c=>{const p=pts[c.i],q=pts[Math.min(pts.length-1,c.i+1)],pr=pts[Math.max(0,c.i-1)];let N=[q[0]-pr[0],q[1]-pr[1],q[2]-pr[2]];if(V.len(N)<1e-3)N=[0,0,-1];N=V.norm(N);
@@ -11170,7 +11191,7 @@ class FPVSim{
   this.perf(t);  const dt=Math.max(0,Math.min(.05,(t-this.last)/1000));this.last=t;const I=this.input();this.I=I;if(!this.att)immAuto(I);if(PREF.simrc&&!this.att){const R=this.rcEl&&this.rcEl.isConnected?this.rcEl:(this.rcEl=document.getElementById('simRC'));if(R&&!R.hidden)setSticks(R,I.thr,I.yaw,I.pit,I.rol)}
   this.acc+=dt;const h=1/240;let n=0;while(this.acc>=h&&n<20){this.pp=this.p.slice();this.pq=this.q.slice();this.step(h,I);this.acc-=h;n++}if(n>=20)this.acc=0;
   {const al=Math.max(0,Math.min(1,this.acc/h)),P0=this.p,Q0=this.q;if(this.pp&&!this.crash&&V.len(V.sub(P0,this.pp))<2){let pq=this.pq;if(pq[0]*Q0[0]+pq[1]*Q0[1]+pq[2]*Q0[2]+pq[3]*Q0[3]<0)pq=pq.map(x=>-x);this.p=P0.map((v,i)=>this.pp[i]+(v-this.pp[i])*al);this.q=Q.norm(Q0.map((v,i)=>pq[i]+(v-pq[i])*al))}this.render(t);wxFx(this,t);this.p=P0;this.q=Q0}if(this.armed&&!this.crash&&this.p[1]>.2&&!SIMM.lid)airTick(dt);simHud(this,I);guideTick(this,I);orientTick(this);MOTOR.set(this.armed&&!this.crash,Math.min(1,this.pwr()*1.05),V.len(this.v),this.plane?(ENGK[this.PK]||'nitro'):'quad:'+quadKey());if(MODE==='learn'){if(SIMM.lid)recTick(this,I,dt);else if(!this.mis)drillTick(this,dt)}this.raf=requestAnimationFrame(this.loop)}
- render(t){const gl=this.r.gl,c=this.cv,NT=!this.att&&!!this.night,TAC=this.att||(SIM.look!=='real'&&!NT),cam=this.att?'cine':(this.mis&&this.mis.ball&&SIM.cam==='fpv'?'chase':SIM.cam);this.r.tac=TAC;gl.uniform1f(this.r.u.uTac,TAC?1:0);gl.uniform1f(this.r.u.uNight,NT?1:0);gl.uniform1f(this.r.u.uGfx,SIM.gfx==='high'&&!TAC?1:0);{const W=this.fwind,wk=W?Math.min(1.8,.4+W.base*.16+W.gust*.04):.45,wd=W?W.dir:[.7,0,.7];gl.uniform1f(this.r.u.uT,(t||0)/1000);gl.uniform3f(this.r.u.uWnd,wd[0],wd[2],wk);gl.uniform1f(this.r.u.uTexOn,this.r.texOK?1:0);gl.uniform1f(this.r.u.uMS,this.r.ms?1:0);gl.uniform1f(this.r.u.uGL,this.gLay||0);const pd=this.padU||[0,0,0];gl.uniform4f(this.r.u.uPad,pd[0],pd[1],pd[2],0)}const WX=this.wx,ic=WX&&WX.ceil?Math.max(0,Math.min(1,(this.p[1]-(WX.ceil-.4))/.9)):0,FG=wxFog(NT,TAC,WX,ic);this.inCloud=ic;gl.uniform3fv(this.r.u.uFog,FG);gl.uniform1f(this.r.u.uFK,wxK(WX)+ic*.14);gl.uniform4f(this.r.u.uWx,WX?WX.c/100:0,WX?WX.r/100:0,WX?WX.f/100:0,ic);gl.viewport(0,0,c.width,c.height);gl.clearColor(FG[0],FG[1],FG[2],1);{const f0=Q.rot(this.q,[0,0,-1]),u0=Q.rot(this.q,[0,1,0]);gl.uniform3fv(this.r.u.uLp,V.add(this.p,V.mul(f0,.12)));gl.uniform3fv(this.r.u.uLd,V.norm(V.add(f0,V.mul(u0,-.28))))}gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+ render(t){const gl=this.r.gl,c=this.cv,NT=!this.att&&!!this.night,TAC=this.att||(SIM.look!=='real'&&!NT),cam=this.att?'cine':(this.mis&&this.mis.ball&&SIM.cam==='fpv'?'chase':SIM.cam);this.r.tac=TAC;gl.uniform1f(this.r.u.uTac,TAC?1:0);gl.uniform1f(this.r.u.uNight,NT?1:0);gl.uniform1f(this.r.u.uGfx,SIM.gfx==='high'&&!TAC?1:0);{const W=this.fwind,wk=W?Math.min(1.8,.4+W.base*.16+W.gust*.04):.45,wd=W?W.dir:[.7,0,.7];gl.uniform1f(this.r.u.uT,(t||0)/1000);gl.uniform3f(this.r.u.uWnd,wd[0],wd[2],wk);gl.uniform1f(this.r.u.uTexOn,this.r.texOK?1:0);gl.uniform1f(this.r.u.uMS,this.r.ms?1:0);gl.uniform1f(this.r.u.uGL,this.gLay||0);const pd=this.padU||[0,0,0];gl.uniform4f(this.r.u.uPad,pd[0],pd[1],pd[2],0)}const WX=this.wx,ic=WX&&WX.ceil?Math.max(0,Math.min(1,(this.p[1]-(WX.ceil-.4))/.9)):0,FG=wxFog(NT,TAC,WX,ic);this.inCloud=ic;gl.uniform3fv(this.r.u.uFog,FG);gl.uniform1f(this.r.u.uFK,wxK(WX,this.plane)+ic*.14);gl.uniform4f(this.r.u.uWx,WX?WX.c/100:0,WX?WX.r/100:0,WX?WX.f/100:0,ic);gl.viewport(0,0,c.width,c.height);gl.clearColor(FG[0],FG[1],FG[2],1);{const f0=Q.rot(this.q,[0,0,-1]),u0=Q.rot(this.q,[0,1,0]);gl.uniform3fv(this.r.u.uLp,V.add(this.p,V.mul(f0,.12)));gl.uniform3fv(this.r.u.uLd,V.norm(V.add(f0,V.mul(u0,-.28))))}gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
   let eye,cq,fov;const fwd=Q.rot(this.q,[0,0,-1]);
   /* v164: the cameras follow in real time (an exponential approach), not a fixed fraction per frame: with a fixed fraction the chase camera trailed the vehicle by (speed x frame time x 7), so every slow frame changed the distance by metres at full speed and the vehicle seemed to shake */
   const tNow=t??performance.now(),rdt=Math.min(.1,Math.max(0,(tNow-(this.rT??tNow))/1000));this.rT=tNow;
@@ -11189,7 +11210,10 @@ class FPVSim{
   const alt0=Math.max(0,eye[1]-(this.gl||0)),P=M4.persp(fov*Math.PI/180,c.width/c.height,cam==='fpv'?Math.min(1.2,Math.max(.05,alt0*.008)):Math.min(.6,Math.max(.08,alt0*.004)),700),VP=M4.mul(P,M4.view(cq,eye)),R=this.r;
   gl.uniformMatrix4fv(R.u.uVP,false,VP);gl.uniform3fv(R.u.uEye,eye);this.VP=VP;this.fxDraw(cam,fov);
   gl.depthMask(false);R.draw(this.sky,[1,0,0,0,0,1,0,0,0,0,1,0,eye[0],eye[1],eye[2],1]);gl.depthMask(true);
-  gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(2,4);R.draw(this.world,I4);if(this.grassM&&SIM.gfx==='high'&&!this.r.tac)R.draw(this.grassM,I4,{lines:false});gl.disable(gl.POLYGON_OFFSET_FILL);if(this.mSolid)R.draw(this.mSolid,I4);
+  /* open flying fields: the far hills travel with the camera (lagging a little behind it near the field, for a touch of parallax) in a thinner haze than the ground; the ground sheet goes on for ever */
+  const WA=this.world&&this.world.aux;
+  if(WA&&WA.hz&&!TAC){const ox=eye[0],oz=eye[2]+115,m=Math.hypot(ox,oz),k=m>1e-3?Math.min(60,m*.04)/m:0,FK0=wxK(this.wx,this.plane)+(this.inCloud||0)*.14;gl.uniform1f(R.u.uFK,FK0*.35);R.draw(WA.hz,[1,0,0,0,0,1,0,0,0,0,1,0,eye[0]-ox*k,0,eye[2]-oz*k,1],{lines:false});gl.uniform1f(R.u.uFK,FK0)}
+  gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(2,4);if(WA&&WA.apron)R.draw(WA.apron,[1,0,0,0,0,1,0,0,0,0,1,0,eye[0],-.3,eye[2],1]);R.draw(this.world,I4);if(this.grassM&&SIM.gfx==='high'&&!this.r.tac)R.draw(this.grassM,I4,{lines:false});gl.disable(gl.POLYGON_OFFSET_FILL);if(this.mSolid)R.draw(this.mSolid,I4);
    if(!TAC&&this.vg&&this.r.texOK){const VG_=this.vg;if(VG_.R)R.draw(VG_.R,I4,{lines:false});
     if(VG_.S){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(-1,-2);R.draw(VG_.S,I4,{lines:false});gl.disable(gl.POLYGON_OFFSET_FILL);gl.depthMask(true);gl.disable(gl.BLEND)}
     if(VG_.F){if(this.r.ms)gl.enable(gl.SAMPLE_ALPHA_TO_COVERAGE);R.draw(VG_.F,I4,{lines:false});if(this.r.ms)gl.disable(gl.SAMPLE_ALPHA_TO_COVERAGE)}}
