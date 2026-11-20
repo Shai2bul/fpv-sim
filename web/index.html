@@ -11672,7 +11672,7 @@ void main(){float vK=vK0;if(vKf>9.5)vK=0.;if(vKf>6.5&&vKf<7.5){if(uTac<.5)discar
  if(gk>0.&&uTac<.5){vec3 V2=normalize(uEye-vW),R2=reflect(-V2,n);float nv=max(dot(n,V2),0.),fr2=.05+.95*pow(1.-nv,4.),up=smoothstep(-.12,.3,R2.y);
   vec3 env=mix(vec3(.2,.21,.18),mix(vec3(.8,.87,.93),vec3(.38,.58,.86),clamp(R2.y*1.4,0.,1.)),up);
   spc+=pow(max(dot(R2,uSun),0.),mix(34.,120.,gk))*mix(.3,1.6,gk)*(1.-uWx.x*.75);rfl=env*(fr2*mix(.4,.85,gk)+.05*gk)*(1.-uWx.x*.4)*(1.-uWx.y*.3)+env*c*met*.3*(1.-uWx.x*.4);}
- vec3 col=c*(amb*.75+l*vec3(1.,.96,.88)*.75);if(uNight<.5)col+=c*tr*vec3(1.,.95,.55)+vec3(1.,.95,.8)*spc+rfl;if(uNight>.5)col=c*(amb*.055+l*vec3(.55,.6,.8)*.045+lamp(n));col=mix(col,uTint,uGlow);col*=1.-uWx.y*.16;float d=length(vW-uEye);float fg=1.-exp(-d*d*uFK);col=mix(col,uFog,clamp(fg,0.,1.));/* v165: glass: nearly clear face-on, more and more of a mirror towards the edges, the sun's glint solid */if(uGlass>.5){float nv3=max(dot(n,normalize(uEye-vW)),0.);oa=clamp(.1+.5*pow(1.-nv3,3.)+min(spc,1.)*.3,0.,.85)*uAlpha;}o=vec4(col,oa);}`;
+ vec3 col=c*(amb*.75+l*vec3(1.,.96,.88)*.75);if(uNight<.5)col+=c*tr*vec3(1.,.95,.55)+vec3(1.,.95,.8)*spc+rfl;if(uNight>.5)col=c*(amb*.055+l*vec3(.55,.6,.8)*.045+lamp(n));col=mix(col,uTint,uGlow);col*=1.-uWx.y*.16;float d=length(vW-uEye);float fg=1.-exp(-d*d*uFK);col=mix(col,uFog,clamp(fg,0.,1.));/* v167: glass: clear. The sky is hardly mirrored (a white-blue band along the curve of the canopy read as a stripe): a thin film of reflection only at the very edge and a faint glint of the sun */if(uGlass>.5){float nv3=max(dot(n,normalize(uEye-vW)),0.);col=mix(c*amb*.55,col,.12);oa=clamp(.02+.1*pow(1.-nv3,6.)+min(spc,1.)*.08,0.,.16)*uAlpha;}o=vec4(col,oa);}`;
 /* v160 · the graphics card can be taken away in the middle of a flight (a driver reset, GPU memory, too many GL views). The simulator is then rebuilt on a fresh canvas, in the same mission. The browser needs a moment before it hands out a new context, so the rebuild asks again with growing pauses and says "reconnecting" instead of reporting "no WebGL2" at the first refusal. After a loss the next contexts are lighter (no multisampling, fewer pixels), so the same load is less likely to take the card down again. */
 const SIMGPU={keep:null,n:(()=>{try{return +sessionStorage.getItem('fpv-gpu-n')||0}catch(e){return 0}})(),why:'',rend:'',tm:0,t0:0,tries:0,scene:null,hg:0,
  aa(){return !SIMGPU.n},budget(){return SIMGPU.n?2.2e6:3.6e6},
@@ -12443,7 +12443,7 @@ class FPVSim{
      if(this.planeP&&AM){const c=Math.cos(this.pa2),sn=Math.sin(this.pa2),PM=M4.mul(M,[c,sn,0,0,-sn,c,0,0,0,0,1,0,0,AM.propY,AM.propZ-.004,1]);/* v164: at speed the blades fade into the disc: a propeller is a blur, not six distinct turns a second sampled at the frame rate (that read as a flicker at full throttle) */const bl2=this.armed&&!this.crash?Math.min(1,Math.max(0,(rp-.28)/.5)):0;R.draw(this.planeP,PM,{alpha:1-bl2*.72,lines:false});
       if(this.planeD&&rp>.12&&this.armed&&!this.crash){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);R.draw(this.planeD,PM,{alpha:Math.min(.3,.06+rp*.1+bl2*.14),lines:false});gl.depthMask(true);gl.disable(gl.BLEND)}}
      /* v165: the canopy glass, last and see-through in both looks (a plain tint in the tactical one, mirror and glint in the real one); not in the pilot's own view */
-     if(this.planeG&&cam!=='fpv'){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);R.draw(this.planeG,M,TAC?{alpha:.3,lines:false}:{glass:1,lines:false});gl.depthMask(true);gl.disable(gl.BLEND)}}else R.draw(this.dm,Sc,{lines:false});
+     if(this.planeG&&cam!=='fpv'){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);R.draw(this.planeG,M,TAC?{alpha:.12,lines:false}:{glass:1,lines:false});gl.depthMask(true);gl.disable(gl.BLEND)}}else R.draw(this.dm,Sc,{lines:false});
    /* props: still while disarmed, idle spin once armed, faster and blurrier with throttle */
    if(!BALL&&!this.plane){const now=t,pdt=Math.min(.05,Math.max(0,(now-(this.pt||now))/1000));this.pt=now;const w=this.armed&&!this.crash?24+170*Math.min(1,Math.max(0,this.rpm||0)):0;this.pw=(this.pw||0)+(w-(this.pw||0))*(1-Math.exp(-pdt/(w>this.pw?.08:.35)));this.pa=((this.pa||0)+Math.min(this.pw,46)*pdt)%(Math.PI*2);
     const bl=Math.min(1,Math.max(0,(this.pw-40)/110)),ba=1-bl*.75,da=bl*.42;
@@ -13592,7 +13592,7 @@ function geoTr2(){const g=new Geo(),K=acKit2(g),cs=[],WH=[.96,.96,.95],BL=[.12,.
  acWheelGear(K,g,cs,{mains:[1,-1].map(sd=>({top:[sd*.16,-.06,-.22],x:sd*.19,y:-.165,z:-.2,r:.046,w:.026,pant:WH})),steer:{top:[0,-.03,-.6],x:0,y:-.165,z:-.6,r:.038,w:.02},leg:AL});
  return {g,cs,prop:{n:2,r:.185,p:.17,z:-.665,y:0,col:[.13,.13,.14]},gm:[-.211,-.2],gt:null}}
 /* ---- v154: the two warbirds, rebuilt: smooth spline fuselages, painted finishes graded per vertex, framed canopies, details and national markings ---- */
-const WB={CM:[.99,.01,.99],RED:[.72,.1,.1],BLU:[.1,.18,.42],WHT:[.9,.9,.86],YEL:[.93,.76,.13],BK:[.07,.07,.08],GL:[.1,.16,.22]};
+const WB={CM:[.99,.01,.99],RED:[.72,.1,.1],BLU:[.1,.18,.42],WHT:[.9,.9,.86],YEL:[.93,.76,.13],BK:[.07,.07,.08],GL:[.08,.12,.15]};
 function wbDisc(r){return [{ring:[r*.88,r],col:WB.YEL},{ring:[r*.58,r*.88],col:WB.BLU},{ring:[r*.27,r*.58],col:WB.WHT},{ring:[0,r*.27],col:WB.RED}]}
 function wbStar(R){const p=[];for(let i=0;i<10;i++){const a=(90+36*i)*Math.PI/180,r=i%2?R*.382:R;p.push([Math.cos(a)*r,Math.sin(a)*r])}return p}
 /* race numbers: seven-segment digits laid on the surface */
@@ -13817,7 +13817,7 @@ const p47At=z=>{const S=P47S;let i=0;while(i<S.length-2&&z>S[i+1][0])i++;const f
 const p47Top=z=>{const a=p47At(z);return a[2]+a[1]/2};
 /* the bubble canopy: [z, width, height, centre, floor] */
 const P47C=[[-.16,.05,.02,.112,.105],[-.13,.105,.05,.122,.105],[-.08,.135,.085,.13,.104],[-.02,.145,.105,.134,.1],[.05,.14,.105,.134,.098],[.12,.122,.085,.126,.094],[.19,.092,.055,.112,.088],[.25,.05,.025,.098,.084],[.29,.02,.01,.088,.082]];
-function p47Can(p,u,v){const fr=Math.abs(v-1.1)<.2||Math.abs(v-3.4)<.1||Math.abs(v-5.1)<.1||v>6.3||(v<2&&Math.abs(p[0])<.004);return fr?[.5,.52,.5]:[.17,.25,.31]}
+function p47Can(p,u,v){const fr=Math.abs(v-1.1)<.2||Math.abs(v-3.4)<.1||Math.abs(v-5.1)<.1||v>6.3||(v<2&&Math.abs(p[0])<.004);return fr?[.5,.52,.5]:[.07,.12,.16]}
 /* block letters and slanted strokes for markings: a glyph is .6 wide and 1 high, scaled by h; 'r' x0 y0 x1 y1 is a bar, 'd' x0 y0 x1 y1 a slanted stroke */
 const WBG={
  B:[['r',0,0,.16,1],['r',0,.84,.46,1],['r',0,.42,.44,.58],['r',0,0,.48,.16],['r',.36,.52,.56,.92],['r',.4,.08,.6,.5]],
@@ -13916,7 +13916,7 @@ function bfTopCol(x,y,z,k){const w=acN(x*4+1,y*4,z*4)*.3,id=acW2((Math.abs(x)*1.
 function bfSideCol(x,y,z,bb){/* fuselage: dark spine, pale sides with small dark spots, and a soft blue-grey underside */
  const sp=acF(x*26+3,y*26,z*26,3),dots=acSS(.54,.6,sp),up=acSS(.28,.78,bb+.12*(acN(z*9,y*9,x*9)-.5)),dn=1-acSS(-.55,-.2,bb+.18*(acN(z*7+3,y*7,x*7)-.5));
  let c=acMix(BFK.G02,BFK.G71,Math.min(1,up*.9+dots*.55*(1-dn)));c=acMix(c,BFK.B65,dn);const m=.96+.08*acF(x*12,y*12,z*12,2);return [c[0]*m,c[1]*m,c[2]*m]}
-function bfCan(p,u,v){const fr=Math.abs(v-1.2)<.22||Math.abs(v-2.4)<.12||Math.abs(v-3.5)<.12||Math.abs(v-4.6)<.12||v>5.6||(v<2&&Math.abs(p[0])<.004);return fr?[.3,.34,.28]:[.17,.25,.31]}
+function bfCan(p,u,v){const fr=Math.abs(v-1.2)<.22||Math.abs(v-2.4)<.12||Math.abs(v-3.5)<.12||Math.abs(v-4.6)<.12||v>5.6||(v<2&&Math.abs(p[0])<.004);return fr?[.3,.34,.28]:[.08,.13,.11]}
 /* a flared Balkenkreuz: the black cross with a white edge */
 function wbBK(r,k=1){const arm=(a,s)=>{const P=[[.3,-.3],[1,-.4],[1,.4],[.3,.3]].map(([x,y])=>[x*s,y*s]),c=[.65*s,0],q=P.map(([x,y])=>[x-c[0],y-c[1]]);const R=([x,y])=>a===0?[x,y]:a===1?[-y,x]:a===2?[-x,-y]:[y,-x];return {pts:q.map(R),at:R(c)}};
  const out=[];[0,1,2,3].forEach(a=>{const o=arm(a,r*1.2);out.push({poly:o.pts,at:o.at,col:BFK.WHT,lay:0})});out.push({rect:[-r*.38,-r*.38,r*.38,r*.38],col:BFK.WHT,lay:0});
@@ -13995,7 +13995,7 @@ function fwFinCol(x,y,z){const w=acN(x*4+1,y*4,z*4)*.3,id=acW2((z*1.1+y*.45)*7+w
 /* the fuselage: a dark spine that breaks up into small spots on the pale RLM 76 sides and belly */
 function fwSideCol(x,y,z,bb){const sp=acF(x*24+3,y*24,z*24,3),dots=acSS(.55,.62,sp),n2=bb+.16*(acN(z*8,y*8,x*8)-.5),up=acSS(.22,.74,n2),mott=Math.min(1,acSS(-.05,.5,n2)*dots*1.2);
  const c=acMix(FWK.B76,acMix(FWK.G02,FWK.G71,acSS(.4,.8,n2)),Math.max(up,mott*.8)),m=.96+.08*acF(x*12,y*12,z*12,2);return [c[0]*m,c[1]*m,c[2]*m]}
-function fwCan(p,u,v){const fr=Math.abs(v-3)<.12||Math.abs(v-5.2)<.1||Math.abs(v-7.4)<.1||Math.abs(v-9.2)<.1||(v<3&&Math.abs(p[0])<.003);if(v>9.7)return WB.CM;return fr?[.3,.34,.28]:[.17,.25,.31]}
+function fwCan(p,u,v){const fr=Math.abs(v-3)<.12||Math.abs(v-5.2)<.1||Math.abs(v-7.4)<.1||Math.abs(v-9.2)<.1||(v<3&&Math.abs(p[0])<.003);if(v>9.7)return WB.CM;return fr?[.3,.34,.28]:[.07,.12,.14]}
 function geoFw190(){const g=new Geo(),K=acKit2(g),cs=[],CM=WB.CM,AL=[.5,.52,.55],y0=-.057,dh=5*Math.PI/180,z0=FWS[0][0],zE=FWS[FWS.length-1],wy=s=>y0+s*Math.tan(dh);
  /* the fuselage and the cowling in one smooth loft: the first rows curve over the lip of the cowling */
  const F=FWS.map(a=>K.ring(a[0],a[1],a[2],a[3],2.2,40));loftS(g,F,{sub:5,col:CM});K.cap(F[F.length-1],[0,zE[3],zE[0]+.004],CM);
@@ -14063,7 +14063,7 @@ const fgSurf=(z,wc)=>{const a=fgAt(z),q=Math.min(.95,wc/a[0]);return a[2]+a[1]/2
 /* the raised canopy: [x real, width, height of the glass above the deck] -> [z, width, height] */
 const FGC=[[2.5,.6,.02],[2.62,.86,.2],[2.85,.9,.36],[3.2,.92,.46],[3.7,.92,.5],[4.2,.91,.5],[4.7,.86,.44],[5.2,.76,.34],[5.6,.56,.2],[5.95,.3,.09],[6.15,.08,.02]].map(([x,w,u])=>[fgz(x),w*FGU,u*FGU]);
 /* glass between its frames: the foot of the windscreen, the centre post, the bow behind the windscreen, the rear of the hood and the sill; the fairing behind is painted metal */
-function fgCan(p,u,v){if(v>8.15)return WB.CM;const fr=v<.4||Math.abs(v-3.05)<.1||v>7.5||(v<3&&Math.abs(p[0])<.0035);return fr?FGK.FRM:[.17,.25,.31]}
+function fgCan(p,u,v){if(v>8.15)return WB.CM;const fr=v<.4||Math.abs(v-3.05)<.1||v>7.5||(v<3&&Math.abs(p[0])<.0035);return fr?FGK.FRM:[.07,.12,.17]}
 /* the wing: [s, leading edge, chord, thickness] in real metres from the centre line; the leading edge sweeps back a little, the trailing edge forward, the tip is rounded off (29 m2) */
 const FGW=[[0,0,3.25,.18],[1,.07,3.2,.17],[1.95,.14,3.05,.16],[3.2,.23,2.6,.14],[4.35,.31,2.05,.12],[5.3,.37,1.42,.1],[5.95,.42,.95,.085],[6.2,.45,.55,.07],[6.245,.455,.3,.05]];
 const fgWat=s=>{let i=0;while(i<FGW.length-2&&s>FGW[i+1][0])i++;const A=FGW[i],B=FGW[i+1],f=Math.max(0,Math.min(1,(s-A[0])/(B[0]-A[0])));return {le:A[1]+(B[1]-A[1])*f,c:A[2]+(B[2]-A[2])*f,t:A[3]+(B[3]-A[3])*f}};
@@ -14144,7 +14144,8 @@ const PLDZ={bf109:-.09,fw190:-.088,fg1d:-.135};
 function geoDz(M,dz){const sh=G=>{for(let i=2;i<G.p.length;i+=3)G.p[i]+=dz;for(let i=2;i<G.L.length;i+=3)G.L[i]+=dz};sh(M.g);M.cs.forEach(c=>{sh(c.g);c.a=[c.a[0],c.a[1],c.a[2]+dz];c.b=[c.b[0],c.b[1],c.b[2]+dz];if(c.h2)c.h2={...c.h2,a:[c.h2.a[0],c.h2.a[1],c.h2.a[2]+dz]}});
  if(M.gm)M.gm=[M.gm[0],M.gm[1]+dz];if(M.gt)M.gt=[M.gt[0],M.gt[1]+dz];if(M.prop)M.prop={...M.prop,z:M.prop.z+dz}}
 /* ---- v165: transparent canopies with a pilot and a cockpit under them. The glass of each warbird (its colour, ACGL) is cut out of the body into a mesh of its own, drawn last and see-through, so that what is under it shows: the cockpit (floor, side consoles, instrument panel with dials, gun sight, control stick, seat armour) and the pilot (helmet, goggles, mask, shoulders) are built here, in the model's final coordinates (nose towards -z), from the numbers of ACPK. They are drawn with the body, but not in the pilot's own first-person view. ---- */
-const ACGL={p51:[.07,.12,.17],spit:[.1,.16,.22],p47:[.17,.25,.31],bf109:[.17,.25,.31],fw190:[.17,.25,.31],fg1d:[.17,.25,.31]};
+/* v167: every glass colour is darker than the weathering threshold (luminance .13): the wear leaves it alone, so that all its triangles are found (a mottled one stayed in the body as an opaque pale stripe) */
+const ACGL={p51:[.07,.12,.17],spit:[.08,.12,.15],p47:[.07,.12,.16],bf109:[.08,.13,.11],fw190:[.07,.12,.14],fg1d:[.07,.12,.17]};
 function acGlassSplit(G,gc){const n=G.p.length/3,hu=G.u.length>0,gl=new Geo();if(hu)G.padU();let w=0;
  const isG=i=>Math.abs(G.c[i*3]-gc[0])<.03&&Math.abs(G.c[i*3+1]-gc[1])<.03&&Math.abs(G.c[i*3+2]-gc[2])<.03&&Math.abs(G.p[i*3])<.16&&G.p[i*3+1]>.09;
  for(let t=0;t+2<n;t+=3){const g3=isG(t)&&isG(t+1)&&isG(t+2);
