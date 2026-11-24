@@ -4071,6 +4071,17 @@ html.admbg .aura{opacity:.35}
 html.free .simview .simrc{bottom:14px}
 html.phone .simview .simrc,html.touch .simview .simrc{display:none!important}
 @media (max-width:1180px){.simview .simrc{width:150px;right:132px}}
+/* v170: the on-screen sticks are two dark glass squares with a white cross and a circle for each stick, seen from above (as on a flight recording), not a picture of a radio */
+.rc .rcq{fill:rgba(0,0,0,.5);stroke:rgba(255,255,255,.34);stroke-width:1}
+.rc .rcp{fill:none;stroke:rgba(255,255,255,.92);stroke-width:1.5;stroke-linecap:round}
+.rc .rcc{fill:rgba(255,255,255,.9);stroke:rgba(0,0,0,.5);stroke-width:1}
+.rc .rcd{fill:rgba(0,0,0,.4)}
+.rc .rct{font:700 10.5px var(--mono);fill:rgba(255,255,255,.88);letter-spacing:.06em}
+.simview .simrc{background:none;border:0;border-radius:0;padding:0;width:216px}
+.simview .simrc>span{display:none}
+.simview .simrc .simrc-x{opacity:0;pointer-events:auto;transition:opacity .15s}.simview .simrc:hover .simrc-x{opacity:1}
+.rcbar.ov .rc-in{background:none;border:0;padding:0;-webkit-backdrop-filter:none;backdrop-filter:none}
+.rcbar.ov .rc-cap{display:none}
 /* collapsed learning-path rail: room for the glow around the current mission */
 html.imm .shell.navc nav.side#nav .cmap{padding-inline:14px!important}
 html.imm .shell.navc nav.side#nav .cml{overflow:visible}
@@ -5679,18 +5690,17 @@ function maneuver(ico,big){
 
 
 /* ---------- stick overlay (Mode 2) ---------- */
-const stickOSD=(ov)=>{if(ov&&!cfg('rcOverlay'))return '';const gim=(cx,k)=>`<g class="gw"><circle cx="${cx}" cy="64" r="29" class="rc-well"/><circle cx="${cx}" cy="64" r="20" class="rc-ring"/><path d="M${cx-24} 64H${cx+24}M${cx} 40V88" class="rc-x"/><g data-s="${k}" data-cx="${cx}"><line x1="${cx}" y1="64" x2="${cx}" y2="64" class="rc-shaft"/><circle cx="${cx}" cy="64" r="10" class="rc-cap"/><circle cx="${cx}" cy="64" r="4.5" class="rc-dot"/></g></g>`;
- const rc=`<svg class="rc" viewBox="0 0 240 122" aria-hidden="true" style="direction:ltr"><path d="M44 14V2M196 14V2" class="rc-ant"/><circle cx="44" cy="2" r="2.4" class="rc-anttip"/><circle cx="196" cy="2" r="2.4" class="rc-anttip"/>
-   <path d="M22 32Q22 16 38 16H202Q218 16 218 32V80Q218 106 194 110L170 112Q150 114 140 102H100Q90 114 70 112L46 110Q22 106 22 80Z" class="rc-body"/>
-   <rect x="58" y="22" width="8" height="5" class="rc-sw"/><rect x="174" y="22" width="8" height="5" class="rc-sw"/><rect x="99" y="28" width="42" height="24" rx="2" class="rc-scr"/><text x="120" y="44" class="rc-txt" text-anchor="middle">SIM</text>
-   ${gim(62,'L')}${gim(178,'R')}</svg>`;
+const stickOSD=(ov)=>{if(ov&&!cfg('rcOverlay'))return '';const SQ=104,sq=(x,k)=>{const cx=x+SQ/2,cy=4+SQ/2;return `<g class="gw"><rect x="${x}" y="4" width="${SQ}" height="${SQ}" rx="3" class="rcq"/><path d="M${x+12} ${cy}H${x+SQ-12}M${cx} ${16}V${4+SQ-12}" class="rcp"/><g data-s="${k}" data-cx="${cx}" data-cy="${cy}"><circle cx="${cx}" cy="${cy}" r="11" class="rcc"/><circle cx="${cx}" cy="${cy}" r="2.6" class="rcd"/></g></g>`};
+ /* v170: two dark glass squares with a white cross, and a circle for each stick seen from above (left: yaw and throttle, right: pitch and roll), the throttle in percent under the left one; not a picture of a radio */
+ const rc=`<svg class="rc" viewBox="0 0 240 124" aria-hidden="true" style="direction:ltr">${sq(4,'L')}${sq(132,'R')}<text x="${4+SQ/2}" y="121" text-anchor="middle" class="rct" data-thr="1">THR 0%</text></svg>`;
  if(ov)return `<div class="rcbar ov ${ov} ${V3D.rcOff?'off':''}" aria-label="מצב הסטיקים בשלט בזמן ההטסה"><button class="rc-tg" data-act="rc-toggle" title="${V3D.rcOff?'הצג שלט':'הסתר שלט'}" aria-label="הצג או הסתר שלט">${V3D.rcOff?'🎮︎ שלט':'×'}</button><div class="rc-in"><span class="rc-cap mono">MODE 2 · שלט</span>${rc}</div></div>`;
  return `<div class="rcbar" aria-label="מצב הסטיקים בשלט בזמן ההטסה"><div class="rcl"><span class="lbl">השלט · MODE 2</span><span class="hint">כך זזים הסטיקים לאורך המשימה</span></div>
   ${rc}
   <div class="rcl rcr"><span><b>שמאל</b> מצערת · סבסוב</span><span><b>ימין</b> עלרוד · גלגול</span></div></div>`};
-function setSticks(root,thr,yaw,pit,rol){if(!root)return;const c=v=>Math.max(-1,Math.min(1,v)),T=17;
- const mv=(k,x,y)=>{const g=root.querySelector(`[data-s="${k}"]`);if(!g)return;const cx=+g.dataset.cx,px=cx+c(x)*T,py=64+c(y)*T;const l=g.querySelector('line');l.setAttribute('x2',px.toFixed(1));l.setAttribute('y2',py.toFixed(1));g.querySelectorAll('circle').forEach(q=>{q.setAttribute('cx',px.toFixed(1));q.setAttribute('cy',py.toFixed(1))})};
- mv('L',yaw,1-2*thr);mv('R',rol,-pit)}
+function setSticks(root,thr,yaw,pit,rol){if(!root)return;const c=v=>Math.max(-1,Math.min(1,+v||0)),T=39;
+ const mv=(k,x,y)=>{const g=root.querySelector(`[data-s="${k}"]`);if(!g)return;g.setAttribute('transform',`translate(${(c(x)*T).toFixed(1)} ${(c(y)*T).toFixed(1)})`)};
+ mv('L',yaw,1-2*c(thr));mv('R',rol,-pit);
+ const t=root.querySelector('[data-thr]');if(t){const v='THR '+Math.round(Math.max(0,c(thr))*100)+'%';if(t.textContent!==v)t.textContent=v}}
 /* 2D diagram: derive sticks from the animated drone's motion */
 function runDiagramSticks(){const host=document.querySelector('.mview');if(!host)return;const osd=document.querySelector('.panel.mission .rcbar'),dr=host.querySelector('svg.mv g[data-dr]');if(!osd||!dr)return;
  let prev=null,ph=null,st={t:.5,y:0,p:0,r:0},lt=performance.now();
@@ -12761,7 +12771,7 @@ function vSim(STG){const sc=SIMSCN[SIM.scene],m=SIM.map,ch=[['thr','מצערת']
    <div class="sorient" id="sOrient" aria-hidden="true"><svg class="sgah" id="sgAH"></svg><div class="sgcmp" id="sgCmp"><svg viewBox="0 0 360 34" width="360" height="34" id="sgCmpS"></svg></div><canvas class="soradar" id="soRadar" width="236" height="236"></canvas></div>
    <div class="sguide" id="sGuide" aria-hidden="true"><svg class="sgpath" id="sgPath"><defs><filter id="sgRingF" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="1.1" flood-color="#021018" flood-opacity=".8"/></filter></defs><g id="sgChev" filter="url(#sgRingF)"></g></svg><div class="sgmark" id="sgMark" hidden><span class="sgbr"></span><b id="sgN"></b><small id="sgD"></small></div><div class="sgarr" id="sgArr" hidden><svg viewBox="0 0 40 40" width="40" height="40"><path d="M8 20h20M20 10l10 10-10 10" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><small id="sgAD"></small></div></div>
    <div class="sgcoach" id="sgCoach" role="status" hidden><span class="sgic" id="sgIco"></span><span class="sgtx"><b id="sgTxt"></b><small id="sgSub"></small></span></div>
-   <div class="simcross" aria-hidden="true"></div><div class="simrc" id="simRC" ${PREF.simrc?"":"hidden"}><span class="mono">MODE 2 · השלט שלך</span><button class="simrc-x" data-act="sim-rc" title="הסתר את השלט" aria-label="הסתר את השלט">×</button>${stickOSD(false).replace(/^[\s\S]*?(<svg class="rc")/,"$1").replace(/<\/svg>[\s\S]*$/,"</svg>")}</div><button class="simfocus" id="simFocus" data-act="sim-focus" hidden>לחץ כאן כדי להפעיל את המקלדת</button><div class="simmsg" id="simMsg" hidden></div>${OV?'':stickOSD('o2')}
+   <div class="simcross" aria-hidden="true"></div><div class="simrc" id="simRC" ${PREF.simrc?"":"hidden"}><button class="simrc-x" data-act="sim-rc" title="הסתר את השלט" aria-label="הסתר את השלט">×</button>${stickOSD(false).replace(/^[\s\S]*?(<svg class="rc")/,"$1").replace(/<\/svg>[\s\S]*$/,"</svg>")}</div><button class="simfocus" id="simFocus" data-act="sim-focus" hidden>לחץ כאן כדי להפעיל את המקלדת</button><div class="simmsg" id="simMsg" hidden></div>${OV?'':stickOSD('o2')}
    ${touchUI()}${FREE?envSel():''}<div class="mapctl ${toolsOpen()?'open':''}" role="toolbar" aria-label="כלי סימולטור"><div class="mc mtog"><button class="mcb" data-act="tools" aria-expanded="${toolsOpen()}" aria-label="כלי הסימולטור"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h3M11 17h9"/><circle cx="16" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></button><span class="mtip">כלים · תצוגה, מצלמה, טיסה</span></div>${[
      ['view','tac','תצוגה',`${mrow('הכוונה לכיוון הטיסה',S_GD)}${mrow('עזרי התמצאות · מכ״ם, מצפן, אופק',S_OR)}${mrow('עולם',S_LK)}${mrow('פירוט גרפי',seg('sim-gfx',SIM.gfx,[['low','בסיסי · מהיר'],['high','מלא · דשא וטקסטורות']])+'<span class="hint qsub">מלא נראה טבעי יותר. במחשב חלש בחר בסיסי. חל על המראה הריאליסטי.</span>')}${mrow('נתונים על המסך',S_OSD)}${mrow('שידור וידאו',S_FD)}`],
      ['cam','fpv','מצלמה',`${mrow('נקודת מבט',S_CM)}${mrow('זווית מצלמה FPV',S_TL)}`],
