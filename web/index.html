@@ -2085,6 +2085,8 @@ header.cmd{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--clsH,20
 .simview{position:relative;aspect-ratio:16/9;max-height:calc(100vh - 230px);width:100%;background:#000;border:1px solid var(--line2);overflow:hidden;margin-inline:auto}
 .simview canvas{position:absolute;inset:0;width:100%;height:100%;display:block;outline:none;cursor:crosshair}
 .simview.analog canvas{filter:saturate(.75) contrast(1.15) blur(.6px)}
+.simview.gpuan canvas{filter:none}.simview.gpuan .simnz{display:none}.simview.gpuan .simfx{filter:blur(.7px) saturate(.9)}
+.simview.gpuan.osd-auth .bfo{filter:blur(.5px) saturate(.9);transform:translateX(var(--oj,0px));opacity:var(--oo,1)}
 .simnz{position:absolute;inset:0;pointer-events:none;opacity:0}
 .simview.analog .simnz{opacity:1;background:repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0 1px,transparent 1px 3px);animation:nz .18s steps(3) infinite;mix-blend-mode:overlay}
 .so{position:absolute;display:flex;flex-direction:column;gap:2px;font:700 13px var(--mono);color:#fff;text-shadow:0 0 3px #000,0 0 6px #000;pointer-events:none}
@@ -11736,9 +11738,108 @@ class SimGL{
   put(g.p,this.a.P,3);put(g.n,this.a.N,3);put(g.c,this.a.C,3);put(g.k,this.a.K,1);if(g.u&&g.u.length){g.padU();put(g.u,this.a.U,4)}gl.bindVertexArray(null);let lv=null,ln=0;
   if(g.L.length){lv=gl.createVertexArray();gl.bindVertexArray(lv);put(g.L,this.a.P,3);put(new Array(g.L.length).fill(0).map((_,i)=>i%3===1?1:0),this.a.N,3);put(g.LC,this.a.C,3);put(new Array(g.L.length/3).fill(5),this.a.K,1);gl.bindVertexArray(null);ln=g.L.length/3}
   const M={vao,n:g.p.length/3,bufs,lv,ln};(this.res||(this.res=[])).push(M);return M}
- free(){const gl=this.gl;(this.res||[]).forEach(m=>{m.bufs.forEach(b=>gl.deleteBuffer(b));gl.deleteVertexArray(m.vao);if(m.lv)gl.deleteVertexArray(m.lv)});this.res=[]}
+ free(){const gl=this.gl;(this.res||[]).forEach(m=>{m.bufs.forEach(b=>gl.deleteBuffer(b));gl.deleteVertexArray(m.vao);if(m.lv)gl.deleteVertexArray(m.lv)});this.res=[];if(this.post){try{this.post.free()}catch(e){}this.post=null}}
  draw(m,M,o={}){const gl=this.gl;gl.uniformMatrix4fv(this.u.uM,false,M);gl.uniform1f(this.u.uGlow,o.glow||0);gl.uniform3fv(this.u.uTint,o.tint||[1,1,1]);gl.uniform1f(this.u.uAlpha,o.alpha??1);gl.uniform1f(this.u.uGlass,o.glass?1:0);gl.bindVertexArray(m.vao);if(o.only!=='lines')gl.drawArrays(gl.TRIANGLES,0,m.n);if((this.tac||o.lines==='force')&&m.lv&&o.lines!==false){gl.bindVertexArray(m.lv);gl.drawArrays(gl.LINES,0,m.ln)}}
  dispose(){const gl=this.gl;SimTex.unhook(this);try{gl.getExtension('WEBGL_lose_context')?.loseContext()}catch(e){}}}
+
+/* ---- v171 · what the FPV camera sees of its own drone: the front arms and motors (the duct rings on the ducted classes), at the real size, and where the lens sits on each class ---- */
+function fpvMount(k){return k==='fs5'?[0,.0447,-.09]:k==='tr3'?[0,.0335,-.0828]:k==='cw'?[0,.0355,-.1012]:[0,.027,-.0525]}
+function fpvFrameGeo(k){const g=new Geo(),L=QLOOK[k]||QLOOK.fs5,m=L.m,CF=[.07,.073,.08],WH=[.93,.93,.95];
+ [[1,-1],[-1,-1]].forEach(([a,b])=>{const cx=a*m,cz=b*m,an=Math.atan2(cz,cx),Lr=Math.hypot(cx,cz),y0=k==='cw'?-.004:k==='tw'?-.006:0,th=k==='tw'?.004:.005,w=k==='fs5'?.024:k==='tr3'?.017:k==='cw'?.02:.011;
+  g.box(cx/2,y0+th/2,cz/2,Lr,th,w,k==='tw'?WH:CF,-an);
+  if(k==='fs5')motorGeo2(g,cx,cz,.0145,.017,.005);else if(k==='tr3')motorGeo2(g,cx,cz,.0105,.013,.004);else if(k==='cw')motorGeo2(g,cx,cz,.0155,.015,.002);else motorGeo2(g,cx,cz,.0065,.008,-.002);
+  if(k==='cw')ductRing(g,cx,cz,.0622,.0315,-.008,[.15,.16,.18],56);else if(k==='tw')ductRing(g,cx,cz,.0343,.022,-.006,WH,48);else if(k==='tr3')ductRing(g,cx,cz,.048,.0195,.002,[.9,.34,.17],48)});
+ return g}
+/* ---- v171 · the picture of an analog FPV camera, made by the graphics card: the scene is drawn at 480 lines into a buffer and then passed through what the radio link does to it ---- */
+const FPVS=`#version 300 es
+void main(){vec2 p=vec2(float((gl_VertexID<<1)&2),float(gl_VertexID&2));gl_Position=vec4(p*2.-1.,0.,1.);}`;
+const FPFS=`#version 300 es
+precision highp float;
+uniform sampler2D uS;uniform vec2 uR,uO;uniform float uT,uLq,uJam,uMode;out vec4 o;
+float h2(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float h3(vec3 p){return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453);}
+vec3 toY(vec3 c){return vec3(dot(c,vec3(.299,.587,.114)),dot(c,vec3(.596,-.274,-.322)),dot(c,vec3(.211,-.523,.312)));}
+vec3 toR(vec3 y){return vec3(y.x+.956*y.y+.621*y.z,y.x-.272*y.y-.647*y.z,y.x-1.106*y.y+1.703*y.z);}
+void main(){
+ vec2 uv=gl_FragCoord.xy/uO,g=gl_FragCoord.xy;
+ float bad=1.-clamp(uLq,0.,1.),fld=mod(floor(uT*50.),997.),frm=mod(floor(uT*25.),991.);
+ vec3 col;
+ if(uMode<.5){
+  /* analog: luma passes about 4 MHz, colour only about 1 MHz and a little late (so it smears sideways), a colour-killer drops the colour on a weak signal, interference shows as snow, torn lines, bars and a rolling picture */
+  float rl=smoothstep(.14,.03,uLq),roll=rl*fract(uT*.6+.15*sin(uT*2.3)),y0=uv.y;
+  uv.y=fract(uv.y-roll);
+  float row=floor(uv.y*uR.y),band=floor(uv.y*26.);
+  float tb=step(1.-(.012+.8*pow(bad,1.7)),h2(vec2(band+frm*3.7,7.3)));
+  float sh=(h2(vec2(band,frm))-.5)*.1*tb*(.4+bad);
+  float jb=0.;
+  if(uJam>.001){float ph=uv.y*7.+uv.x*1.8-uT*6.5;jb=smoothstep(.45,.9,.5+.5*sin(ph)+.25*sin(ph*2.7+uT*3.))*uJam;sh+=jb*(h2(vec2(row,fld))-.5)*.05;}
+  float x=uv.x+sh+(h2(vec2(row,fld))-.5)*(.0007+.012*pow(bad,2.));
+  vec2 uc=(uv-.5)*vec2(uO.x/uO.y,1.);float rr=dot(uc,uc);
+  vec2 ca=(uv-.5)*(.0016+.0032*rr);
+  float px=1./uR.x;
+  vec2 q=vec2(x,uv.y);
+  vec3 cm=vec3(texture(uS,q-ca).r,texture(uS,q).g,texture(uS,q+ca).b);
+  float yl=toY(texture(uS,q-vec2(.9*px,0.)).rgb).x,yr=toY(texture(uS,q+vec2(.9*px,0.)).rgb).x,ym=toY(cm).x;
+  float Y=ym*.5+(yl+yr)*.25;
+  Y+=(ym-(yl+yr)*.5)*.55;
+  vec2 iq=vec2(0.);float ws=0.;
+  for(int i=-4;i<=4;i++){float fi=float(i),w=exp(-fi*fi/11.);iq+=toY(texture(uS,vec2(x+(fi*1.5-1.4)*px,uv.y)).rgb).yz*w;ws+=w;}
+  iq/=ws;
+  float n1=h3(vec3(g*.5,fld))-.5,n2=h2(vec2(row,fld+3.))-.5;
+  Y+=n1*(.03+.55*pow(bad,1.5))+n2*(.012+.3*pow(bad,1.5));
+  float sat=smoothstep(.05,.4,uLq);
+  vec2 qn=vec2(h3(vec3(g*.37,fld+1.)),h3(vec3(g*.37,fld+2.)))-.5;
+  iq=iq*.92*sat+qn*(.015+.75*pow(bad,1.4))*(.35+.65*sat);
+  Y+=jb*(h2(vec2(row,fld+5.))-.3)*.8;
+  Y=(Y-.5)*1.1+.5;
+  float vg=1.-.30*smoothstep(.3,1.,sqrt(rr)*1.15);
+  Y*=vg;iq*=mix(1.,.8,1.-vg);
+  Y*=1.-.03*mod(row+fld,2.);
+  Y*=1.-.05*(.5-.5*cos(6.28318*uv.y*uR.y));
+  col=clamp(toR(vec3(Y,iq)),0.,1.);
+  col=mix(col,vec3(h3(vec3(g,fld))*.9+.05),smoothstep(.22,.03,uLq));
+  col*=1.-rl*(1.-smoothstep(0.,.07,min(abs(y0-roll),1.-abs(y0-roll))))*.9;
+ }else{
+  /* digital: a clean picture until the link thins out; then blocks, a washed-out colour, bands and finally nothing */
+  float bs=mix(1.,44.,pow(bad,1.25));
+  vec2 gb=floor(uv*uR/bs);
+  vec2 q=bs>1.15?(gb+.5)*bs/uR:uv;
+  col=texture(uS,q).rgb;
+  float bn=h2(gb+floor(uT*6.));
+  col*=1.+(bn-.5)*.6*bad;
+  col=mix(col,vec3(dot(col,vec3(.299,.587,.114))),clamp(bad*.8,0.,1.));
+  float lv=mix(256.,12.,bad);col=floor(col*lv+.5)/lv;
+  float rb=step(.9-.5*bad,h2(vec2(floor(uv.y*uR.y/max(bs*.5,1.)),floor(uT*5.))))*step(.5,bad);
+  col=mix(col,vec3(.35,.45,.38)*(.6+.4*bn),rb*.7);
+  col=mix(col,vec3(.02),smoothstep(.1,0.,uLq));
+ }
+ o=vec4(col,1.);}`;
+class FPost{
+ constructor(R){const gl=R.gl;this.R=R;this.gl=gl;this.bad=false;this.W=0;this.H=0;this.fm=null;
+  const sh=(t,x)=>{const o=gl.createShader(t);gl.shaderSource(o,x);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(o));return o};
+  try{const p=this.pr=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,FPVS));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,FPFS));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(p));
+   this.u={};['uS','uR','uO','uT','uLq','uJam','uMode'].forEach(k=>this.u[k]=gl.getUniformLocation(p,k));gl.useProgram(R.pr)}catch(e){console.warn('[sim] the video pass is not available',e);this.bad=true;try{gl.useProgram(R.pr)}catch(e2){}}}
+ alloc(W,H){const gl=this.gl;this.drop();const mx=gl.getParameter(gl.MAX_SAMPLES)||0,sm=SIMGPU.aa()?Math.min(4,mx):0;let ok=false;
+  try{const rc=gl.createRenderbuffer(),rd=gl.createRenderbuffer();
+   gl.bindRenderbuffer(gl.RENDERBUFFER,rc);if(sm>0)gl.renderbufferStorageMultisample(gl.RENDERBUFFER,sm,gl.RGBA8,W,H);else gl.renderbufferStorage(gl.RENDERBUFFER,gl.RGBA8,W,H);
+   gl.bindRenderbuffer(gl.RENDERBUFFER,rd);if(sm>0)gl.renderbufferStorageMultisample(gl.RENDERBUFFER,sm,gl.DEPTH_COMPONENT24,W,H);else gl.renderbufferStorage(gl.RENDERBUFFER,gl.DEPTH_COMPONENT24,W,H);
+   const fm=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,fm);gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.RENDERBUFFER,rc);gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,rd);const ok1=gl.checkFramebufferStatus(gl.FRAMEBUFFER)===gl.FRAMEBUFFER_COMPLETE;
+   gl.activeTexture(gl.TEXTURE1);const tx=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tx);gl.texStorage2D(gl.TEXTURE_2D,1,gl.RGBA8,W,H);
+   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.activeTexture(gl.TEXTURE0);
+   const fr=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,fr);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tx,0);const ok2=gl.checkFramebufferStatus(gl.FRAMEBUFFER)===gl.FRAMEBUFFER_COMPLETE;
+   gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.bindRenderbuffer(gl.RENDERBUFFER,null);this.o={rc,rd,fm,tx,fr};ok=ok1&&ok2}catch(e){ok=false}
+  if(!ok){this.drop();this.bad=true;return false}
+  this.fm=this.o.fm;this.fr=this.o.fr;this.tx=this.o.tx;this.W=W;this.H=H;return true}
+ drop(){const gl=this.gl,o=this.o;if(!o)return;try{gl.deleteRenderbuffer(o.rc);gl.deleteRenderbuffer(o.rd);gl.deleteFramebuffer(o.fm);gl.deleteFramebuffer(o.fr);gl.deleteTexture(o.tx)}catch(e){}this.o=null;this.fm=this.fr=this.tx=null;this.W=this.H=0}
+ /* the scene is drawn into the buffer (lines: 480 for the analog picture, 720 for the digital one) */
+ begin(c,lines){const gl=this.gl;if(this.bad)return false;const H=Math.max(200,Math.min(lines,c.height)),W=Math.max(2,Math.round(H*c.width/c.height));
+  if(W!==this.W||H!==this.H){if(!this.alloc(W,H))return false}
+  gl.bindFramebuffer(gl.FRAMEBUFFER,this.fm);gl.viewport(0,0,W,H);return true}
+ end(c,t,P){const gl=this.gl;gl.bindFramebuffer(gl.READ_FRAMEBUFFER,this.fm);gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,this.fr);gl.blitFramebuffer(0,0,this.W,this.H,0,0,this.W,this.H,gl.COLOR_BUFFER_BIT,gl.NEAREST);
+  gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,c.width,c.height);gl.disable(gl.DEPTH_TEST);gl.disable(gl.BLEND);gl.useProgram(this.pr);
+  gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,this.tx);gl.uniform1i(this.u.uS,1);gl.uniform2f(this.u.uR,this.W,this.H);gl.uniform2f(this.u.uO,c.width,c.height);gl.uniform1f(this.u.uT,(t||0)/1000);gl.uniform1f(this.u.uLq,P.lq);gl.uniform1f(this.u.uJam,P.jam||0);gl.uniform1f(this.u.uMode,P.mode||0);
+  gl.bindVertexArray(null);gl.drawArrays(gl.TRIANGLES,0,3);gl.activeTexture(gl.TEXTURE0);gl.useProgram(this.R.pr);gl.enable(gl.DEPTH_TEST)}
+ free(){this.drop();try{this.gl.deleteProgram(this.pr)}catch(e){}}}
 const I4=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];
 /* ---- simulator instance ---- */
 /* ===== engine sound: one synthesizer per power plant, built the way the real engine makes its noise =====
@@ -12414,12 +12515,38 @@ class FPVSim{
  /* spectator view: what the ears hear (see MOTOR.space): the distance from the eye to the vehicle, whether its nose points at the eye, the Doppler shift in cents (343 m/s) and the reference distance of this kind of engine */
  ears(){const e=this.cEye;if(SIM.cam!=='los'||this.att||!e)return null;const p=this.p,dx=p[0]-e[0],dy=p[1]-e[1],dz=p[2]-e[2],d=Math.hypot(dx,dy,dz)||1,vr=(this.v[0]*dx+this.v[1]*dy+this.v[2]*dz)/d,f=this.plane?-V.dot(Q.rot(this.q,[0,0,-1]),[dx/d,dy/d,dz/d]):0;
   return {d,face:f,dc:Math.max(-170,Math.min(170,1200*Math.log2(343/(343+vr)))),ref:this.plane?({nitro:48,gas4:38,jet:85}[ENGK[this.PK]]||40):14}}
- render(t){const gl=this.r.gl,c=this.cv,NT=!this.att&&!!this.night,TAC=this.att||(SIM.look!=='real'&&!NT),cam=this.att?'cine':(this.mis&&this.mis.ball&&SIM.cam==='fpv'?'chase':SIM.cam);this.r.tac=TAC;gl.uniform1f(this.r.u.uTac,TAC?1:0);gl.uniform1f(this.r.u.uNight,NT?1:0);gl.uniform1f(this.r.u.uGfx,SIM.gfx==='high'&&!TAC?1:0);{const W=this.fwind,wk=W?Math.min(1.8,.4+W.base*.16+W.gust*.04):.45,wd=W?W.dir:[.7,0,.7];gl.uniform1f(this.r.u.uT,(t||0)/1000);gl.uniform3f(this.r.u.uWnd,wd[0],wd[2],wk);gl.uniform1f(this.r.u.uTexOn,this.r.texOK?1:0);gl.uniform1f(this.r.u.uMS,this.r.ms?1:0);gl.uniform1f(this.r.u.uGL,this.gLay||0);const pd=this.padU||[0,0,0];gl.uniform4f(this.r.u.uPad,pd[0],pd[1],pd[2],0)}const WX=this.wx,ic=WX&&WX.ceil?Math.max(0,Math.min(1,(this.p[1]-(WX.ceil-.4))/.9)):0,FG=wxFog(NT,TAC,WX,ic);this.inCloud=ic;gl.uniform3fv(this.r.u.uFog,FG);gl.uniform1f(this.r.u.uFK,wxK(WX,this.plane)+ic*.14);gl.uniform4f(this.r.u.uWx,WX?WX.c/100:0,WX?WX.r/100:0,WX?WX.f/100:0,ic);gl.viewport(0,0,c.width,c.height);gl.clearColor(FG[0],FG[1],FG[2],1);{const f0=Q.rot(this.q,[0,0,-1]),u0=Q.rot(this.q,[0,1,0]);gl.uniform3fv(this.r.u.uLp,V.add(this.p,V.mul(f0,.12)));gl.uniform3fv(this.r.u.uLd,V.norm(V.add(f0,V.mul(u0,-.28))))}gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+ /* v171: the prop state is stepped here, for every camera (the first-person view draws the props too) */
+ propStep(t){const pdt=Math.min(.05,Math.max(0,(t-(this.pt||t))/1000));this.pt=t;const w=this.armed&&!this.crash?24+170*Math.min(1,Math.max(0,this.rpm||0)):0;this.pw=(this.pw||0)+(w-(this.pw||0))*(1-Math.exp(-pdt/(w>this.pw?.08:.35)));this.pa=((this.pa||0)+Math.min(this.pw,46)*pdt)%(Math.PI*2);
+  const bl=Math.min(1,Math.max(0,(this.pw-40)/110));return {bl,ba:1-bl*.75,da:bl*.42}}
+ /* v171: the radio links. The picture and the sticks each have a quality from 1 (clean) to 0 (gone). Today only the range counts (a 25-200 mW transmitter is good for a kilometre or so in the open); the radio-interference lessons put emitters on top of this. */
+ linkQ(){const h=(this.scn&&this.scn.start)||[0,0,0],d=Math.hypot(this.p[0]-h[0],this.p[1]-h[1],this.p[2]-h[2]),rg=Math.max(0,1-Math.max(0,d-900)/1500);return {vid:rg,ctl:Math.min(1,rg*1.15),jam:0}}
+ /* v171: the first-person picture goes through the video pass (a buffer of its own) when the feed is analog, or digital with a failing link */
+ postBegin(cam,c,gl){let po=null;const lq=this.lq??1,an=SIM.feed==='analog',on=cam==='fpv'&&!this.att&&!FPVSim.noPost&&(an||lq<.985);
+  if(on){const R=this.r;let P=R.post;if(!P)P=R.post=new FPost(R);if(P.begin(c,an?480:720)){po=P;P.mode=an?0:1}else FPVSim.noPost=P.bad}
+  const sv=this._sv||(this._sv=c.closest('.simview'));if(sv&&this._gpan!==!!po){this._gpan=!!po;sv.classList.toggle('gpuan',!!po)}
+  if(!po){gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,c.width,c.height)}return po}
+ /* v171: the FPV lens looks past its own frame: the front props, motors and arms at the real size, a few centimetres away. A pass of its own (near plane 6 mm, depth cleared) so they never sink into the scenery. A lens focused far away cannot show what is this close: still blades are a little soft, spinning ones are a faint dark veil with a ghost of the blades in it. Like the real thing they only show at the bottom corners, and less the more the camera is tilted up. */
+ fpvProps(gl,R,cq,eye,fov,c,NT,t){const qk=quadKey();if(qk!==this.qk||!this.bm){this.qk=qk;this.dm=R.mesh(droneGeo(qk));this.pm=R.mesh(propGeo(qk));this.bm=R.mesh(bladeGeo(qk))}
+  this.propStep(t);const FM=this.fpk===qk&&this.fpm?this.fpm:(this.fpk=qk,this.fpm=R.mesh(fpvFrameGeo(qk)));
+  gl.uniformMatrix4fv(R.u.uVP,false,M4.mul(M4.persp(fov*Math.PI/180,c.width/c.height,.006,1.5),M4.view(cq,[0,0,0])));gl.uniform3fv(R.u.uEye,[0,0,0]);gl.uniform1f(R.u.uFK,0);
+  {const f0=Q.rot(this.q,[0,0,-1]);gl.uniform3fv(R.u.uLp,V.sub(V.add(this.p,V.mul(f0,.12)),eye))}
+  gl.depthMask(true);gl.clear(gl.DEPTH_BUFFER_BIT);gl.disable(gl.BLEND);
+  const M=M4.fromQT(this.q,V.sub(this.p,eye)),arm=this.armed&&!this.crash,rp=Math.min(1,Math.max(0,this.rpm||0)),nb=qk==='tw'?4:3,TC=NT?[.02,.02,.025]:[.07,.075,.085];
+  R.draw(FM,M,{lines:false});
+  const rot=(a,x,z)=>M4.mul(M,[Math.cos(a),0,-Math.sin(a),0,0,1,0,0,Math.sin(a),0,Math.cos(a),0,x,0,z,1]);
+  gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+  motorPos(qk).filter(m=>m[1]<0).forEach(([x,z,d])=>{
+   if(!arm){R.draw(this.bm,rot(this.pa*d,x,z),{lines:false});gl.depthMask(false);[-.0022,.0022].forEach(o=>R.draw(this.bm,rot(this.pa*d,x+o,z),{alpha:.28,lines:false}));gl.depthMask(true)}
+   else{gl.depthMask(false);const a0=this.pa*d,qa=Math.PI*2/nb,rv=.55+.45*rp;for(let j=0;j<4;j++)R.draw(this.bm,rot(a0+j/4*qa,x,z),{alpha:.12+.1*rv,tint:TC,glow:.35,lines:false});
+    /* the swept volume of a prop is a few millimetres thick (twisted blades) and, out of focus, much more: slices of the disc one above the other */
+    for(let j=-3;j<=3;j++){const yo=j*.0026,wj=1-Math.abs(j)/4.5;[[1.04,.8],[.9,1]].forEach(([s,w])=>R.draw(this.pm,M4.mul(M,[s,0,0,0,0,1,0,0,0,0,s,0,x,yo,z,1]),{alpha:(.085+.03*rv)*w*wj,tint:TC,glow:.55,lines:false}))}gl.depthMask(true)}});
+  gl.disable(gl.BLEND)}
+ render(t){const gl=this.r.gl,c=this.cv,NT=!this.att&&!!this.night,TAC=this.att||(SIM.look!=='real'&&!NT),cam=this.att?'cine':(this.mis&&this.mis.ball&&SIM.cam==='fpv'?'chase':SIM.cam);this.r.tac=TAC;gl.uniform1f(this.r.u.uTac,TAC?1:0);gl.uniform1f(this.r.u.uNight,NT?1:0);gl.uniform1f(this.r.u.uGfx,SIM.gfx==='high'&&!TAC?1:0);{const W=this.fwind,wk=W?Math.min(1.8,.4+W.base*.16+W.gust*.04):.45,wd=W?W.dir:[.7,0,.7];gl.uniform1f(this.r.u.uT,(t||0)/1000);gl.uniform3f(this.r.u.uWnd,wd[0],wd[2],wk);gl.uniform1f(this.r.u.uTexOn,this.r.texOK?1:0);gl.uniform1f(this.r.u.uMS,this.r.ms?1:0);gl.uniform1f(this.r.u.uGL,this.gLay||0);const pd=this.padU||[0,0,0];gl.uniform4f(this.r.u.uPad,pd[0],pd[1],pd[2],0)}const WX=this.wx,ic=WX&&WX.ceil?Math.max(0,Math.min(1,(this.p[1]-(WX.ceil-.4))/.9)):0,FG=wxFog(NT,TAC,WX,ic);this.inCloud=ic;gl.uniform3fv(this.r.u.uFog,FG);gl.uniform1f(this.r.u.uFK,wxK(WX,this.plane)+ic*.14);gl.uniform4f(this.r.u.uWx,WX?WX.c/100:0,WX?WX.r/100:0,WX?WX.f/100:0,ic);const LK=this.linkQ();this.lq=LK.vid;this.ctlq=LK.ctl;this.jam=LK.jam||0;const PO=this.postBegin(cam,c,gl);gl.clearColor(FG[0],FG[1],FG[2],1);{const f0=Q.rot(this.q,[0,0,-1]),u0=Q.rot(this.q,[0,1,0]);gl.uniform3fv(this.r.u.uLp,V.add(this.p,V.mul(f0,.12)));gl.uniform3fv(this.r.u.uLd,V.norm(V.add(f0,V.mul(u0,-.28))))}gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
   let eye,cq,fov;const fwd=Q.rot(this.q,[0,0,-1]);
   /* v164: the cameras follow in real time (an exponential approach), not a fixed fraction per frame: with a fixed fraction the chase camera trailed the vehicle by (speed x frame time x 7), so every slow frame changed the distance by metres at full speed and the vehicle seemed to shake */
   const tNow=t??performance.now(),rdt=Math.min(.1,Math.max(0,(tNow-(this.rT??tNow))/1000));this.rT=tNow;
   if(cam==='cine'){const hf=V.norm([fwd[0],0,fwd[2]]),sd=[-hf[2],0,hf[0]],ph=Math.sin(t/7000);const want=V.add(this.p,V.add(V.add(V.mul(hf,-3.4),V.mul(sd,2.2*ph)),[0,1.2+.5*Math.cos(t/9000),0]));this.chase=this.chase?V.lerp(this.chase,want,this.still?1:.04):want;eye=this.chase;cq=M4.lookQ(eye,V.add(this.p,V.mul(hf,2)));fov=62}
-   else if(cam==='fpv'){cq=this.plane?Q.mul(this.q,Q.axis([1,0,0],-.06)):Q.mul(this.q,Q.axis([1,0,0],(SIM.tilt??25)*Math.PI/180));eye=V.add(this.p,Q.rot(this.q,this.plane?[0,.16,-.3]:[0,.03,-.08]));fov=this.plane?88:100}
+   else if(cam==='fpv'){cq=this.plane?Q.mul(this.q,Q.axis([1,0,0],-.06)):Q.mul(this.q,Q.axis([1,0,0],(SIM.tilt??25)*Math.PI/180));eye=V.add(this.p,Q.rot(this.q,this.plane?[0,.16,-.3]:fpvMount(quadKey())));fov=this.plane?88:100}
   else if(cam==='chase'){const hf=V.norm([fwd[0],0,fwd[2]]);const want=V.add(this.p,V.add(V.mul(hf,this.plane?-4.9:-2.4),[0,this.plane?1.35:.9,0]));if(this.col)want[1]=Math.max(want[1],colFloor(this.col,want[0],want[2],want[1]+3)+.45);this.chase=this.chase?V.lerp(this.chase,want,1-Math.exp(-rdt/.13)):want;eye=this.chase;cq=M4.lookQ(eye,V.add(this.p,V.mul(hf,this.plane?5:1.5)));fov=70}
   else{const s=this.scn.start;eye=this.plane?[-14,1.7,36]:[s[0]+3,1.7,s[2]+4];if(this.col)eye[1]=Math.max(1.7,colFloor(this.col,eye[0],eye[2],60)+1.6);cq=M4.lookQ(eye,this.p);
    /* spectator: the zoom keeps the vehicle a readable size (about a tenth of the picture height for a plane) however far it flies, following the distance smoothly so the picture never pumps */
@@ -12466,10 +12593,12 @@ class FPVSim{
      /* v165: the canopy glass, last and see-through in both looks (a plain tint in the tactical one, mirror and glint in the real one); not in the pilot's own view */
      if(this.planeG&&cam!=='fpv'){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);R.draw(this.planeG,M,TAC?{alpha:.12,lines:false}:{glass:1,lines:false});gl.depthMask(true);gl.disable(gl.BLEND)}}else R.draw(this.dm,Sc,{lines:false});
    /* props: still while disarmed, idle spin once armed, faster and blurrier with throttle */
-   if(!BALL&&!this.plane){const now=t,pdt=Math.min(.05,Math.max(0,(now-(this.pt||now))/1000));this.pt=now;const w=this.armed&&!this.crash?24+170*Math.min(1,Math.max(0,this.rpm||0)):0;this.pw=(this.pw||0)+(w-(this.pw||0))*(1-Math.exp(-pdt/(w>this.pw?.08:.35)));this.pa=((this.pa||0)+Math.min(this.pw,46)*pdt)%(Math.PI*2);
+   if(!BALL&&!this.plane){this.propStep(t);
     const bl=Math.min(1,Math.max(0,(this.pw-40)/110)),ba=1-bl*.75,da=bl*.42;
     motorPos(qk).forEach(([x,z,d])=>{const a=this.pa*d,c=Math.cos(a),sn=Math.sin(a),L=M4.mul(Sc,[c,0,-sn,0,0,1,0,0,sn,0,c,0,x,0,z,1]);R.draw(this.bm,L,{alpha:ba,lines:false});if(da>.02)R.draw(this.pm,M4.mul(Sc,[1,0,0,0,0,1,0,0,0,0,1,0,x,0,z,1]),{alpha:da,lines:false})})}
-   if(NT){if(!this.lm||this.lmk!==qk){const D=droneLights(qk);this.lm={m:this.r.mesh(D.m),h:this.r.mesh(D.h)};this.lmk=qk}const bk=(t%1200)<90?1:.55;R.draw(this.lm.m,Sc,{lines:false});gl.blendFunc(gl.SRC_ALPHA,gl.ONE);gl.depthMask(false);R.draw(this.lm.h,Sc,{alpha:.3*bk,lines:false});gl.depthMask(true);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA)}gl.disable(gl.BLEND);if(cam==='los')gl.uniform1f(R.u.uFK,wxK(WX,this.plane)+ic*.14)}}
+   if(NT){if(!this.lm||this.lmk!==qk){const D=droneLights(qk);this.lm={m:this.r.mesh(D.m),h:this.r.mesh(D.h)};this.lmk=qk}const bk=(t%1200)<90?1:.55;R.draw(this.lm.m,Sc,{lines:false});gl.blendFunc(gl.SRC_ALPHA,gl.ONE);gl.depthMask(false);R.draw(this.lm.h,Sc,{alpha:.3*bk,lines:false});gl.depthMask(true);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA)}gl.disable(gl.BLEND);if(cam==='los')gl.uniform1f(R.u.uFK,wxK(WX,this.plane)+ic*.14)}
+  if(cam==='fpv'&&!this.plane&&!this.att&&!(this.mis&&this.mis.ball))this.fpvProps(gl,R,cq,eye,fov,c,NT,t);
+  if(PO)PO.end(c,t,{lq:this.lq,jam:this.jam,mode:PO.mode})}
  dispose(){cancelAnimationFrame(this.raf);this.ro?.disconnect();if(!this.att){wxAudio(0);this._wxCv?.remove();this._wxW?.remove();try{this.fx?.remove()}catch(e){}this.fx=null}removeEventListener('keydown',this.onKey);removeEventListener('keyup',this.onKey);if(this.cv.__owner===this){this.r.free();this.cv.__owner=null}if(!this.att){MOTOR.stop();MOTOR.space(null);MOTOR.dop(MOTOR.eng[MOTOR.cur],0,MOTOR.c?MOTOR.c.currentTime:0)}if(SIM.inst===this)SIM.inst=null;if(BG.inst===this)BG.inst=null}}
 
 const SIMI={sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>',cloud:'<path d="M7 18.5h10.2a4.1 4.1 0 0 0 .5-8.15A5.6 5.6 0 0 0 7.1 9.3a4.6 4.6 0 0 0-.1 9.2z"/>',rain:'<path d="M7 14.5h10a3.6 3.6 0 0 0 .5-7.15A5 5 0 0 0 7.9 6.6 4 4 0 0 0 7 14.5z"/><path d="M8.5 17.5l-1 2.5M12.5 17.5l-1 2.5M16.5 17.5l-1 2.5"/>',fog:'<path d="M4 8.5h13M6 12h14M4 15.5h11M8 19h10"/>',balloon:'<path d="M12 3c3.3 0 5.5 2.6 5.5 5.8 0 3.6-2.9 6.6-5.5 6.6S6.5 12.4 6.5 8.8C6.5 5.6 8.7 3 12 3z"/><path d="M11 15.4l-.6 1.4h3.2l-.6-1.4M12 16.8c0 2-1.6 2.4-1.6 4.2"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="2"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/>',trash:'<path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v5.5M14 11v5.5"/>',arch:'<rect x="3" y="4" width="18" height="4.5" rx="1"/><path d="M5 8.5V19a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5M10 12.5h4"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',eyex:'<path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7a9.6 9.6 0 0 0 4.2-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',field:'<path d="M5 21V4M5 4h11l-2 3.5 2 3.5H5"/>',forest:'<path d="M12 3l5 7h-3l4 6H6l4-6H7z"/><path d="M12 16v5"/>',
@@ -12735,7 +12864,8 @@ function simHud(s,I){{const f=document.getElementById('simFocus');if(f){const h=
  set('soSpd',String(Math.round(sp)));{const b=document.getElementById('soSpdB');if(b)b.style.width=Math.min(100,sp/(s.plane?plKmh(s.PK)*1.05/100:1.2))+'%'}set('soAlt',Math.max(0,s.p[1]-.06-(s.gl||0)).toFixed(1));{const vs=s.v[1];set('soVs',(vs>.15?'▲ ':vs<-.15?'▼ ':'± ')+Math.abs(vs).toFixed(1)+' m/s')}
  {const f=Q.rot(s.q,[0,0,-1]);let h=Math.round(Math.atan2(f[0],-f[2])*180/Math.PI);h=(h+360)%360;set('soHdg',String(h).padStart(3,'0')+'°');{const ww=document.getElementById('soWindW');if(ww){ww.hidden=!s.windNow;if(s.windNow){const wv=Math.hypot(s.windNow[0],s.windNow[2]);set('soWind',wv.toFixed(1)+' מ׳/ש');const wa=Math.atan2(s.windNow[0],-s.windNow[2])*180/Math.PI-h;const ar=document.getElementById('soWArr');if(ar)ar.style.transform=`rotate(${wa.toFixed(0)}deg)`}}}
  if(SIM.osd==='auth'){const bt=Math.max(0,s.bat??100),vv=(s.volt||4.2*SIMQ().cells).toFixed(1),A=s.armed?(s.amp||0).toFixed(1):'0.0',mah=Math.round(s.mah||0),ft=s.ft||0,tm=Math.floor(ft/60)+':'+String(Math.floor(ft%60)).padStart(2,'0'),u=curTrainee?.();
-  set('bfTL',`LQ  2:99\nRSSI -${48+Math.round(I.thr*6)}`);set('bfTC',(u?.callsign||'FPV SIM').toUpperCase());set('bfTR',s.plane?`FUEL ${Math.round(bt)}%\nN ${Math.round((s.rpm||0)*100)}%`:`${vv}V\n${A}A`);set('bfBL',`ALT ${Math.max(0,s.p[1]-.06).toFixed(1)}M\n${Math.round(sp)}KM/H`);
+  {const lkV=Math.min(1,s.lq??1),lkC=Math.min(1,s.ctlq??1),lkB=1-Math.min(lkV,lkC);set('bfTL',`LQ  2:${String(Math.round(lkC*99)).padStart(2,'0')}\nRSSI -${48+Math.round(I.thr*6+lkB*52)}`);
+   {const bo=s._bfo&&s._bfo.isConnected?s._bfo:(s._bfo=document.querySelector('#simView .bfo'));if(bo){const vb=1-lkV;let oj=0,oo=1;if(vb>.02){const ph=Math.floor(performance.now()/90),r1=Math.abs(Math.sin(ph*12.9898)*43758.5453)%1,r2=Math.abs(Math.sin(ph*78.233)*43758.5453)%1;oj=(r1-.5)*2*vb*vb*16;oo=Math.max(0,1-vb*vb*.9*r2)}bo.style.setProperty('--oj',oj.toFixed(1)+'px');bo.style.setProperty('--oo',oo.toFixed(2))}}}set('bfTC',(u?.callsign||'FPV SIM').toUpperCase());set('bfTR',s.plane?`FUEL ${Math.round(bt)}%\nN ${Math.round((s.rpm||0)*100)}%`:`${vv}V\n${A}A`);set('bfBL',`ALT ${Math.max(0,s.p[1]-.06).toFixed(1)}M\n${Math.round(sp)}KM/H`);
   set('bfBC',`${({acro:'ACRO',horizon:'HOR ',angle:'ANGL'})[SIM.mode]||'ANGL'}  \u23F1${tm}`);set('bfBR',s.plane?`${s.PP?.rg?(s.auxA?.gear>.97?'GEAR DN':s.auxA?.gear<.03?'GEAR UP':'GEAR >>'):'GEAR FIX'}${s.PP?.fl?' F'+(s.aux?.flap||0):''}\nHDG ${String(h).padStart(3,'0')}`:`${mah}MAH\nHDG ${String(h).padStart(3,'0')}`);
   set('bfW',s.crash?'CRASH':s.plane?(s.gwarn?'GEAR!':s.dry?'FUEL OUT':s.stall?'STALL':bt<12?'LOW FUEL':''):!s.armed?'DISARMED':bt<20?'LOW BATTERY':'');
   const rt=Q.rot(s.q,[1,0,0]),fw=Q.rot(s.q,[0,0,-1]),rl=Math.asin(Math.max(-1,Math.min(1,rt[1])))*180/Math.PI,pt=Math.asin(Math.max(-1,Math.min(1,fw[1])))*180/Math.PI,H=document.getElementById('bfH');if(H)H.style.transform=`translate(-50%,-50%) translateY(${(pt*3).toFixed(1)}px) rotate(${(-rl).toFixed(1)}deg)`}const G=s.gates[s.gi]&&s.gates[s.gi].G;set('soDst',G?Math.hypot(G[0]-s.p[0],G[1]-s.p[1],G[2]-s.p[2]).toFixed(1)+'m':'—');const ft=s.ft||0;set('soFt',Math.floor(ft/60)+':'+String(Math.floor(ft%60)).padStart(2,'0'));const bt=Math.max(0,Math.round(s.bat??100));set('soBat',bt+'%');{const bl=document.getElementById('soBatL'),w=s.plane?'דלק':'סוללה';if(bl&&bl.dataset.w!==w){bl.dataset.w=w;bl.textContent=w}}const be=document.getElementById('soBat');if(be)be.className=bt<15?'bad':bt<35?'warn':''}
