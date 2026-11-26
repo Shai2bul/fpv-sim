@@ -11665,13 +11665,14 @@ in vec3 aP;in vec3 aN;in vec3 aC;in float aK;in vec4 aU;uniform mat4 uVP,uM;unif
 void main(){vec4 w=uM*vec4(aP,1.);float sw=aU.z*aU.w;if(sw>0.){float ph=w.x*.31+w.z*.23,s=sin(uT*1.7+ph)*.65+sin(uT*3.1+ph*2.1+1.3)*.35,gs=.6+.4*sin(uT*.43+ph*.2);w.xz+=uWnd.xy*(s*gs*sw*uWnd.z);w.y-=abs(s)*sw*uWnd.z*.18;}
 vW=w.xyz;vN=mat3(uM)*aN;vC=aC;vK0=aK;vKf=aK;vU=aU;gl_Position=uVP*w;}`;
 const SIMFS=`#version 300 es
-precision highp float;precision highp sampler2DArray;in vec3 vC,vN,vW;in float vK0;in vec4 vU;flat in float vKf;uniform vec3 uEye,uSun,uFog,uTint,uLp,uLd;uniform float uGlow,uAlpha,uTac,uNight,uFK,uGfx,uTexOn,uGL,uMS,uT,uGlass;uniform vec4 uWx,uPad;uniform sampler2DArray uTex;out vec4 o;
+precision highp float;precision highp sampler2DArray;in vec3 vC,vN,vW;in float vK0;in vec4 vU;flat in float vKf;uniform vec3 uEye,uSun,uFog,uTint,uLp,uLd;uniform float uGlow,uAlpha,uTac,uNight,uFK,uGfx,uTexOn,uGL,uMS,uT,uGlass;uniform vec4 uWx,uPad,uXr,uXd;uniform sampler2DArray uTex;out vec4 o;
 float spc;float TS(int l){return l==0?2.5:l==1?2.5:l==2?3.2:l==3?3.:l==4?3.5:l==5?3.:l==6?1.3:l==7?2.4:l==8?2.:l==21?12.:3.;}
 vec3 lamp(vec3 n){vec3 L=vW-uLp;float d=length(L);vec3 Ld=L/max(d,1e-3);float cone=smoothstep(.62,.93,dot(Ld,uLd));float near=smoothstep(2.2,0.,d)*.35;return vec3(1.,.96,.88)*(cone*7.+near)*max(dot(n,-Ld),0.)/(1.+d*d*.09);}
 float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float vn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}
 float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*vn(p);p=p*2.03+vec2(1.7,9.2);a*=.5;}return v;}
-void main(){float vK=vK0;if(vKf>9.5)vK=0.;if(vKf>6.5&&vKf<7.5){if(uTac<.5)discard;vK=0.;}if((vKf>7.5&&vKf<8.5)||(vKf>5.5&&vKf<6.5)||(vKf>8.5&&vKf<9.5))vK=0.;float dd=length(vW-uEye);
+void main(){if(uXr.w>0.){vec3 xv=vW-uXr.xyz;float xt=dot(xv,uXd.xyz);if(xt>1.&&xt<uXd.w-.6&&vW.y>.3){float xd=length(xv-uXd.xyz*xt),xR=uXr.w+xt*.05;if(xd<xR){float xf=xd/xR;if(fract(52.9829189*fract(dot(gl_FragCoord.xy,vec2(.06711056,.00583715))))>xf*xf*(3.-2.*xf))discard;}}}
+ float vK=vK0;if(vKf>9.5)vK=0.;if(vKf>6.5&&vKf<7.5){if(uTac<.5)discard;vK=0.;}if((vKf>7.5&&vKf<8.5)||(vKf>5.5&&vKf<6.5)||(vKf>8.5&&vKf<9.5))vK=0.;float dd=length(vW-uEye);
   if(vKf>139.5){float a=texture(uTex,vec3(vU.xy,20.)).a*vC.r*uTexOn;float fg=1.-exp(-dd*dd*uFK);o=vec4(mix(vec3(.01,.02,.01),uFog,clamp(fg,0.,1.)),a*uAlpha*(1.-fg*.7));return;}
  if(vK>4.5){vec3 lc=mix(vC,uTint,uGlow);float fl=1.-exp(-dd*dd*(uTac>.5?max(.00006,uFK):uFK));o=vec4(mix(lc,uFog,clamp(fl,0.,1.)),uAlpha);return;}
  if(uTac>.5){if(vK>1.5&&vK<3.5){float t=clamp(normalize(vW-uEye).y*1.4,0.,1.);o=vec4(mix(mix(vec3(.075,.105,.095),vec3(.035,.05,.045),pow(t,.5)),uFog,clamp(uWx.z*1.1+uWx.w,0.,1.)),1.);return;}
@@ -11751,7 +11752,7 @@ class SimGL{
   cv.addEventListener('webglcontextlost',e=>{e.preventDefault();cv.__lost=true;SIMGPU.lost(cv)});
   const sh=(t,s)=>{const x=gl.createShader(t);gl.shaderSource(x,s);gl.compileShader(x);if(!gl.getShaderParameter(x,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(x));return x};
   const p=this.pr=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,SIMVS));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,SIMFS));gl.linkProgram(p);gl.useProgram(p);
-  this.u={};['uVP','uM','uEye','uSun','uFog','uTint','uGlow','uAlpha','uTac','uNight','uLp','uLd','uFK','uWx','uGfx','uT','uWnd','uTex','uTexOn','uGL','uMS','uPad','uGlass'].forEach(k=>this.u[k]=gl.getUniformLocation(p,k));this.a={P:gl.getAttribLocation(p,'aP'),N:gl.getAttribLocation(p,'aN'),C:gl.getAttribLocation(p,'aC'),K:gl.getAttribLocation(p,'aK'),U:gl.getAttribLocation(p,'aU')};
+  this.u={};['uVP','uM','uEye','uSun','uFog','uTint','uGlow','uAlpha','uTac','uNight','uLp','uLd','uFK','uWx','uGfx','uT','uWnd','uTex','uTexOn','uGL','uMS','uPad','uGlass','uXr','uXd'].forEach(k=>this.u[k]=gl.getUniformLocation(p,k));this.a={P:gl.getAttribLocation(p,'aP'),N:gl.getAttribLocation(p,'aN'),C:gl.getAttribLocation(p,'aC'),K:gl.getAttribLocation(p,'aK'),U:gl.getAttribLocation(p,'aU')};
   gl.enable(gl.DEPTH_TEST);gl.uniform3fv(this.u.uSun,V.norm([.4,.8,.35]));gl.uniform3fv(this.u.uFog,[.74,.82,.86]);gl.uniform1f(this.u.uFK,.000018);gl.uniform4f(this.u.uWx,0,0,0,0);
    /* v154: the material textures (one 2D array, filled as SimTex paints the layers), the sway attribute's default, multisampling for cut-out edges */
    gl.vertexAttrib4f(this.a.U,0,0,0,0);this.ms=(gl.getParameter(gl.SAMPLES)||0)>1;this.texOK=false;
@@ -11765,8 +11766,9 @@ class SimGL{
   put(g.p,this.a.P,3);put(g.n,this.a.N,3);put(g.c,this.a.C,3);put(g.k,this.a.K,1);if(g.u&&g.u.length){g.padU();put(g.u,this.a.U,4)}gl.bindVertexArray(null);let lv=null,ln=0;
   if(g.L.length){lv=gl.createVertexArray();gl.bindVertexArray(lv);put(g.L,this.a.P,3);put(new Array(g.L.length).fill(0).map((_,i)=>i%3===1?1:0),this.a.N,3);put(g.LC,this.a.C,3);put(new Array(g.L.length/3).fill(5),this.a.K,1);gl.bindVertexArray(null);ln=g.L.length/3}
   const M={vao,n:g.p.length/3,bufs,lv,ln};(this.res||(this.res=[])).push(M);return M}
- free(){const gl=this.gl;(this.res||[]).forEach(m=>{m.bufs.forEach(b=>gl.deleteBuffer(b));gl.deleteVertexArray(m.vao);if(m.lv)gl.deleteVertexArray(m.lv)});this.res=[];if(this.post){try{this.post.free()}catch(e){}this.post=null}}
+ free(){const gl=this.gl;fxGLFree(this);(this.res||[]).forEach(m=>{m.bufs.forEach(b=>gl.deleteBuffer(b));gl.deleteVertexArray(m.vao);if(m.lv)gl.deleteVertexArray(m.lv)});this.res=[];if(this.post){try{this.post.free()}catch(e){}this.post=null}}
  draw(m,M,o={}){const gl=this.gl;gl.uniformMatrix4fv(this.u.uM,false,M);gl.uniform1f(this.u.uGlow,o.glow||0);gl.uniform3fv(this.u.uTint,o.tint||[1,1,1]);gl.uniform1f(this.u.uAlpha,o.alpha??1);gl.uniform1f(this.u.uGlass,o.glass?1:0);gl.bindVertexArray(m.vao);if(o.only!=='lines')gl.drawArrays(gl.TRIANGLES,0,m.n);if((this.tac||o.lines==='force')&&m.lv&&o.lines!==false){gl.bindVertexArray(m.lv);gl.drawArrays(gl.LINES,0,m.ln)}}
+ drop(m){const gl=this.gl;m.bufs.forEach(b=>gl.deleteBuffer(b));gl.deleteVertexArray(m.vao);if(m.lv)gl.deleteVertexArray(m.lv);if(this.res)this.res=this.res.filter(x=>x!==m)}
  dispose(){const gl=this.gl;SimTex.unhook(this);try{gl.getExtension('WEBGL_lose_context')?.loseContext()}catch(e){}}}
 
 /* ---- v171 · what the FPV camera sees of its own drone: the front arms and motors (the duct rings on the ducted classes), at the real size, and where the lens sits on each class ---- */
@@ -11875,11 +11877,14 @@ const I4=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];
    gas4   petrol 4-stroke twin (scale warbird): one firing every two revolutions per cylinder, uneven deep beats, big slow prop
    jet    kerosene turbine: slow spool-up and spool-down, rising compressor whine on top of a broadband roar */
 const ENGK={tr1:'nitro',tr2:'nitro',p51:'gas4',spit:'gas4',p47:'gas4',bf109:'gas4',fw190:'rad14',fg1d:'gas4',jet:'jet'};
-const FXS={};
-/* v153: one soft sprite per colour and kind, drawn with drawImage: a radial gradient per particle per frame (up to 460 of them) was the most expensive line of the whole frame. Colours are rounded to steps of 8, which keeps the number of sprites small and cannot be seen. */
-function fxSprite(kind,R,G,B){R&=248;G&=248;B&=248;const key=kind+R+'.'+G+'.'+B;let c=FXS[key];if(c)return c;const S=96,x=(c=document.createElement('canvas')).getContext('2d');c.width=c.height=S;const g=x.createRadialGradient(S/2,S/2,0,S/2,S/2,S/2),rg=a=>`rgba(${R},${G},${B},${a})`;
- if(kind==='smoke'){g.addColorStop(0,rg(1));g.addColorStop(.55,rg(.55));g.addColorStop(1,rg(0))}else if(kind==='dust'){g.addColorStop(0,rg(1));g.addColorStop(.6,rg(.56));g.addColorStop(1,rg(0))}else{g.addColorStop(0,'rgba(255,244,222,1)');g.addColorStop(.28,rg(.8));g.addColorStop(1,rg(0))}
- x.fillStyle=g;x.fillRect(0,0,S,S);return FXS[key]=c}
+/* v172: the simulator's own exhaust table (ENGFX stays as it is, for the films). rate: puffs per second at idle / full power · life: seconds · z: radius at the pipe (m, times the model's scale) · grow: radius gain over the life · op: peak opacity at idle / full power · col, nc: colour by day / night (sRGB) · slip: speed at which the slipstream carries it back (m/s) at idle / full power · up: rise · blip: extra puffs when the throttle is snapped open · flN: flames from the stacks in the dark */
+const FXSIM={
+ nitro:{rate:[10,16],life:[1,2],z:.06,grow:5.5,op:[.55,.32],col:[186,196,216],nc:[120,128,154],slip:[1.2,6],up:.14},
+ gas4:{rate:[3,5],life:[.7,1.4],z:.05,grow:4.5,op:[.26,.12],col:[200,207,220],nc:[114,118,138],slip:[1,5],up:.1,blip:1,flN:true},
+ rad14:{rate:[3.4,5.4],life:[.8,1.5],z:.055,grow:4.8,op:[.3,.14],col:[194,201,216],nc:[114,118,138],slip:[1,5],up:.1,blip:1,flN:true},
+ jet:{}};
+/* v172: how much dust each kind of ground gives (a: 0..1 and a bit) and its colour by day */
+const FXSURF={asphalt:{a:.07,c:[172,172,174]},concrete:{a:.1,c:[204,201,194]},grass:{a:.3,c:[160,154,114]},dirt:{a:1,c:[170,140,102]},sand:{a:1.1,c:[220,198,152]},snow:{a:.9,c:[238,242,250]},rock:{a:.45,c:[152,148,142]}};
 /* v153: what the exhaust of each engine kind looks like; the simulator and the trailers read this one table. rate: puffs per second at idle / full power · life: seconds · z: start radius (m) · grow: size gain over the life · op: opacity at idle / full power · col, nc: colour by day / night (sRGB) · spd: speed away from the engine (m/s) · blip: extra puffs when the throttle is snapped open · fl: a flame at the nozzle (turbine) · flN: stack flames in the dark (petrol) */
 const ENGFX={
  nitro:{rate:[9,15],life:[.8,1.5],z:.06,grow:3.4,rg:.5,op:[.2,.1],col:[168,184,208],nc:[108,116,144],spd:[.35,1.2],up:.14},
@@ -12177,6 +12182,71 @@ const WX_TPL=[
  [4,'land','נחיתה בגשם חזק','נחיתת דיוק בגשם חזק ועננות כבדה. הגשם מוסיף משבים קטנים ממש לפני המגע.','מנחת',80,74,{c:85,r:80,f:20}],
  [4,'recover','סערה משולבת','רוח חזקה, גשם כבד ועננים בגובה 10 מ׳ באותה טיסה. מחזיקים קו, נשארים מתחת לעננים ומתאוששים ממשבים.','מגרש פתוח',100,74,{c:92,r:88,f:25,ceil:10,w:3}]];
 const SIMWIND={recover:{base:2,gust:6.5,dir:V.norm([.2,0,1]),zone:[-4,7],n:'אזור משבים חזקים באמצע המסלול'},wind:{base:5.5,gust:3,dir:V.norm([1,0,.25]),n:'רוח צד חזקה עם משבים'},final:{base:3,gust:2,dir:V.norm([-.6,0,1]),n:'רוח מתונה עם משבים'}};
+/* v172 · particles in the scene. Dust, smoke, flames and sparks are billboards drawn in the GL pass with the depth test; they used to be a flat 2D layer over the whole picture, so a cloud of dust sat on the aircraft however far behind it the dust really was, and a flame at the nozzle showed through the fuselage. One program, one dynamic buffer, one atlas of soft sprites painted once. */
+const FXV=`#version 300 es
+layout(location=0) in vec3 aC;layout(location=1) in vec4 aS;layout(location=2) in vec4 aCol;layout(location=3) in vec2 aT;
+uniform mat4 uVP;uniform vec3 uR,uU,uEye;
+out vec2 vUv;out vec4 vCol;out vec3 vW;out vec2 vT;
+void main(){float c=cos(aS.w),s=sin(aS.w);vec2 q=vec2(aS.x*c-aS.y*s,aS.x*s+aS.y*c);vec3 te=uEye-aC;float d=length(te);
+ vec3 w=aC+(uR*q.x+uU*q.y)*aS.z+te/max(d,1e-3)*min(aS.z*.8,d*.45);
+ vUv=aS.xy*.5+.5;vCol=aCol;vT=aT;vW=w;gl_Position=uVP*vec4(w,1.);}`;
+const FXF=`#version 300 es
+precision highp float;in vec2 vUv;in vec4 vCol;in vec3 vW;in vec2 vT;uniform sampler2D uSp;uniform vec3 uEye,uFog;uniform vec4 uCut;uniform float uFK;out vec4 o;
+void main(){float t=floor(vT.x+.5);if(t>=8.){t-=8.;if(dot(vW,uCut.xyz)+uCut.w<0.)discard;}vec2 uv=(vec2(mod(t,4.),floor(t/4.))+clamp(vUv,.015,.985))/vec2(4.,2.);float a=texture(uSp,uv).a;
+ float d=length(vW-uEye);float fg=clamp(1.-exp(-d*d*uFK),0.,1.);vec3 c=mix(vCol.rgb,uFog,fg*(1.-vT.y));
+ float al=a*vCol.a*smoothstep(.1,.8,d);o=vec4(c*al,al*(1.-vT.y));}`;
+/* the atlas: 0-2 billowy puffs (smoke, dust), 3 a thin wisp, 4 a hot glow, 5 a spark, 6 a soft round dot, 7 a hard chip */
+function fxAtlas(){const S=64,cv=document.createElement('canvas');cv.width=S*4;cv.height=S*2;const g=cv.getContext('2d');let sd=20261126;const rnd=()=>(sd=(Math.imul(sd,1664525)+1013904223)>>>0)/4294967296;
+ const tile=(i,fn)=>{g.save();g.translate((i%4)*S,Math.floor(i/4)*S);g.beginPath();g.rect(0,0,S,S);g.clip();fn();g.restore()};
+ const disc=(h,x,y,r,a0,a1)=>{const gr=h.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,`rgba(255,255,255,${a0})`);gr.addColorStop(.6,`rgba(255,255,255,${a0*.4})`);gr.addColorStop(1,'rgba(255,255,255,0)');h.fillStyle=gr;h.fillRect(x-r,y-r,r*2,r*2)};
+ const puff=(n,spread,lo,hi,sx=1,sy=1)=>{const c2=document.createElement('canvas');c2.width=c2.height=S;const h=c2.getContext('2d');
+  for(let i=0;i<n;i++){const a=rnd()*6.283,d=Math.sqrt(rnd())*spread*S;disc(h,S/2+Math.cos(a)*d*sx,S/2+Math.sin(a)*d*sy,(lo+rnd()*(hi-lo))*S,.5)}
+  h.globalCompositeOperation='destination-in';const m=h.createRadialGradient(S/2,S/2,S*.1,S/2,S/2,S*.5);m.addColorStop(0,'rgba(0,0,0,1)');m.addColorStop(.62,'rgba(0,0,0,.85)');m.addColorStop(1,'rgba(0,0,0,0)');h.fillStyle=m;h.fillRect(0,0,S,S);g.drawImage(c2,0,0)};
+ tile(0,()=>puff(26,.24,.15,.3));tile(1,()=>puff(24,.27,.14,.27));tile(2,()=>puff(28,.22,.13,.3));tile(3,()=>puff(14,.3,.08,.16,1.2,.5));
+ tile(4,()=>{const m=S/2,gr=g.createRadialGradient(m,m,0,m,m,m);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.22,'rgba(255,255,255,.75)');gr.addColorStop(.55,'rgba(255,255,255,.18)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(0,0,S,S)});
+ tile(5,()=>{const m=S/2,gr=g.createRadialGradient(m,m,0,m,m,m);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.12,'rgba(255,255,255,.9)');gr.addColorStop(.3,'rgba(255,255,255,.16)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(0,0,S,S)});
+ tile(6,()=>{const m=S/2,gr=g.createRadialGradient(m,m,0,m,m,m);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.5,'rgba(255,255,255,.5)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(0,0,S,S)});
+ tile(7,()=>{g.fillStyle='#fff';g.fillRect(S*.22,S*.22,S*.56,S*.56)});return cv}
+function fxGLInit(gl){const X={ok:false};try{const sh=(t,s)=>{const x=gl.createShader(t);gl.shaderSource(x,s);gl.compileShader(x);if(!gl.getShaderParameter(x,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(x));return x};
+  const p=X.pr=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,FXV));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,FXF));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(p));
+  X.u={};['uVP','uR','uU','uEye','uSp','uFog','uFK','uCut'].forEach(k=>X.u[k]=gl.getUniformLocation(p,k));
+  X.max=560;const STR=13,nv=X.max*4;X.buf=new Float32Array(nv*STR);
+  X.vao=gl.createVertexArray();gl.bindVertexArray(X.vao);X.vb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,X.vb);gl.bufferData(gl.ARRAY_BUFFER,X.buf.byteLength,gl.DYNAMIC_DRAW);
+  const A=(loc,n,off)=>{gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,n,gl.FLOAT,false,STR*4,off*4)};A(0,3,0);A(1,4,3);A(2,4,7);A(3,2,11);
+  const ix=new Uint16Array(X.max*6);for(let i=0;i<X.max;i++){const b=i*4;ix.set([b,b+1,b+2,b,b+2,b+3],i*6)}X.ib=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,X.ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,ix,gl.STATIC_DRAW);gl.bindVertexArray(null);
+  X.tex=gl.createTexture();gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,X.tex);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,fxAtlas());gl.generateMipmap(gl.TEXTURE_2D);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.activeTexture(gl.TEXTURE0);X.ok=true}catch(e){try{console.warn('fx',e)}catch(_){}X.ok=false}return X}
+function fxGLFree(R){const X=R&&R.fxr;if(!X||!X.ok)return;const gl=R.gl;try{gl.deleteBuffer(X.vb);gl.deleteBuffer(X.ib);gl.deleteVertexArray(X.vao);gl.deleteTexture(X.tex);gl.deleteProgram(X.pr)}catch(e){}R.fxr=null}
+/* what one particle looks like now: [sprite, half size (m), turn, r, g, b, alpha, additive] */
+function fxLook(q){const c=q.c,r=c[0]/255,g=c[1]/255,b=c[2]/255;
+ if(q.k==='afl')return [(q.t||4)+(q.cl?8:0),q.sz,0,r,g,b,q.al,q.ad||0];
+ if(q.s===undefined){q.s=Math.random();q.rt=Math.random()*6.283;q.sp=(Math.random()-.5)*1.2}
+ const k=q.l/q.m,tl=Math.floor(q.s*3),rot=q.rt+q.sp*q.l,sh=.93+.14*((q.s*7)%1);
+ if(q.k==='smoke')return [tl,q.z*(1+k*(q.gr||4)),rot,r*sh,g*sh,b*sh,Math.min(.9,(q.o||.3)*Math.pow(1-k,1.5)*Math.min(1,.25+k*6)),0];
+ if(q.k==='dust')return [tl,q.z*(1+k*(q.gr||2)),rot,r*sh,g*sh,b*sh,Math.min(.9,(q.o||.2)*Math.pow(1-k,1.25)*Math.min(1,.2+k*5)),0];
+ if(q.k==='flame')return [4,q.z*2.6*(1+k*.5),0,r,g,b,Math.min(1,(q.o||1)*(1-k)),1];
+ if(q.k==='trail')return [6,q.z*1.2,0,r,g,b,.75*(1-k),1];
+ if(q.k==='chip')return [7,q.z,rot,r*sh,g*sh,b*sh,Math.min(1,1.6*(1-k)),0];
+ return [5,q.z*(2.2-k),0,r,g,b,Math.min(1,1.4*(1-k)),1]}
+/* draws the particles of the sim into the scene (after the vehicle, before the video pass): far to near, one draw call */
+function fxGLDraw(R,P,VP,eye,cq,FG,K,cut){if(!P.length)return;const gl=R.gl;let X=R.fxr;if(X===undefined||X===null)X=R.fxr=fxGLInit(gl);if(!X.ok)return;
+ const rx=Q.rot(cq,[1,0,0]),ry=Q.rot(cq,[0,1,0]),fw=Q.rot(cq,[0,0,-1]),idx=[];
+ for(let i=0;i<P.length&&idx.length<X.max;i++){const q=P[i];q._d=(q.p[0]-eye[0])*fw[0]+(q.p[1]-eye[1])*fw[1]+(q.p[2]-eye[2])*fw[2];if(q._d>.05)idx.push(i)}
+ idx.sort((a,b)=>P[b]._d-P[a]._d);const B=X.buf,CR=[[-1,-1],[1,-1],[1,1],[-1,1]];let o=0;
+ for(const i of idx){const q=P[i],L=fxLook(q);if(L[6]<=.003)continue;for(let c=0;c<4;c++){B[o++]=q.p[0];B[o++]=q.p[1];B[o++]=q.p[2];B[o++]=CR[c][0];B[o++]=CR[c][1];B[o++]=L[1];B[o++]=L[2];B[o++]=L[3];B[o++]=L[4];B[o++]=L[5];B[o++]=L[6];B[o++]=L[0];B[o++]=L[7]}}
+ const cnt=o/52;if(!cnt)return;
+ gl.useProgram(X.pr);gl.uniformMatrix4fv(X.u.uVP,false,VP);gl.uniform3fv(X.u.uR,rx);gl.uniform3fv(X.u.uU,ry);gl.uniform3fv(X.u.uEye,eye);gl.uniform3fv(X.u.uFog,FG);gl.uniform1f(X.u.uFK,K);gl.uniform4fv(X.u.uCut,cut||[0,0,0,1]);gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,X.tex);gl.uniform1i(X.u.uSp,2);
+ gl.bindVertexArray(X.vao);gl.bindBuffer(gl.ARRAY_BUFFER,X.vb);gl.bufferSubData(gl.ARRAY_BUFFER,0,B,0,o);
+ gl.enable(gl.BLEND);gl.blendFunc(gl.ONE,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);gl.drawElements(gl.TRIANGLES,cnt*6,gl.UNSIGNED_SHORT,0);gl.depthMask(true);gl.disable(gl.BLEND);gl.bindVertexArray(null);gl.activeTexture(gl.TEXTURE0);gl.useProgram(R.pr)}
+/* v172 · the break-up. A destroyed vehicle comes apart into the pieces it is made of, each one a rigid body that flies, tumbles and bounces. debSplit cuts a mesh into chunks by where its triangles are (the pieces are re-centred on themselves so that they turn about their own middle); the box around a chunk is what lands on the ground. */
+const DEBC=[[-1,-1,-1],[1,-1,-1],[-1,1,-1],[1,1,-1],[-1,-1,1],[1,-1,1],[-1,1,1],[1,1,1]];
+function debSplit(G,key,sc,off){sc=sc||1;off=off||[0,0,0];if(G.u.length)G.padU();const T=G.p.length/9,grp=new Map(),P=G.p;
+ for(let t=0;t<T;t++){const i=t*9,k=key((P[i]+P[i+3]+P[i+6])/3+off[0],(P[i+1]+P[i+4]+P[i+7])/3+off[1],(P[i+2]+P[i+5]+P[i+8])/3+off[2]);let a=grp.get(k);if(!a)grp.set(k,a=[]);a.push(t)}
+ const out=[];grp.forEach(ts=>{if(ts.length<4)return;let sx=0,sy=0,sz=0,n=0;for(const t of ts)for(let v=0;v<3;v++){const i=t*9+v*3;sx+=P[i];sy+=P[i+1];sz+=P[i+2];n++}
+  const cx=sx/n,cy=sy/n,cz=sz/n,g=new Geo(),mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];
+  for(const t of ts)for(let v=0;v<3;v++){const i=t*9+v*3,j=t*3+v,x=(P[i]-cx)*sc,y=(P[i+1]-cy)*sc,z=(P[i+2]-cz)*sc;g.p.push(x,y,z);g.n.push(G.n[i],G.n[i+1],G.n[i+2]);g.c.push(G.c[i],G.c[i+1],G.c[i+2]);g.k.push(G.k[j]);if(G.u.length)g.u.push(G.u[j*4],G.u[j*4+1],G.u[j*4+2],G.u[j*4+3]);
+   if(x<mn[0])mn[0]=x;if(x>mx[0])mx[0]=x;if(y<mn[1])mn[1]=y;if(y>mx[1])mx[1]=y;if(z<mn[2])mn[2]=z;if(z>mx[2])mx[2]=z}
+  out.push({g,c:[(cx+off[0])*sc,(cy+off[1])*sc,(cz+off[2])*sc],h:[Math.max(.012,(mx[0]-mn[0])/2),Math.max(.012,(mx[1]-mn[1])/2),Math.max(.012,(mx[2]-mn[2])/2)],o:[(mx[0]+mn[0])/2,(mx[1]+mn[1])/2,(mx[2]+mn[2])/2]})});return out}
 class FPVSim{
  constructor(host,opt={}){this.host=host;this.att=!!opt.att;this.skey=opt.scene;this.cv=host.querySelector('canvas');this.r=this.cv.__sg||(this.cv.__sg=new SimGL(this.cv));this.cv.__owner=this;this.load(opt.scene||SIM.scene);this.keys={};this.t0=performance.now();this.last=this.t0;this.acc=0;
   this.onKey=e=>{if(e.target.closest?.('input,select,textarea'))return;if(KEYCAP.on)return;const CM=keyCM();const k=CM[e.code];if(!k)return;if(e.type==='keydown'&&['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright'].includes(k))this.kbT=performance.now();if(e.type==='keydown'&&e.repeat&&[' ','r','c','m','g','f','v'].includes(k)){e.preventDefault();return}if(e.type==='keydown'){if(k===' '){e.preventDefault();this.toggleArm()}if(k==='r')this.reset();if(k==='g')this.auxCmd('gear','toggle');if(k==='f')this.auxCmd('flap','+');if(k==='v')this.auxCmd('flap','-');if((k==='f'||k==='v')&&!this.plane)this.vtx(k==='v'?1:-1);if(k==='c')simCycleCam();if(k==='m')simSetMode(({angle:'horizon',horizon:'acro',acro:'angle'})[SIM.mode]||'angle');if(['arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault()}this.keys[k]=e.type==='keydown'};
@@ -12242,7 +12312,7 @@ class FPVSim{
     else if(ico==='bturn'){this.hd-=(I.rol||0)*1.5*dt;const f=[-Math.sin(this.hd),0,-Math.cos(this.hd)];this.p[0]+=f[0]*4*dt;this.p[2]+=f[2]*4*dt;this.v=[f[0]*4,this.v[1],f[2]*4]}}
    else if(ico==='bpit'){this.bvz*=.9}}
   const bank=this.mis.ico==='bturn'&&this.armed?-(I.rol||0)*.5:0;this.q=Q.mul(Q.axis([0,1,0],this.hd),Q.axis([0,0,1],bank));this.gl=0;this.ft=(this.ft||0)+dt;basicTick(this,dt)}
- reset(){this.dfx=null;this.pd=null;const s=this.scn.start;this.p=[s[0],.06,s[2]];if(this.col){const f=colFloor(this.col,s[0],s[2],(s[1]||0)+1.5);if(f>0)this.p[1]=f+Math.max(.06,SIMQ().r)}this.gl=this.col?colFloor(this.col,s[0],s[2],this.p[1]):0;this.v=[0,0,0];this.q=Q.axis([0,1,0],this.scn.yaw);this.w=[0,0,0];this.armed=false;this.crash=0;this.lives=livesMax();this.hp=100;this.sring=[];this.inv=0;this.gi=0;this.ft=0;this.bat=100;this.bst=null;this.hd=this.scn.yaw||0;this.bvy=0;this.bvz=0;(this.gates||[]).forEach(g=>g.side=null);this.mt=0;this.rpm=0;this.mah=0;this.amp=0;this.volt=4.2*SIMQ().cells;this.nz=[0,0,0];this.wash=0;this.lap0=null;this.lapT=null;this.prevLocal=null;this.chase=null;this.airHold=false;this.stall=false;this.flash('');simMsg();
+ reset(){this.debFree();this.dfx=null;this.pd=null;const s=this.scn.start;this.p=[s[0],.06,s[2]];if(this.col){const f=colFloor(this.col,s[0],s[2],(s[1]||0)+1.5);if(f>0)this.p[1]=f+Math.max(.06,SIMQ().r)}this.gl=this.col?colFloor(this.col,s[0],s[2],this.p[1]):0;this.v=[0,0,0];this.q=Q.axis([0,1,0],this.scn.yaw);this.w=[0,0,0];this.armed=false;this.crash=0;this.lives=livesMax();this.hp=100;this.sring=[];this.inv=0;this.gi=0;this.ft=0;this.bat=100;this.bst=null;this.hd=this.scn.yaw||0;this.bvy=0;this.bvz=0;(this.gates||[]).forEach(g=>g.side=null);this.mt=0;this.rpm=0;this.mah=0;this.amp=0;this.volt=4.2*SIMQ().cells;this.nz=[0,0,0];this.wash=0;this.lap0=null;this.lapT=null;this.prevLocal=null;this.chase=null;this.airHold=false;this.stall=false;this.flash('');simMsg();
   if(this.plane){const I=INTRO3[this.mis.ico],A=I.air;const PP=this.PP||PLANE;this.p[1]=PP.gear;if(PP.tail&&!A)this.q=Q.mul(Q.axis([0,1,0],this.scn.yaw),Q.axis([1,0,0],PP.gp0));if(A){const P0=I.path()[0];this.p=[P0[0],A.alt,P0[2]];this.q=Q.mul(Q.axis([0,1,0],this.scn.yaw),Q.axis([1,0,0],.04));this.airHold=true;this.flash('הטיסן מוחזק באוויר · הזז סטיק או הוסף מצערת כדי להתחיל',2600)}this.armed=true;{const idl=PP.idl??(PP.jet?.3:.22);this.rpm=idl;this.mt=PP.jet?.04:idl*idl}/* v153: the engine is already running at idle when the plane appears */this.kthr=0;this.aux={gear:PP.rg&&A?0:1,flap:0};this.auxA={gear:this.aux.gear,flap:0};this.pstrike=false;this.dry=false;this.lowF=false;this.gwarn=false;this.gwT=0;this.refT=0;this.csd=null;this.gTouch=false;this.swp=null;const eT=PP.rg||PP.fl?`G · גלגלים${PP.fl?' · F / V · מדפים':''}`:'';if(eT&&!SIM.gfHint){SIM.gfHint=1;setTimeout(()=>{if(this.plane&&this.armed&&!this.crash)this.flash(eT,3200)},3400)}}}
  /* no edge of the world for the drones either: the ground goes on for ever (one big sheet that travels with the camera) and the far hills travel with it, as in the plane worlds. A closed hall keeps its floor. The hills are left out at night. */
  openWorld(fc,seed,rim,noHills){if(this.att||!this.world)return;const ap=new Geo();ap.quad([-1100,0,1100],[1100,0,1100],[1100,0,-1100],[-1100,0,-1100],fc,-1);this.world.aux={hz:noHills?null:this.r.mesh(hzGeo(seed,rim)),apron:this.r.mesh(ap)}}
@@ -12456,34 +12526,87 @@ class FPVSim{
   this.stepTail(dt,V.len(this.v),0,g,py0)}
  /* ---- game feel: particles, speed streaks and camera shake, drawn on a light 2D layer over the 3D view ---- */
  fxBurst(p,n,o={}){const P=this.parts||(this.parts=[]);if(P.length>420)return;for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,e=(Math.random()*2-1)*(o.flat?.25:1),sp=(o.sp||3)*(.35+Math.random()*.9),c=Math.sqrt(1-e*e);
-  P.push({p:p.slice(),v:[Math.cos(a)*c*sp+(o.v?.[0]||0),e*sp+(o.up||0)+(o.v?.[1]||0),Math.sin(a)*c*sp+(o.v?.[2]||0)],l:0,m:(o.life||.6)*(.6+Math.random()*.7),c:o.col||[255,190,80],z:o.sz||.05,g:o.g??9,k:o.k||'spark'})}}
- fxStep(t){if(this.att)return 0;const dt=Math.min(.05,Math.max(0,(t-(this.fxT||t))/1000));this.fxT=t;const P=this.parts||(this.parts=[]),gy=this.gl||0;
+  P.push({p:p.slice(),v:[Math.cos(a)*c*sp+(o.v?.[0]||0),e*sp+(o.up||0)+(o.v?.[1]||0),Math.sin(a)*c*sp+(o.v?.[2]||0)],l:0,m:(o.life||.6)*(.6+Math.random()*.7),c:o.col||[255,190,80],z:o.sz||.05,g:o.g??9,k:o.k||'spark',o:o.o,gr:o.gr})}}
+ /* v172: what the ground under a point is made of, for the dust (FXSURF): the runway is asphalt, the rest is what the scene's ground layer says */
+ /* v172: a vehicle that is destroyed comes apart: a plane into its fuselage (in lengths), wing sections, tail, control surfaces, wheels, propeller and canopy; a drone into its centre, four arms with their motors and its propellers. The pieces start from where they are, with a part of the vehicle's speed, thrown outwards, and then fly under gravity, tumble and bounce on whatever is under them. */
+ debFree(){const D=this.deb;if(!D)return;this.deb=null;try{D.list.forEach(b=>this.r.drop(b.m))}catch(e){}}
+ debBreak(){if(this.deb||this.att||PREF.motion==='reduced'||(this.mis&&this.mis.ball))return;
+  try{const R=this.r,list=[],push=(ch,o)=>{for(const c of ch){const m=R.mesh(c.g);list.push(Object.assign({m,loc:c.c,h:c.h,o:c.o},o))}};
+   if(this.plane&&this.AM){const AM=this.AM,half=(this.PP?.b||1.6)/2,P=AM.g.p;let z0=1e9,z1=-1e9;for(let i=2;i<P.length;i+=3){if(P[i]<z0)z0=P[i];if(P[i]>z1)z1=P[i]}const L=z1-z0;
+    push(debSplit(AM.g,(x,y,z)=>{const ax=Math.abs(x)/half;if(ax<.2){const f=(z-z0)/L;return 'f'+(f<.28?0:f<.52?1:f<.78?2:3)}return (x<0?'L':'R')+(ax<.58?'a':'b')}),{w:1});
+    (AM.cs||[]).forEach(c=>push(debSplit(c.g,()=>0),{w:.5}));
+    if(AM.propG)push(debSplit(AM.propG,()=>0,1,[0,AM.propY||0,AM.propZ||0]),{w:.3,prop:1});
+    if(AM.pl)push(debSplit(AM.pl,()=>0),{w:.4});
+    if(AM.gl)push(debSplit(AM.gl,()=>0),{w:.35,glass:1})}
+   else if(!this.plane){const qk=quadKey(),G=droneGeo(qk),P=G.p;let mx=0;for(let i=0;i<P.length;i+=3)mx=Math.max(mx,Math.abs(P[i]),Math.abs(P[i+2]));
+    push(debSplit(G,(x,y,z)=>(Math.abs(x)<mx*.3&&Math.abs(z)<mx*.3)?'c':(x<0?'L':'R')+(z<0?'F':'B'),2.2),{w:.7});
+    const B=bladeGeo(qk);motorPos(qk).forEach(([x,z])=>push(debSplit(B,()=>0,2.2,[x,0,z]),{w:.25,prop:1}))}
+   if(!list.length)return;
+   const v0=this.v,sp0=V.len(v0),gy=this.gl||0;let n=0;for(const b of list){const wc=V.add(this.p,Q.rot(this.q,b.loc));b.pos=wc;b.q=this.q.slice();let out=V.sub(wc,this.p);const ol=V.len(out);out=ol>.02?V.mul(out,1/ol):V.norm([Math.random()-.5,.5,Math.random()-.5]);out[1]=Math.abs(out[1])*.5+.25;
+    const sz=Math.max(b.h[0],b.h[1],b.h[2]),sc=(1.6+Math.random()*3.4)/(.6+sz*1.6)*(b.prop?1.5:1),s2=(this.plane?.85:.5);b.v=V.add(V.mul(v0,.28),V.add(V.mul(V.norm(out),sc*s2),[0,1+Math.random()*2.4,0]));
+    const wm=(6+Math.random()*10)/(.5+sz*1.5);b.w=[(Math.random()-.5)*wm,(Math.random()-.5)*wm,(Math.random()-.5)*wm];b.k2=(b.h[0]*b.h[0]+b.h[1]*b.h[1]+b.h[2]*b.h[2])/3+.002;b.e=.3;b.rest=false;n++}
+   this.deb={list,t:0}}catch(e){try{console.warn('deb',e)}catch(_){}this.debFree()}}
+ debStep(dt){const D=this.deb;if(!D||!(dt>0))return;const steps=dt>.03?3:dt>.016?2:1,h=dt/steps;
+  for(let s=0;s<steps;s++)for(const b of D.list){if(b.rest)continue;b.v[1]-=9.81*h;const dr=Math.exp(-h*(.1+.025*V.len(b.v)*(b.prop?3:1)));b.v=V.mul(b.v,dr);b.pos=V.add(b.pos,V.mul(b.v,h));
+   const wl=V.len(b.w);if(wl>1e-4)b.q=Q.norm(Q.mul(Q.axis(V.mul(b.w,1/wl),wl*h),b.q));b.w=V.mul(b.w,Math.exp(-h*.25));
+   const fl=this.col?colFloor(this.col,b.pos[0],b.pos[2],b.pos[1]+2):(this.gl||0);let low=null,ld=0;
+   for(const cs of DEBC){const r=Q.rot(b.q,[cs[0]*b.h[0],cs[1]*b.h[1],cs[2]*b.h[2]]),d=fl-(b.pos[1]+r[1]);if(d>ld){ld=d;low=r}}
+   if(low){b.pos[1]+=ld;const vc=V.add(b.v,V.cross(b.w,low));if(vc[1]<0){const k2=b.k2,den=1+(low[0]*low[0]+low[2]*low[2])/k2,j=-(1+b.e)*vc[1]/den;b.v[1]+=j;b.w=V.add(b.w,V.mul([-low[2]*j,0,low[0]*j],1/k2));
+     const vt=[vc[0],0,vc[2]],vl=Math.hypot(vt[0],vt[2]);if(vl>1e-3){const tn=[vt[0]/vl,0,vt[2]/vl],rt=V.cross(low,tn),jt=Math.min(.6*j,vl/(1+(rt[0]*rt[0]+rt[1]*rt[1]+rt[2]*rt[2])/k2));b.v=V.sub(b.v,V.mul(tn,jt));b.w=V.sub(b.w,V.mul(rt,jt/k2))}}
+    b.w=V.mul(b.w,Math.exp(-h*2.5));if(V.len(b.v)<.2&&V.len(b.w)<.9){b.rest=true;b.v=[0,0,0];b.w=[0,0,0]}}
+   if(b.pos[1]<(this.gl||0)-30)b.rest=true}}
+ debDraw(gl,R,TAC){const D=this.deb;if(!D)return;let gls=null;
+  for(const b of D.list){if(b.glass){(gls||(gls=[])).push(b);continue}R.draw(b.m,M4.fromQT(b.q,b.pos),{lines:false})}
+  if(gls){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);for(const b of gls)R.draw(b.m,M4.fromQT(b.q,b.pos),TAC?{alpha:.12,lines:false}:{glass:1,lines:false});gl.depthMask(true);gl.disable(gl.BLEND)}}
+ /* v172: what a crash throws up besides the pieces: sparks, bright chips of the paint, a cloud of dust of the ground's own colour and a dark puff */
+ fxCrash(){const SF=this.fxSurf(this.p[0],this.p[2]),dk=this.plane?[150,148,144]:[150,150,154],cc=this.plane?[[250,200,60],[220,60,50],[240,240,240]]:[[40,40,44],[200,60,50],[90,160,230]];
+  this.fxBurst(this.p,46,{sp:5.5,col:[255,170,70],life:.8,sz:.04});
+  for(let i=0;i<3;i++)this.fxBurst(this.p,9,{sp:6,col:cc[i],life:1.4,sz:.022,g:9,k:'chip'});
+  this.fxBurst(this.p,14,{sp:2.2,up:1,col:this.night?SF.c.map(v=>v*.42|0):SF.c,life:1.5,sz:.16,g:-.4,k:'dust',o:.3,gr:3});
+  this.fxBurst(this.p,this.plane?5:3,{sp:1,up:.9,col:dk,life:1.7,sz:.2,g:-.4,k:'smoke',o:.16,gr:3.4})}
+ xrOn(gl,R,eye,LD){const d=V.norm(V.sub(this.p,eye));gl.uniform4f(R.u.uXr,eye[0],eye[1],eye[2],.6);gl.uniform4f(R.u.uXd,d[0],d[1],d[2],LD)}
+ fxSurf(x,z){const R=this.plane?(this.mis&&this.mis.free?RWYF:RWY):null;if(R&&Math.abs(x-R.x)<R.w/2&&z<R.z0&&z>R.z1)return FXSURF.asphalt;const L=this.gLay;return L===TXY.dirt?FXSURF.dirt:L===TXY.sand?FXSURF.sand:L===TXY.snow?FXSURF.snow:L===TXY.rock?FXSURF.rock:L===TXY.asphalt?FXSURF.asphalt:L===TXY.concrete?FXSURF.concrete:FXSURF.grass}
+ fxStep(t){if(this.att)return 0;const dt=Math.min(.05,Math.max(0,(t-(this.fxT||t))/1000));this.fxT=t;const P=this.parts||(this.parts=[]),gy=this.gl||0,rnd=Math.random;
   if(this.armed&&!this.crash){const h=this.p[1]-gy,r=this.pwr();
-   if(h<1.4&&r>.18){this.dAcc=(this.dAcc||0)+dt*(1.4-h)*r*70;const col=this.r.tac?[90,170,120]:this.night?[120,120,130]:[196,178,140];while(this.dAcc>1&&P.length<420){this.dAcc--;const a=Math.random()*Math.PI*2,rr=.15+Math.random()*.35;P.push({p:[this.p[0]+Math.cos(a)*rr,gy+.03,this.p[2]+Math.sin(a)*rr],v:[Math.cos(a)*(1.5+r*3),.25+Math.random()*.5,Math.sin(a)*(1.5+r*3)],l:0,m:.7+Math.random()*.6,c:col,z:.09+Math.random()*.08,g:-.3,k:'dust'})}}
+   /* dust: the slipstream of a plane and the downwash of a drone lift it off the ground, in proportion to the power, to how close the vehicle is and to what the ground is made of: a runway gives hardly any, grass a light haze, bare earth and sand a real cloud. It is laid on the ground behind the plane (the wash goes back) and in a ring around the drone (the wash spreads out along the ground) */
+   if(r>.12&&dt>0){const SF=this.fxSurf(this.p[0],this.p[2]),col=this.night?SF.c.map(v=>v*.42|0):this.r.tac?SF.c.map((v,i)=>v*[.62,.95,.74][i]|0):SF.c;
+    if(this.plane){const PP=this.PP||PLANE,vs=PLVS[this.PK]||1,hh=h-(PP.gear||.2),span=PP.b||1.4;
+     if(hh<1.8){const fh=Math.pow(1-hh/1.8,1.8),bk=Q.rot(this.q,[0,0,1]),bl=Math.hypot(bk[0],bk[2])||1,bx=bk[0]/bl,bz=bk[2]/bl;this.dAcc=(this.dAcc||0)+dt*SF.a*110*Math.pow(r,1.3)*fh*(PP.jet?.7:1);
+      while(this.dAcc>=1&&P.length<420){this.dAcc--;const d=(.5+rnd()*1.7)*vs,sd=(rnd()-.5)*span*.45,sp=(2+7*r)*(.35+rnd()*.8),sw=(rnd()-.5)*2.4;
+       P.push({p:[this.p[0]+bx*d-bz*sd,gy+.02,this.p[2]+bz*d+bx*sd],v:[bx*sp-bz*sw,.3+rnd()*.8*(.6+r),bz*sp+bx*sw],l:0,m:1.2+rnd()*1.2,c:col,z:.13+rnd()*.12,gr:2.8,g:-.25,k:'dust',o:.1+.18*Math.min(1,SF.a)})}}}
+    else if(h<1.5){const fh=Math.pow(1-h/1.5,1.6);this.dAcc=(this.dAcc||0)+dt*SF.a*130*Math.pow(r,1.2)*fh;
+     while(this.dAcc>=1&&P.length<420){this.dAcc--;const a=rnd()*6.283,rr=.1+rnd()*.3,sp=(1.1+r*3)*(.4+rnd()*.8);
+      P.push({p:[this.p[0]+Math.cos(a)*rr,gy+.03,this.p[2]+Math.sin(a)*rr],v:[Math.cos(a)*sp,.2+rnd()*.6,Math.sin(a)*sp],l:0,m:.9+rnd()*.8,c:col,z:.09+rnd()*.09,gr:2.8,g:-.2,k:'dust',o:.09+.16*Math.min(1,SF.a)})}}}
    if(this.night){this.tAcc=(this.tAcc||0)+dt;if(this.tAcc>.025){this.tAcc=0;P.push({p:V.add(this.p,Q.rot(this.q,[0,.04,.16])),v:[0,0,0],l:0,m:.55,c:[255,40,30],z:.04,g:0,k:'trail'})}}}
-  {const PM=this.plane&&PLANES[this.PK],FX=PM&&ENGFX[ENGK[this.PK]||'nitro'];if(PM&&FX&&PM.ex&&this.armed&&!this.crash&&!this.airHold&&!this.pstrike&&(this.bat??100)>0&&dt>0){
-   /* the exhaust follows the engine: petrol leaves a thin haze and a puff on a throttle blip, nitro a short oily blue smoke, a turbine a hot flame and no smoke (ENGFX) */
+  {const PM=this.plane&&PLANES[this.PK],FX=PM&&FXSIM[ENGK[this.PK]||'nitro'];if(PM&&FX&&PM.ex&&this.armed&&!this.crash&&!this.airHold&&!this.pstrike&&(this.bat??100)>0&&dt>0){
+   /* the exhaust follows the engine (FXSIM): petrol leaves a thin haze and a puff on a throttle blip, nitro a short oily smoke, a turbine no smoke at all (its flame is fxFlame). The smoke is carried back by the slipstream and then hangs in the air, so it is left behind as a trail along the flight path */
    const mt=this.mt||0,pw=Math.max(0,Math.min(1,this.pwr())),dm=(mt-(this.mtP??mt))/dt,vs=PLVS[this.PK]||1,back=Q.rot(this.q,[0,0,1]),at=e=>V.add(this.p,Q.rot(this.q,[e[0]*vs,e[1]*vs,e[2]*vs]));this.mtP=mt;
-   if(FX.rate){const rate=Math.min(26,FX.rate[0]+(FX.rate[1]-FX.rate[0])*pw+(FX.blip||0)*Math.max(0,dm)*6);this.smA=(this.smA||0)+dt*rate;let n=0;
-    while(this.smA>=1&&n<6&&P.length<460){this.smA--;n++;const e=PM.ex[this.smI=((this.smI||0)+1)%PM.ex.length],sp=FX.spd[0]+(FX.spd[1]-FX.spd[0])*pw;
-     P.push({p:at(e),v:V.add(V.mul(this.v,.3),V.add(V.mul(back,sp),[(Math.random()-.5)*.25,FX.up+Math.random()*.12,(Math.random()-.5)*.25])),l:0,m:FX.life[0]+(FX.life[1]-FX.life[0])*Math.random(),c:this.night?FX.nc:FX.col,z:FX.z*(.8+Math.random()*.5),gr:FX.grow,g:-.1,k:'smoke',o:(PM.sm||1)*(FX.op[0]+(FX.op[1]-FX.op[0])*pw)*(1+Math.min(2,Math.max(0,dm)*2))/.3})}}
-   if(FX.fl||(this.night&&FX.flN)){const r=FX.fl?FX.fl.rate[0]+(FX.fl.rate[1]-FX.fl.rate[0])*pw:(1-pw)*7+Math.max(0,dm)*14;this.flA=(this.flA||0)+dt*r;let n=0;
-    while(this.flA>=1&&n<5&&P.length<460){this.flA--;n++;const e=FX.fl?PM.ex[0]:PM.ex[(this.smI||0)%PM.ex.length];
-     P.push({p:at(e),v:V.add(V.mul(this.v,.9),V.mul(back,FX.fl?2+9*pw:1.2)),l:0,m:FX.fl?.05+.07*pw:.05+Math.random()*.05,c:FX.fl?FX.fl.col:[255,150,70],z:FX.fl?FX.fl.z*(.5+.9*pw):.03,g:0,k:'flame',o:FX.fl?FX.fl.op[0]+(FX.fl.op[1]-FX.fl.op[0])*pw:.7})}}
+   if(FX.rate){const rate=Math.min(30,FX.rate[0]+(FX.rate[1]-FX.rate[0])*pw+(FX.blip||0)*Math.max(0,dm)*6);this.smA=(this.smA||0)+dt*rate;let n=0;
+    while(this.smA>=1&&n<6&&P.length<460){this.smA--;n++;const e=PM.ex[this.smI=((this.smI||0)+1)%PM.ex.length],sl=FX.slip[0]+(FX.slip[1]-FX.slip[0])*pw;
+     P.push({p:at(e),v:V.add(V.mul(back,sl*(.7+rnd()*.6)),[(rnd()-.5)*.35,FX.up+rnd()*.12,(rnd()-.5)*.35]),l:0,m:FX.life[0]+(FX.life[1]-FX.life[0])*rnd(),c:this.night?FX.nc:FX.col,z:FX.z*vs*(.8+rnd()*.5),gr:FX.grow,g:-.1,k:'smoke',o:Math.min(.85,(PM.sm||1)*(FX.op[0]+(FX.op[1]-FX.op[0])*pw)*(1+Math.min(2,Math.max(0,dm)*2)))})}}
+   if(this.night&&FX.flN){const rr=(1-pw)*7+Math.max(0,dm)*14;this.flA=(this.flA||0)+dt*rr;let n=0;
+    while(this.flA>=1&&n<5&&P.length<460){this.flA--;n++;const e=PM.ex[(this.smI||0)%PM.ex.length];
+     P.push({p:at(e),v:V.add(V.mul(this.v,.9),V.mul(back,1.2)),l:0,m:.05+rnd()*.05,c:[255,150,70],z:.03,g:0,k:'flame',o:.7})}}
   }}
-  for(let i=P.length-1;i>=0;i--){const q=P[i];q.l+=dt;if(q.l>=q.m){P.splice(i,1);continue}q.v[1]-=q.g*dt;if(q.k==='dust'){q.v[0]*=1-dt*2.2;q.v[2]*=1-dt*2.2}else if(q.k==='smoke'){const dr=Math.exp(-dt*1.5);q.v[0]*=dr;q.v[1]*=dr;q.v[2]*=dr}q.p=V.add(q.p,V.mul(q.v,dt));if(q.k==='spark'&&q.p[1]<gy+.02){q.p[1]=gy+.02;q.v[1]*=-.35;q.v[0]*=.6;q.v[2]*=.6}}
+  for(let i=P.length-1;i>=0;i--){const q=P[i];q.l+=dt;if(q.l>=q.m){P.splice(i,1);continue}q.v[1]-=q.g*dt;
+   if(q.k==='dust'){const dr=Math.exp(-dt*2);q.v[0]*=dr;q.v[2]*=dr;q.v[1]*=Math.exp(-dt*.7);q.v[0]+=Math.sin(q.l*3.1+(q.rt||0)*5)*dt*.3;q.v[2]+=Math.cos(q.l*2.7+(q.rt||0)*5)*dt*.3}
+   else if(q.k==='smoke'){const dr=Math.exp(-dt*1.3);q.v[0]*=dr;q.v[1]*=dr;q.v[2]*=dr;q.v[0]+=Math.sin(q.l*2.3+(q.rt||0)*4)*dt*.22;q.v[2]+=Math.cos(q.l*2.1+(q.rt||0)*4)*dt*.22}
+   q.p=V.add(q.p,V.mul(q.v,dt));if((q.k==='spark'||q.k==='chip')&&q.p[1]<gy+.02){q.p[1]=gy+.02;q.v[1]*=-.35;q.v[0]*=.6;q.v[2]*=.6}}
+  if(this.deb)this.debStep(dt);
   this.shk=(this.shk||0)*Math.exp(-dt*5.5);return dt}
+ /* v172: the afterburner. A turbine gives no smoke; at high throttle it gives a flame that starts at the exit of the nozzle and runs back along the exhaust axis. It is a chain of soft glows laid in the scene (depth-tested like the rest, and cut off by the plane of the nozzle exit, so that nothing can glow inside the body): a white-blue core, an orange body, a red tail and a few shock diamonds, flickering a little. At idle only a faint glow is left. */
+ fxFlame(t){const PM=this.plane&&PLANES[this.PK];if(!PM||!PM.jet||!PM.ex||!this.armed||this.crash||this.airHold||this.pstrike||(this.bat??100)<=0)return null;
+  const pw=Math.max(0,Math.min(1,this.pwr()));if(pw<.05)return null;
+  const vs=PLVS[this.PK]||1,e=PM.ex[0],back=Q.rot(this.q,[0,0,1]),N0=V.add(this.p,Q.rot(this.q,[e[0]*vs,e[1]*vs,e[2]*vs])),ab=Math.min(1,Math.max(0,(pw-.5)/.4)),ab2=ab*ab*(3-2*ab),ts=t/1000,
+   fl=1+.07*Math.sin(ts*31)+.05*Math.sin(ts*53+1.3),NR=.052*vs,Lf=(.12+.82*ab2)*vs*fl,col=s=>s<.12?[205,225,255]:s<.4?[255,200,120]:s<.7?[255,150,60]:[230,85,30],out=[],N=Math.max(3,Math.round(4+12*ab2));
+  for(let i=0;i<N;i++){const s=i/(N-1),sz=NR*(1.5+.45*Math.sin(Math.PI*Math.min(1,s*1.25))-.75*s)*(.8+.5*ab2)*(1+.1*Math.sin(ts*47+i*1.9)),al=(.14+.7*ab2)*Math.pow(1-s,1.35)*(.9+.1*Math.sin(ts*61+i*2.3));out.push({p:V.add(N0,V.mul(back,s*Lf)),c:col(s),k:'afl',t:4,cl:1,sz,al:Math.min(1,al),ad:.55})}
+  if(ab2>.15)for(let j=1;j<=4;j++){const s=j*.17;out.push({p:V.add(N0,V.mul(back,s*Lf)),c:[235,235,255],k:'afl',t:5,cl:1,sz:NR*(.75-.12*j),al:Math.min(1,ab2*(.55-.1*j)*(.85+.15*Math.sin(ts*70+j*2))),ad:1})}
+  out.push({p:V.add(N0,V.mul(back,.02)),c:[255,190,110],k:'afl',t:4,cl:1,sz:NR*(1.2+1.4*ab2),al:.25+.5*ab2,ad:1});
+  out.cut=[back[0],back[1],back[2],-V.dot(back,N0)];return out}
+ fxGL(gl,R,VP,eye,cq,FG,cam,WX,ic,LD,t){let P=this.parts||[];const FL=this.fxFlame(t);if(FL)P=FL.concat(P);if(!P.length)return;const FK=wxK(WX,this.plane)+ic*.14;fxGLDraw(R,P,VP,eye,cq,FG,Math.max(.00006,cam==='los'?Math.min(FK*.2,.3/Math.max(100,LD*LD)):FK),FL?FL.cut:null)}
  fxDraw(cam,fov){if(this.att)return;const cv=this.cv;let F=this.fx;if(!F||!F.isConnected){F=this.fx=document.createElement('canvas');F.className='simfx';F.setAttribute('aria-hidden','true');cv.after(F)}
   const w=cv.clientWidth,h=cv.clientHeight,d=Math.min(1.5,devicePixelRatio||1);if(F.width!==Math.round(w*d)||F.height!==Math.round(h*d)){F.width=Math.round(w*d);F.height=Math.round(h*d)}
-  const g=F.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,w,h);const VP=this.VP,P=this.parts||[],red=PREF.motion==='reduced';
-  if(VP&&P.length){const f=h/(2*Math.tan(fov*Math.PI/360));g.globalCompositeOperation='lighter';
-   for(const q of P){const x=q.p[0],y=q.p[1],z=q.p[2],cw=VP[3]*x+VP[7]*y+VP[11]*z+VP[15];if(cw<.05)continue;const sx=((VP[0]*x+VP[4]*y+VP[8]*z+VP[12])/cw*.5+.5)*w,sy=(1-((VP[1]*x+VP[5]*y+VP[9]*z+VP[13])/cw*.5+.5))*h;if(sx<-40||sy<-40||sx>w+40||sy>h+40)continue;
-    const k=q.l/q.m,r=Math.max(.6,Math.min(52,q.z*f/cw*(q.k==='dust'?1+k*1.6:q.k==='smoke'?1+k*(q.gr||4.2):1))),a=q.k==='dust'?.2*(1-k):q.k==='smoke'?.3*(q.o||1)*Math.pow(1-k,1.5)*Math.min(1,.25+k*6):q.k==='trail'?.75*(1-k):(1-k);const [R,G,B]=q.c;
-    if(q.k==='smoke'){g.globalCompositeOperation='source-over';g.globalAlpha=Math.min(1,a);g.drawImage(fxSprite('smoke',R,G,B),sx-r,sy-r,r*2,r*2);g.globalAlpha=1;g.globalCompositeOperation='lighter'}
-    else if(q.k==='dust'){g.globalCompositeOperation='source-over';g.globalAlpha=Math.min(1,a*1.25);g.drawImage(fxSprite('dust',R,G,B),sx-r,sy-r,r*2,r*2);g.globalAlpha=1;g.globalCompositeOperation='lighter'}
-    else if(q.k==='flame'){const fa=Math.min(1,(q.o||1)*(1-k));g.globalCompositeOperation='lighter';g.globalAlpha=fa;g.drawImage(fxSprite('flame',R,G,B),sx-r*2.6,sy-r*2.6,r*5.2,r*5.2);g.globalAlpha=1}
-    else{g.fillStyle=`rgba(${R},${G},${B},${a})`;g.beginPath();g.arc(sx,sy,r,0,7);g.fill();if(q.k==='spark'){g.fillStyle=`rgba(${R},${G},${B},${a*.25})`;g.beginPath();g.arc(sx,sy,r*3,0,7);g.fill()}}}
-   g.globalCompositeOperation='source-over'}
+  const g=F.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,w,h);const VP=this.VP,red=PREF.motion==='reduced';
   /* spectator view: the vehicle is always at the centre, so the centre reticle is hidden (CSS) and corner brackets with the distance follow it while it is small on the screen */
   if(cam==='los'&&VP&&this.cEye&&!this.crash){const x=this.p[0],y=this.p[1],z=this.p[2],cw=VP[3]*x+VP[7]*y+VP[11]*z+VP[15];if(cw>.5){const sx=((VP[0]*x+VP[4]*y+VP[8]*z+VP[12])/cw*.5+.5)*w,sy=(1-((VP[1]*x+VP[5]*y+VP[9]*z+VP[13])/cw*.5+.5))*h,f=h/(2*Math.tan(fov*Math.PI/360)),span=this.plane?(this.PP?.b||1.9):.32,px=span*f/cw,al=Math.max(0,Math.min(1,(150-px)/70));
    if(al>.02){const hs=Math.max(22,Math.min(70,px*.8+14)),c=Math.max(8,hs*.38);g.save();g.globalAlpha=al;g.lineCap='round';g.lineJoin='round';
@@ -12517,7 +12640,7 @@ class FPVSim{
   this.v=V.mul(this.v,.45);this.w=[this.w[0]+(Math.random()-.5)*4,this.w[1]+(Math.random()-.5)*3,this.w[2]+(Math.random()-.5)*4];this.inv=now+900;
   this.flash(crit?`${why} · מכה בכנף · שלמות קריטית · עוד מכה קשה מרסקת`:`${why} · מכה בכנף · −${Math.round(before-this.hp)}%`,crit?2000:1500);return false}
  pdKill(){this.pd=(this.pd||[0,0,0,0]).map(()=>100)}
- doCrash(t){this.pdKill();if(PREF.motion!=='reduced')this.shk=1.7;if(SFX.on&&cfg('sound'))SFX.impact(/קרקע/.test(t)?'ground':'wall',1.3);if(this.p[1]<1.2)impactFx(this,'ground',1.4,true);this.fxBurst(this.p,46,{sp:5.5,col:[255,170,70],life:.8,sz:.04});this.fxBurst(this.p,18,{sp:1.2,up:1.2,col:[90,90,95],life:1.4,sz:.16,g:-.6,k:'dust'});this.crash=performance.now();this.armed=false;this.flash(t+(this.mis||this.gates?.length?' · מתחילים מההתחלה':''),1800);SFX.play('fail');setTimeout(()=>{if(this.crash)this.reset()},1800)}
+ doCrash(t){this.pdKill();if(PREF.motion!=='reduced')this.shk=1.7;if(SFX.on&&cfg('sound'))SFX.impact(/קרקע/.test(t)?'ground':'wall',1.3);if(this.p[1]<1.2)impactFx(this,'ground',1.4,true);this.debBreak();this.fxCrash();this.crash=performance.now();this.armed=false;this.flash(t+(this.mis||this.gates?.length?' · מתחילים מההתחלה':''),1800);SFX.play('fail');setTimeout(()=>{if(this.crash)this.reset()},this.deb?2400:1800)}
  resize(){const c=this.cv,q=this.att?1:(this.qs??(FPVSim.qs||1)),w=c.clientWidth,h=c.clientHeight;if(!w||!h)return;let d=Math.max(.6,Math.min(this.att?.8:2,Math.max(devicePixelRatio||1,this.att?1:1.5)*q));
   /* v153: a budget of about 3.6 million multisampled pixels: a large or high-density screen used to ask for 8 million */
   d=Math.max(.6,Math.min(d,Math.sqrt((this.att?1.3e6:SIMGPU.budget())/(w*h))));const W=Math.round(w*d),H=Math.round(h*d);if(c.width!==W)c.width=W;if(c.height!==H)c.height=H}
@@ -12625,20 +12748,21 @@ class FPVSim{
   /* open flying fields: the far hills travel with the camera (lagging a little behind it near the field, for a touch of parallax) in a thinner haze than the ground; the ground sheet goes on for ever */
   const WA=this.world&&this.world.aux;
   if(WA&&WA.hz&&!TAC){const ox=eye[0],oz=eye[2]+115,m=Math.hypot(ox,oz),k=m>1e-3?Math.min(60,m*.04)/m:0,FK0=wxK(this.wx,this.plane)+(this.inCloud||0)*.14;gl.uniform1f(R.u.uFK,(this.plane?FK0:wxK(this.wx,true)+(this.inCloud||0)*.14)*.35/(hs*hs));R.draw(WA.hz,[hs,0,0,0,0,hs,0,0,0,0,hs,0,eye[0]-ox*k,0,eye[2]-oz*k,1],{lines:false});gl.uniform1f(R.u.uFK,FK0)}
-  gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(2,4);if(WA&&WA.apron)R.draw(WA.apron,[1,0,0,0,0,1,0,0,0,0,1,0,eye[0],-.3,eye[2],1]);R.draw(this.world,I4);if(this.grassM&&SIM.gfx==='high'&&!this.r.tac)R.draw(this.grassM,I4,{lines:false});gl.disable(gl.POLYGON_OFFSET_FILL);if(this.mSolid)R.draw(this.mSolid,I4);
+  gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(2,4);if(WA&&WA.apron)R.draw(WA.apron,[1,0,0,0,0,1,0,0,0,0,1,0,eye[0],-.3,eye[2],1]);const XR=cam==='los'&&!this.att&&LD>3;if(XR)this.xrOn(gl,R,eye,LD);R.draw(this.world,I4);if(this.grassM&&SIM.gfx==='high'&&!this.r.tac)R.draw(this.grassM,I4,{lines:false});gl.disable(gl.POLYGON_OFFSET_FILL);if(this.mSolid)R.draw(this.mSolid,I4);
    if(!TAC&&this.vg&&this.r.texOK){const VG_=this.vg;if(VG_.R)R.draw(VG_.R,I4,{lines:false});
     if(VG_.S){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(-1,-2);R.draw(VG_.S,I4,{lines:false});gl.disable(gl.POLYGON_OFFSET_FILL);gl.depthMask(true);gl.disable(gl.BLEND)}
     if(VG_.F){if(this.r.ms)gl.enable(gl.SAMPLE_ALPHA_TO_COVERAGE);R.draw(VG_.F,I4,{lines:false});if(this.r.ms)gl.disable(gl.SAMPLE_ALPHA_TO_COVERAGE)}}
+   if(XR)gl.uniform4f(R.u.uXr,0,0,0,0);
    if(this.btg&&this.mis&&this.mis.ball){const st=this.bst||{},pl=.45+.35*Math.sin(t/160);this.btg.forEach(b=>{const cur=b.mk!=null?(st.k||0)===b.mk&&b.i===(st.i||0):b.i===(st.i||0),past=b.mk!=null?(st.k||0)>b.mk||(st.i||0)>0:b.i>=0&&b.i<(st.i||0);R.draw(b.m,I4,{lines:'force',glow:cur?pl:past?.6:0,tint:cur?[1,.95,.6]:[.25,.3,.28]})})}/* no route line: see route rings in guideTick */const pulse=.35+.25*Math.sin(t/180);this.gates.forEach((G,i)=>R.draw(G.m,I4,i===this.gi?{glow:TAC?.4+pulse:pulse,tint:[1,.95,.6],lines:G.wp?'force':undefined}:{lines:G.wp?'force':undefined,glow:G.wp&&i<this.gi?.0:0}));
    if(NT){if(!this.neon)this.neon=neonBuild(this);const N=this.neon,blink=.55+.45*Math.sin(t/140);if(N.m)R.draw(N.m,I4,{lines:false});
     N.gates.forEach((g,i)=>{const done=i<this.gi,cur=i===this.gi,col=cur?NEON.cur:done?[.2,.45,.42]:NEON.gate;R.draw(g.m,I4,{tint:col,glow:1,lines:false})});
     gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);gl.depthMask(false);if(N.h)R.draw(N.h,I4,{alpha:.14,lines:false});N.gates.forEach((g,i)=>{const cur=i===this.gi;if(i<this.gi)return;R.draw(g.h,I4,{tint:cur?NEON.cur:NEON.gate,glow:1,alpha:cur?.12+.12*blink:.12,lines:false})});gl.depthMask(true);gl.disable(gl.BLEND)}
    if(!this.mis&&!this.att&&(PREF.gbal||PREF.gtgt))objDraw(this,R,gl,t);else if(this.objs){this.objs=null;gameHud(this)}
    if(this.mGlass){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);R.draw(this.mGlass,I4,{alpha:.32});gl.depthMask(true);gl.disable(gl.BLEND)}
-  if(cam!=='fpv'){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);const s=1+this.p[1]*.25;R.draw(this.shm,[s,0,0,0,0,1,0,0,0,0,s,0,this.p[0],.01,this.p[2],1],{alpha:Math.max(.08,.45-this.p[1]*.05),tint:TAC?[.3,.75,.5]:[0,0,0],glow:1,lines:false});
+  if(cam!=='fpv'){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);const s=1+this.p[1]*.25;if(!this.deb)R.draw(this.shm,[s,0,0,0,0,1,0,0,0,0,s,0,this.p[0],.01,this.p[2],1],{alpha:Math.max(.08,.45-this.p[1]*.05),tint:TAC?[.3,.75,.5]:[0,0,0],glow:1,lines:false});
    /* spectator: the vehicle is seen through a much thinner haze than the scenery, so it does not melt into the distance (the view is zoomed on it) */
    if(cam==='los')gl.uniform1f(R.u.uFK,Math.min((wxK(WX,this.plane)+ic*.14)*.2,.3/Math.max(100,LD*LD)));
-   const qk=quadKey();if(qk!==this.qk||!this.bm){this.qk=qk;this.dm=this.r.mesh(droneGeo(qk));this.pm=this.r.mesh(propGeo(qk));this.bm=this.r.mesh(bladeGeo(qk))}const M=M4.fromQT(this.q,this.p),Sc=M4.mul(M,[2.2,0,0,0,0,2.2,0,0,0,0,2.2,0,0,0,0,1]);const BALL=this.mis&&this.mis.ball;if(BALL){const BM=M4.fromQT(this.q,[this.p[0],this.p[1]+.14,this.p[2]]);R.draw(this.ballM,BM,{lines:false});R.draw(this.ballN,BM,{lines:false});gl.depthMask(false);R.draw(this.ballH,BM,{alpha:.18,lines:false});gl.depthMask(true)}else if(this.plane&&this.planeM){R.draw(this.planeM,M,{lines:false});if(this.planeK&&cam!=='fpv')R.draw(this.planeK,M,{lines:false});const now2=t,pdt2=Math.min(.05,Math.max(0,(now2-(this.pt2||now2))/1000));this.pt2=now2;
+   const qk=quadKey();if(qk!==this.qk||!this.bm){this.qk=qk;this.dm=this.r.mesh(droneGeo(qk));this.pm=this.r.mesh(propGeo(qk));this.bm=this.r.mesh(bladeGeo(qk))}const M=M4.fromQT(this.q,this.p),Sc=M4.mul(M,[2.2,0,0,0,0,2.2,0,0,0,0,2.2,0,0,0,0,1]);const BALL=this.mis&&this.mis.ball;if(this.deb){}else if(BALL){const BM=M4.fromQT(this.q,[this.p[0],this.p[1]+.14,this.p[2]]);R.draw(this.ballM,BM,{lines:false});R.draw(this.ballN,BM,{lines:false});gl.depthMask(false);R.draw(this.ballH,BM,{alpha:.18,lines:false});gl.depthMask(true)}else if(this.plane&&this.planeM){R.draw(this.planeM,M,{lines:false});if(this.planeK&&cam!=='fpv')R.draw(this.planeK,M,{lines:false});const now2=t,pdt2=Math.min(.05,Math.max(0,(now2-(this.pt2||now2))/1000));this.pt2=now2;
      /* control surfaces follow the sticks through a servo lag, on the ground and in the air */
      const IN=this.Is||this.I||{rol:0,pit:0,yaw:0},AX=this.auxA||{gear:1,flap:0},dd=this.csd||(this.csd={ail:0,ele:0,rud:0,flp:0,gear:0}),kf=1-Math.exp(-pdt2/.07),tg={ail:(IN.rol||0)*.4,ele:(IN.pit||0)*.4,rud:(IN.yaw||0)*.45,flp:AX.flap,gear:1-AX.gear};for(const c in tg)dd[c]=(dd[c]||0)+(tg[c]-(dd[c]||0))*kf;
      (this.planeCS||[]).forEach(c=>{const th=c.sgn*Math.max(-c.max,Math.min(c.max,(dd[c.ch]||0)*c.k));const qq=Q.axis(c.ax,th);let LM=M4.fromQT(qq,V.sub(c.a,Q.rot(qq,c.a)));if(c.h2){const t2=c.h2.sgn*c.h2.k*(dd.gear||0),q2=Q.axis(c.h2.ax,t2);LM=M4.mul(M4.fromQT(q2,V.sub(c.h2.a,Q.rot(q2,c.h2.a))),LM)}R.draw(c.m,M4.mul(M,LM),{lines:false})});
@@ -12648,13 +12772,15 @@ class FPVSim{
      /* v165: the canopy glass, last and see-through in both looks (a plain tint in the tactical one, mirror and glint in the real one); not in the pilot's own view */
      if(this.planeG&&cam!=='fpv'){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);R.draw(this.planeG,M,TAC?{alpha:.12,lines:false}:{glass:1,lines:false});gl.depthMask(true);gl.disable(gl.BLEND)}}else R.draw(this.dm,Sc,{lines:false});
    /* props: still while disarmed, idle spin once armed, faster and blurrier with throttle */
-   if(!BALL&&!this.plane){this.propStep(t);
+   if(!BALL&&!this.plane&&!this.deb){this.propStep(t);
     const bl=Math.min(1,Math.max(0,(this.pw-40)/110)),ba=1-bl*.75,da=bl*.42;
     motorPos(qk).forEach(([x,z,d])=>{const a=this.pa*d,c=Math.cos(a),sn=Math.sin(a),L=M4.mul(Sc,[c,0,-sn,0,0,1,0,0,sn,0,c,0,x,0,z,1]);R.draw(this.bm,L,{alpha:ba,lines:false});if(da>.02)R.draw(this.pm,M4.mul(Sc,[1,0,0,0,0,1,0,0,0,0,1,0,x,0,z,1]),{alpha:da,lines:false})})}
-   if(NT){if(!this.lm||this.lmk!==qk){const D=droneLights(qk);this.lm={m:this.r.mesh(D.m),h:this.r.mesh(D.h)};this.lmk=qk}const bk=(t%1200)<90?1:.55;R.draw(this.lm.m,Sc,{lines:false});gl.blendFunc(gl.SRC_ALPHA,gl.ONE);gl.depthMask(false);R.draw(this.lm.h,Sc,{alpha:.3*bk,lines:false});gl.depthMask(true);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA)}gl.disable(gl.BLEND);if(cam==='los')gl.uniform1f(R.u.uFK,wxK(WX,this.plane)+ic*.14)}
-  if(cam==='fpv'&&!this.plane&&!this.att&&!(this.mis&&this.mis.ball))this.fpvProps(gl,R,cq,eye,fov,c,NT,t);
+   if(NT&&!this.deb){if(!this.lm||this.lmk!==qk){const D=droneLights(qk);this.lm={m:this.r.mesh(D.m),h:this.r.mesh(D.h)};this.lmk=qk}const bk=(t%1200)<90?1:.55;R.draw(this.lm.m,Sc,{lines:false});gl.blendFunc(gl.SRC_ALPHA,gl.ONE);gl.depthMask(false);R.draw(this.lm.h,Sc,{alpha:.3*bk,lines:false});gl.depthMask(true);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA)}gl.disable(gl.BLEND);if(cam==='los')gl.uniform1f(R.u.uFK,wxK(WX,this.plane)+ic*.14)}
+  if(this.deb){if(cam==='los')gl.uniform1f(R.u.uFK,Math.min((wxK(WX,this.plane)+ic*.14)*.2,.3/Math.max(100,LD*LD)));this.debDraw(gl,R,TAC);if(cam==='los')gl.uniform1f(R.u.uFK,wxK(WX,this.plane)+ic*.14)}
+  this.fxGL(gl,R,VP,eye,cq,FG,cam,WX,ic,LD,tNow);
+  if(cam==='fpv'&&!this.plane&&!this.att&&!this.deb&&!(this.mis&&this.mis.ball))this.fpvProps(gl,R,cq,eye,fov,c,NT,t);
   if(PO)PO.end(c,t,{lq:this.lq,jam:this.jam,mode:PO.mode})}
- dispose(){cancelAnimationFrame(this.raf);this.ro?.disconnect();if(!this.att){wxAudio(0);this._wxCv?.remove();this._wxW?.remove();try{this.fx?.remove()}catch(e){}this.fx=null}removeEventListener('keydown',this.onKey);removeEventListener('keyup',this.onKey);if(this.cv.__owner===this){this.r.free();this.cv.__owner=null}if(!this.att){MOTOR.stop();MOTOR.space(null);MOTOR.dop(MOTOR.eng[MOTOR.cur],0,MOTOR.c?MOTOR.c.currentTime:0)}if(SIM.inst===this)SIM.inst=null;if(BG.inst===this)BG.inst=null}}
+ dispose(){this.debFree();cancelAnimationFrame(this.raf);this.ro?.disconnect();if(!this.att){wxAudio(0);this._wxCv?.remove();this._wxW?.remove();try{this.fx?.remove()}catch(e){}this.fx=null}removeEventListener('keydown',this.onKey);removeEventListener('keyup',this.onKey);if(this.cv.__owner===this){this.r.free();this.cv.__owner=null}if(!this.att){MOTOR.stop();MOTOR.space(null);MOTOR.dop(MOTOR.eng[MOTOR.cur],0,MOTOR.c?MOTOR.c.currentTime:0)}if(SIM.inst===this)SIM.inst=null;if(BG.inst===this)BG.inst=null}}
 
 const SIMI={sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>',cloud:'<path d="M7 18.5h10.2a4.1 4.1 0 0 0 .5-8.15A5.6 5.6 0 0 0 7.1 9.3a4.6 4.6 0 0 0-.1 9.2z"/>',rain:'<path d="M7 14.5h10a3.6 3.6 0 0 0 .5-7.15A5 5 0 0 0 7.9 6.6 4 4 0 0 0 7 14.5z"/><path d="M8.5 17.5l-1 2.5M12.5 17.5l-1 2.5M16.5 17.5l-1 2.5"/>',fog:'<path d="M4 8.5h13M6 12h14M4 15.5h11M8 19h10"/>',balloon:'<path d="M12 3c3.3 0 5.5 2.6 5.5 5.8 0 3.6-2.9 6.6-5.5 6.6S6.5 12.4 6.5 8.8C6.5 5.6 8.7 3 12 3z"/><path d="M11 15.4l-.6 1.4h3.2l-.6-1.4M12 16.8c0 2-1.6 2.4-1.6 4.2"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="2"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/>',trash:'<path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v5.5M14 11v5.5"/>',arch:'<rect x="3" y="4" width="18" height="4.5" rx="1"/><path d="M5 8.5V19a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5M10 12.5h4"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',eyex:'<path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7a9.6 9.6 0 0 0 4.2-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',field:'<path d="M5 21V4M5 4h11l-2 3.5 2 3.5H5"/>',forest:'<path d="M12 3l5 7h-3l4 6H6l4-6H7z"/><path d="M12 16v5"/>',
  tac:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',real:'<circle cx="17" cy="7" r="2.5"/><path d="M3 19l6-8 4 5 3-3 5 6z"/>',
