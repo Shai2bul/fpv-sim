@@ -12788,7 +12788,7 @@ in vec3 aP;in vec3 aN;in vec3 aC;in float aK;in vec4 aU;uniform mat4 uVP,uM;unif
 void main(){vec4 w=uM*vec4(aP,1.);float sw=aU.z*aU.w;if(sw>0.){float ph=w.x*.31+w.z*.23,s=sin(uT*1.7+ph)*.65+sin(uT*3.1+ph*2.1+1.3)*.35,gs=.6+.4*sin(uT*.43+ph*.2);w.xz+=uWnd.xy*(s*gs*sw*uWnd.z);w.y-=abs(s)*sw*uWnd.z*.18;}
 vW=w.xyz;vL=aP;vN=mat3(uM)*aN;vC=aC;vK0=aK;vKf=aK;vU=aU;gl_Position=uVP*w;}`;
 const SIMFS=`#version 300 es
-precision highp float;precision highp sampler2DArray;in vec3 vC,vN,vW,vL;in float vK0;in vec4 vU;flat in float vKf;uniform vec3 uEye,uSun,uFog,uTint,uLp,uLd;uniform float uGlow,uAlpha,uTac,uNight,uFK,uGfx,uTexOn,uGL,uMS,uT,uGlass;uniform vec4 uWx,uPad,uXr,uXd,uHm;uniform sampler2DArray uTex;uniform vec3 uDe,uOm;uniform float uMb;out vec4 o;
+precision highp float;precision highp sampler2DArray;in vec3 vC,vN,vW,vL;in float vK0;in vec4 vU;flat in float vKf;uniform vec3 uEye,uSun,uFog,uTint,uLp,uLd;uniform float uGlow,uAlpha,uTac,uNight,uFK,uGfx,uTexOn,uGL,uMS,uT,uGlass;uniform vec4 uWx,uPad,uXr,uXd,uHm;uniform sampler2DArray uTex;uniform vec3 uDe,uOm,uGm;uniform float uMb;out vec4 o;
 float spc;float TS(int l){return l==0?2.5:l==1?2.5:l==2?3.2:l==3?3.:l==4?3.5:l==5?3.:l==6?1.3:l==7?2.4:l==8?2.:l==21?12.:3.;}
 vec3 lamp(vec3 n){vec3 L=vW-uLp;float d=length(L);vec3 Ld=L/max(d,1e-3);float cone=smoothstep(.62,.93,dot(Ld,uLd));float near=smoothstep(2.2,0.,d)*.35;return vec3(1.,.96,.88)*(cone*7.+near)*max(dot(n,-Ld),0.)/(1.+d*d*.09);}
 float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
@@ -12802,26 +12802,30 @@ vec3 sMot(vec3 w,vec3 n){vec3 d=normalize(w-uEye);vec3 d0=d-cross(uOm,d);vec3 e0
 float evn(vec2 p,int s){vec2 i=floor(p),f=p-i;vec2 u=f*f*f*(f*(f*6.-15.)+10.);ivec2 ii=ivec2(i);float a=evh(ii,s),b=evh(ii+ivec2(1,0),s),c=evh(ii+ivec2(0,1),s),d=evh(ii+ivec2(1,1),s);return a+(b-a)*u.x+(c-a)*u.y+(a-b-c+d)*u.x*u.y;}
 /* v173: the meadow and the fields. Home strip (runway or practice field): mown, striped, even. Away from it: parcels (a warped grid of about 70 m) of pasture, young crop, ripe grain and ploughed earth, with rows that fade with the size of a pixel, dark edges where the hedges grow and the odd dirt track. Parcel number and edges are the same numbers as in evParcel (JavaScript). */
 vec3 evTurf(vec2 g,float dd,float px,vec3 vc){
- float fa=uHm.w,ds=length(vec2(g.x-uHm.x,g.y-clamp(g.y,uHm.z,uHm.y))),far=fa*smoothstep(55.,170.,ds);
+ float fa=uHm.w,ds=length(vec2(g.x-uHm.x,g.y-clamp(g.y,uHm.z,uHm.y))),far=fa*smoothstep(55.,170.,ds);bool lt=uGm.z>.6;
  vec3 LG=vc*vec3(1.15,.97,.85),DG=vc*vec3(1.4,1.07,.78);
- float m1=evn(g*.017,3),m2=evn(g*.071,5),m3=evn(g*.29,7);
+ float m1=evn(g*.017,3),m2=evn(g*.071,5),m3=lt?.5:evn(g*.29,7);
  vec3 meadow=mix(LG,DG,smoothstep(.3,.72,m1+(m2-.5)*.35));
- vec2 wp=g+(vec2(evn(g*.012,41),evn(g*.012+vec2(5.,9.),43))-.5)*64.,cc=wp/72.,cf=fract(cc);ivec2 ci=ivec2(floor(cc));
- float pid=evh(ci,61),pid2=evh(ci,67),de=min(min(cf.x,1.-cf.x),min(cf.y,1.-cf.y))*72.;
- vec3 fc=meadow;vec2 dir=pid2>.5?vec2(1.,0.):vec2(0.,1.);float rowW=.75,rowA=0.;
- if(pid<.2){fc=vc*vec3(.95,1.,.7);rowA=.16;}
- else if(pid<.36){fc=vec3(.66,.55,.28)*(.9+.2*pid2);rowA=.1;}
- else if(pid<.47){fc=vec3(.4,.29,.2)*(.85+.3*pid2);rowA=.24;rowW=1.1;}
- else if(pid<.62){fc=vc*vec3(.84,.92,.64);}
- else fc=mix(LG,DG,pid2*.6);
- vec3 col=mix(meadow,fc*(.92+.16*m3),far);
- float rw=sin(dot(g,dir)*6.2832/rowW)*rowA*(1.-smoothstep(.15,.7,max(gpx,abs(dot(gmv,dir))*uMb)/rowW))*far;col*=1.+rw;
- col*=1.-.22*(1.-smoothstep(0.,3.,de))*(1.-smoothstep(1.,3.,px))*far;
- col=mix(col,vec3(.46,.37,.26),(1.-smoothstep(.6,1.5,de))*(1.-smoothstep(.5,1.5,px))*step(pid2,.14)*far*.85);
+ vec3 col=meadow;
+ if(far>0.){
+  vec2 wp=g+(vec2(evn(g*.012,41),evn(g*.012+vec2(5.,9.),43))-.5)*64.,cc=wp/72.,cf=fract(cc);ivec2 ci=ivec2(floor(cc));
+  float pid=evh(ci,61),pid2=evh(ci,67),de=min(min(cf.x,1.-cf.x),min(cf.y,1.-cf.y))*72.;
+  vec3 fc=meadow;vec2 dir=pid2>.5?vec2(1.,0.):vec2(0.,1.);float rowW=.75,rowA=0.;
+  if(pid<.2){fc=vc*vec3(.95,1.,.7);rowA=.16;}
+  else if(pid<.36){fc=vec3(.66,.55,.28)*(.9+.2*pid2);rowA=.1;}
+  else if(pid<.47){fc=vec3(.4,.29,.2)*(.85+.3*pid2);rowA=.24;rowW=1.1;}
+  else if(pid<.62){fc=vc*vec3(.84,.92,.64);}
+  else fc=mix(LG,DG,pid2*.6);
+  col=mix(meadow,fc*(.92+.16*m3),far);
+  float rw=sin(dot(g,dir)*6.2832/rowW)*rowA*(1.-smoothstep(.15,.7,max(gpx,abs(dot(gmv,dir))*uMb)/rowW))*far;col*=1.+rw;
+  col*=1.-.22*(1.-smoothstep(0.,3.,de))*(1.-smoothstep(1.,3.,px))*far;
+  col=mix(col,vec3(.46,.37,.26),(1.-smoothstep(.6,1.5,de))*(1.-smoothstep(.5,1.5,px))*step(pid2,.14)*far*.85);
+ }
  float mw=(1.-far)*step(.5,abs(uHm.y-uHm.z));float ms=sin(g.x*6.2832/9.)*.5+.5;col*=1.+mw*.11*(smoothstep(.35,.65,ms)-.5)*(1.-smoothstep(.2,1.,px/4.));
- vec3 t1=gT(g*.55,.55,uGL).rgb*2.,t2=gT(g*2.9+.37,2.9,uGL).rgb*2.;float fd=1.-smoothstep(.12,1.1,gpx);
- col*=mix(vec3(1.),t1*(.55+.45*t2),fd*.95)*(.88+.24*m3);
- float we=(1.-far)*smoothstep(.72,.9,evn(g*.045,9))*smoothstep(.3,.68,evn(g*.23,11))*.5;col=mix(col,vec3(.46,.38,.27)*(.8+.4*m3),we);
+ vec3 tm=vec3(1.);float fd=1.-smoothstep(.12,1.1,gpx);
+ if(fd>0.&&!lt){vec3 t1=gT(g*.55,.55,uGL).rgb*2.,t2=gT(g*2.9+.37,2.9,uGL).rgb*2.;tm=mix(vec3(1.),t1*(.55+.45*t2),fd*.95);}
+ col*=tm*(.88+.24*m3);
+ if(far<.999&&!lt){float we=(1.-far)*smoothstep(.72,.9,evn(g*.045,9))*smoothstep(.3,.68,evn(g*.23,11))*.5;col=mix(col,vec3(.46,.38,.27)*(.8+.4*m3),we);}
  return col;}
 vec3 evTurfR(vec2 g,float dd,float px,vec3 vc,vec2 p){gdx=dFdx(p);gdy=dFdy(p);gpx=px;gmv=vec2(0.);return evTurf(g,dd,px,vc);}
 vec3 evSand(vec2 g,float dd,float px,vec3 vc){
@@ -12830,14 +12834,14 @@ vec3 evSand(vec2 g,float dd,float px,vec3 vc){
  vec2 wd=vec2(.8,.6);float ph=dot(g,wd)*6.2832/.34+m2*9.,rp=sin(ph)*.5+.5;col*=1.-.12*(rp-.5)*(1.-smoothstep(.08,.4,px/.34));
  col*=1.+.05*sin(dot(g,wd)*6.2832/3.2+m1*14.)*(1.-smoothstep(.4,2.5,px));
  {vec2 gg=g*14.;ivec2 ic=ivec2(floor(gg));float hh=evh(ic,19);vec2 f=fract(gg)-.5-(vec2(evh(ic,31),evh(ic,37))-.5)*.5;float rr=.1+.1*evh(ic,41);float st=step(.9,hh)*(1.-smoothstep(rr*.55,rr,length(f)))*(1.-smoothstep(.04,.2,px));col=mix(col,vc*vec3(.62,.56,.5)*(.8+.4*evh(ic,43)),st*.85);}
- vec3 t1=gT(g*.9,.9,uGL).rgb*2.,t2=gT(g*3.7+.2,3.7,uGL).rgb*2.;float fd=1.-smoothstep(.1,1.,gpx);
- return col*mix(vec3(1.),t1*(.6+.4*t2),fd*.9)*(.9+.2*m3);}
+ float fd=1.-smoothstep(.1,1.,gpx);vec3 tm=vec3(1.);if(fd>0.&&uGm.z<=.6){vec3 t1=gT(g*.9,.9,uGL).rgb*2.,t2=gT(g*3.7+.2,3.7,uGL).rgb*2.;tm=mix(vec3(1.),t1*(.6+.4*t2),fd*.9);}
+ return col*tm*(.9+.2*m3);}
 vec3 evDirt(vec2 g,float dd,float px,vec3 vc){
  float m1=evn(g*.02,23),m2=evn(g*.09,25),m3=evn(g*.4,27);
  vec3 col=vc*mix(vec3(1.12,1.,.9),vec3(.76,.7,.64),smoothstep(.3,.75,m1+(m2-.5)*.4));
  float pb=step(.9,evh(ivec2(floor(g*9.)),29))*(1.-smoothstep(.06,.3,px));col=mix(col,vc*vec3(.55,.5,.46),pb*.7);
- vec3 t1=gT(g*.4,.4,uGL).rgb*2.,t2=gT(g*1.9+.2,1.9,uGL).rgb*2.;float fd=1.-smoothstep(.1,1.,gpx);
- return col*mix(vec3(1.),t1*(.6+.4*t2),fd*.9)*(.88+.24*m3);}
+ float fd=1.-smoothstep(.1,1.,gpx);vec3 tm=vec3(1.);if(fd>0.&&uGm.z<=.6){vec3 t1=gT(g*.4,.4,uGL).rgb*2.,t2=gT(g*1.9+.2,1.9,uGL).rgb*2.;tm=mix(vec3(1.),t1*(.6+.4*t2),fd*.9);}
+ return col*tm*(.88+.24*m3);}
 vec3 evConc(vec2 g,float dd,float px,vec3 vc){
  float m1=evn(g*.03,51),m2=evn(g*.11,53),m3=evn(g*.5,55);
  vec2 sc=g/4.5,cf=fract(sc);ivec2 ci=ivec2(floor(sc));float sh=evh(ci,57);
@@ -12848,8 +12852,8 @@ vec3 evConc(vec2 g,float dd,float px,vec3 vc){
  float wa=uHm.w;float wd=smoothstep(.5,.78,m1+(m2-.5)*.45)*wa+jn*wa*step(.45,evh(ivec2(floor(g*2.)),61))*.7;
  vec3 weed=mix(vec3(.22,.27,.12),vec3(.4,.36,.18),evn(g*.6,63))*(.75+.5*evh(ivec2(floor(g*4.)),65));
  col=mix(col,weed,clamp(wd,0.,1.)*.9);
- vec3 t1=gT(g*.4,.4,uGL).rgb*2.,t2=gT(g*1.9+.2,1.9,uGL).rgb*2.;float fd=1.-smoothstep(.1,1.,gpx);
- return col*mix(vec3(1.),t1*(.6+.4*t2),fd*.8);}
+ float fd=1.-smoothstep(.1,1.,gpx);vec3 tm=vec3(1.);if(fd>0.&&uGm.z<=.6){vec3 t1=gT(g*.4,.4,uGL).rgb*2.,t2=gT(g*1.9+.2,1.9,uGL).rgb*2.;tm=mix(vec3(1.),t1*(.6+.4*t2),fd*.8);}
+ return col*tm;}
 vec3 evAsph(vec2 g,float dd,float px,vec3 vc){
  float m1=evn(g*.025,71),m2=evn(g*.1,73),m3=evn(g*.45,75);
  vec2 sc=g/9.,ci2=floor(sc);float pa=evh(ivec2(ci2),77);vec2 pf=fract(sc);
@@ -12857,8 +12861,8 @@ vec3 evAsph(vec2 g,float dd,float px,vec3 vc){
  vec3 col=vc*(.8+.4*m1)*(.9+.2*m2)*(1.+.06*(pa-.5));col*=1.-.16*patch_;
  float ck=abs(evn(g*.7+vec2(11.,2.),79)-.5);col*=1.-.4*(1.-smoothstep(0.,.016+px*.3,ck))*(1.-smoothstep(.1,1.5,px))*step(.55,m1);
  float wear=smoothstep(.55,.85,evn(g*vec2(.9,.07)+vec2(0.,13.),81));col*=1.+.1*wear*(1.-smoothstep(.2,3.,px));
- vec3 t1=gT(g*.5,.5,uGL).rgb*2.,t2=gT(g*2.3+.2,2.3,uGL).rgb*2.;float fd=1.-smoothstep(.1,1.,gpx);
- return col*mix(vec3(1.),t1*(.6+.4*t2),fd*.85)*(.92+.16*m3);}
+ float fd=1.-smoothstep(.1,1.,gpx);vec3 tm=vec3(1.);if(fd>0.&&uGm.z<=.6){vec3 t1=gT(g*.5,.5,uGL).rgb*2.,t2=gT(g*2.3+.2,2.3,uGL).rgb*2.;tm=mix(vec3(1.),t1*(.6+.4*t2),fd*.85);}
+ return col*tm*(.92+.16*m3);}
 /* weathering of the walls: strata in rock, rain streaks and a dirty foot on concrete, rust and grime on sheet metal */
 vec3 evSurf(vec3 c,float ls,vec3 w,vec3 an){
  float nz=vn(w.xz*.18+w.y*.07);
@@ -12867,6 +12871,7 @@ vec3 evSurf(vec3 c,float ls,vec3 w,vec3 an){
  else if(ls>6.5&&ls<7.5){float rs=smoothstep(.62,.85,vn(vec2((w.x+w.z)*.3,w.y*.5))+.25*(1.-smoothstep(0.,1.2,w.y)));c=mix(c,c*vec3(1.2,.75,.5),rs*.4);c*=.85+.15*smoothstep(0.,1.5,w.y);c*=.94+.12*nz;}
  return c;}
 void main(){if(uXr.w>0.){vec3 xv=vW-uXr.xyz;float xt=dot(xv,uXd.xyz);if(xt>1.&&xt<uXd.w-.6&&vW.y>.3){float xd=length(xv-uXd.xyz*xt),xR=uXr.w+xt*.05;if(xd<xR){float xf=xd/xR;if(fract(52.9829189*fract(dot(gl_FragCoord.xy,vec2(.06711056,.00583715))))>xf*xf*(3.-2.*xf))discard;}}}
+ {int kq=int(vKf+.5);if((kq>=110&&kq<=113)||kq==119){float kp=(1.-uGm.z)*(1.-smoothstep(.006,.035,uGm.x/max(length(vW-uEye),.5)+uGm.y));if(kp<.999&&evh(ivec2(floor(vW.xz*2.5)),83)>=kp)discard;}}
  float vK=vK0;if(vKf>9.5)vK=0.;if(vKf>6.5&&vKf<7.5){if(uTac<.5)discard;vK=0.;}if((vKf>7.5&&vKf<8.5)||(vKf>5.5&&vKf<6.5)||(vKf>8.5&&vKf<9.5))vK=0.;float dd=length(vW-uEye);
   if(vKf>169.5&&vKf<170.5){/* v176: the blur of a spinning propeller seen from the camera: one disc, soft in the radius, a little denser behind each blade (uGlow: how much of the blades is still seen, 0 = a plain disc). vU = position on the disc (1 = tip), blades x direction; colour uTint, opacity uAlpha */
   float r=length(vU.xy),nb=abs(vU.z),ph=fract(sign(vU.z)*atan(vU.y,vU.x)*nb*.15915494);float bl=smoothstep(0.,.13,ph)*pow(1.-ph,2.2),pr=smoothstep(.1,.36,r)*(1.-smoothstep(.62,1.,r))*(.8+.2*smoothstep(.3,.5,r)*(1.-smoothstep(.55,.85,r)));
@@ -12904,14 +12909,14 @@ void main(){if(uXr.w>0.){vec3 xv=vW-uXr.xyz;float xt=dot(xv,uXd.xyz);if(xt>1.&&x
   float Hh=bio==3?200.:bio==1?92.:bio==2?80.:78.,hf=vL.y/Hh;
   if(uGfx<.5){float q1=vn(p*.008+sd),q2=vn(p*.034+sd*1.7+4.1);vec3 lf=bio==2?vec3(.36,.32,.19):bio==1?vec3(.1,.17,.12):bio==3?vec3(.12,.2,.13):vec3(.17,.26,.11);c=vC*(bio==2?vec3(.98,.9,.82):vec3(1.))*(.85+.3*q2);float fc2=bio==2?0.:smoothstep(.42,.6,q1+(q2-.5)*.3+hf*.5)*(1.-smoothstep(.4,.6,sl));c=mix(c,lf*(.7+.6*q2),fc2);c=mix(c,bio==2?vec3(.6,.43,.3):vec3(.48,.46,.42),smoothstep(.4,.6,sl+(q2-.5)*.3));}
   else{
-  float n1=vn(p*.008+sd),n2=vn(p*.034+sd*1.7+4.1),n3=vn(p*.14+sd*.3+9.3),n4=vn(p*.55+sd*2.3+1.7)*(1.-smoothstep(.5,1.6,px)),n5=vn(p*1.9+sd*.7+5.5)*(1.-smoothstep(.15,.6,px));
-  vec3 mead=bio==2?vC*vec3(.98,.9,.82)*(.8+.4*n3)*(.9+.2*n4):evTurfR(p+vec2(731.,-523.),dd,px*.5,vC,p)*(bio==1?vec3(.92,.94,1.):bio==3?vec3(1.02,1.02,.96):vec3(1.));
+  float n1=vn(p*.008+sd),n2=vn(p*.034+sd*1.7+4.1),n3=vn(p*.14+sd*.3+9.3),n4=px<1.6?vn(p*.55+sd*2.3+1.7)*(1.-smoothstep(.5,1.6,px)):0.,n5=px<.6?vn(p*1.9+sd*.7+5.5)*(1.-smoothstep(.15,.6,px)):0.;
+  gdx=dFdx(p);gdy=dFdy(p);gpx=px*.5;gmv=vec2(0.);vec3 mead=vec3(0.);
   vec3 fore=bio==2?vec3(.36,.32,.19):bio==1?vec3(.1,.17,.12):bio==3?vec3(.12,.2,.13):vec3(.17,.26,.11);
   vec3 rock=bio==2?vec3(.6,.43,.3):bio==1?vec3(.42,.4,.38):bio==3?vec3(.5,.49,.49):vec3(.56,.52,.45);
   float tl=bio==3?.5:bio==1?.82:bio==2?.5:.9;
   float fcov=bio==2?.15:smoothstep(.3,.5,n1+(n2-.5)*.35+hf*.7-.12);
   float wf=fcov*(1.-smoothstep(tl-.14,tl,hf+(n2-.5)*.2))*(1.-smoothstep(.42,.66,sl+(n3-.5)*.3));
-  wf=smoothstep(.38,.62,wf+(n4-.5)*.5);
+  wf=smoothstep(.38,.62,wf+(n4-.5)*.5);if(wf<.995)mead=bio==2?vC*vec3(.98,.9,.82)*(.8+.4*n3)*(.9+.2*n4):evTurf(p+vec2(731.,-523.),dd,px*.5,vC)*(bio==1?vec3(.92,.94,1.):bio==3?vec3(1.02,1.02,.96):vec3(1.));
   float wr=smoothstep(.36,.56,sl+(n3-.5)*.34+max(hf-.55,0.)*.4);
   float ws=bio==3?smoothstep(.0,.05,hf-.56+(n2-.5)*.14-sl*.22):0.;
   /* crowns: a bump from two scales of noise lights the forest from the sun side and shades its lee */
@@ -12973,12 +12978,12 @@ const SIMGPU={keep:null,n:(()=>{try{return +sessionStorage.getItem('fpv-gpu-n')|
   m.innerHTML=k==='reconnect'?'<div class="sime" role="status"><span class="simsp" aria-hidden="true"></span><b>החיבור לכרטיס המסך נותק באמצע הטיסה</b><span>מתחבר מחדש…</span></div>'
    :`<div class="sime" role="alert"><b>החיבור לכרטיס המסך לא חזר</b><span>הדפדפן עדיין לא מאפשר לפתוח אותו מחדש. נסה שוב, ואם זה חוזר על עצמו: רענן את העמוד (Ctrl+Shift+R), ודא שהאצת החומרה מופעלת בהגדרות הדפדפן, או הורד את איכות הגרפיקה.</span><span class="sime-b"><button class="btn sm pri" type="button" data-act="sim-gpu-retry">נסה שוב</button></span>${SIMGPU.why||SIMGPU.rend?`<small class="mono" dir="ltr" data-notr="1">${esc((SIMGPU.why||'')+(SIMGPU.why&&SIMGPU.rend?' · ':'')+(SIMGPU.rend||''))}</small>`:''}</div>`}};
 class SimGL{
- constructor(cv){let why='';const ce=e=>{why=(e&&e.statusMessage)||''};cv.addEventListener('webglcontextcreationerror',ce);let gl=null;try{gl=cv.getContext('webgl2',{antialias:SIMGPU.aa(),alpha:false})}catch(e){why=String(e&&e.message||e)}cv.removeEventListener('webglcontextcreationerror',ce);
+ constructor(cv,hp){let why='';const ce=e=>{why=(e&&e.statusMessage)||''};cv.addEventListener('webglcontextcreationerror',ce);let gl=null;try{gl=cv.getContext('webgl2',{antialias:SIMGPU.aa(),alpha:false,powerPreference:hp?'high-performance':'default'})}catch(e){why=String(e&&e.message||e)}cv.removeEventListener('webglcontextcreationerror',ce);
   if(!gl){cv.__fail=1;SIMGPU.why=why;const er=new Error('webgl2');er.why=why;throw er}this.gl=gl;if(gl.isContextLost())throw new Error('webgl-lost');this.cv=cv;try{const dx=gl.getExtension('WEBGL_debug_renderer_info');if(dx)cv.__rend=SIMGPU.rend=String(gl.getParameter(dx.UNMASKED_RENDERER_WEBGL)||'').slice(0,90)}catch(e){}
   cv.addEventListener('webglcontextlost',e=>{e.preventDefault();cv.__lost=true;SIMGPU.lost(cv)});
   const sh=(t,s)=>{const x=gl.createShader(t);gl.shaderSource(x,s);gl.compileShader(x);if(!gl.getShaderParameter(x,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(x));return x};
   const p=this.pr=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,SIMVS));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,SIMFS));gl.linkProgram(p);gl.useProgram(p);
-  this.u={};['uVP','uM','uEye','uSun','uFog','uTint','uGlow','uAlpha','uTac','uNight','uLp','uLd','uFK','uWx','uGfx','uT','uWnd','uTex','uTexOn','uGL','uMS','uPad','uGlass','uXr','uXd','uHm','uDe','uOm','uMb'].forEach(k=>this.u[k]=gl.getUniformLocation(p,k));this.a={P:gl.getAttribLocation(p,'aP'),N:gl.getAttribLocation(p,'aN'),C:gl.getAttribLocation(p,'aC'),K:gl.getAttribLocation(p,'aK'),U:gl.getAttribLocation(p,'aU')};
+  this.u={};['uVP','uM','uEye','uSun','uFog','uTint','uGlow','uAlpha','uTac','uNight','uLp','uLd','uFK','uWx','uGfx','uT','uWnd','uTex','uTexOn','uGL','uMS','uPad','uGlass','uXr','uXd','uHm','uDe','uOm','uGm','uMb'].forEach(k=>this.u[k]=gl.getUniformLocation(p,k));this.a={P:gl.getAttribLocation(p,'aP'),N:gl.getAttribLocation(p,'aN'),C:gl.getAttribLocation(p,'aC'),K:gl.getAttribLocation(p,'aK'),U:gl.getAttribLocation(p,'aU')};
   gl.enable(gl.DEPTH_TEST);gl.uniform3fv(this.u.uSun,V.norm([.4,.8,.35]));gl.uniform3fv(this.u.uFog,[.74,.82,.86]);gl.uniform1f(this.u.uFK,.000018);gl.uniform4f(this.u.uWx,0,0,0,0);
    /* v154: the material textures (one 2D array, filled as SimTex paints the layers), the sway attribute's default, multisampling for cut-out edges */
    gl.vertexAttrib4f(this.a.U,0,0,0,0);this.ms=(gl.getParameter(gl.SAMPLES)||0)>1;this.texOK=false;
@@ -13526,7 +13531,7 @@ function debSplit(G,key,sc,off){sc=sc||1;off=off||[0,0,0];if(G.u.length)G.padU()
    if(x<mn[0])mn[0]=x;if(x>mx[0])mx[0]=x;if(y<mn[1])mn[1]=y;if(y>mx[1])mx[1]=y;if(z<mn[2])mn[2]=z;if(z>mx[2])mx[2]=z}
   out.push({g,c:[(cx+off[0])*sc,(cy+off[1])*sc,(cz+off[2])*sc],h:[Math.max(.012,(mx[0]-mn[0])/2),Math.max(.012,(mx[1]-mn[1])/2),Math.max(.012,(mx[2]-mn[2])/2)],o:[(mx[0]+mn[0])/2,(mx[1]+mn[1])/2,(mx[2]+mn[2])/2]})});return out}
 class FPVSim{
- constructor(host,opt={}){this.host=host;this.att=!!opt.att;this.skey=opt.scene;this.cv=host.querySelector('canvas');this.r=this.cv.__sg||(this.cv.__sg=new SimGL(this.cv));this.cv.__owner=this;this.load(opt.scene||SIM.scene);this.keys={};this.t0=performance.now();this.last=this.t0;this.acc=0;
+ constructor(host,opt={}){this.host=host;this.att=!!opt.att;this.skey=opt.scene;this.cv=host.querySelector('canvas');this.r=this.cv.__sg||(this.cv.__sg=new SimGL(this.cv,!this.att));this.cv.__owner=this;this.load(opt.scene||SIM.scene);this.keys={};this.t0=performance.now();this.last=this.t0;this.acc=0;
   this.onKey=e=>{if(e.target.closest?.('input,select,textarea'))return;if(KEYCAP.on)return;if(e.type==='keydown'&&e.ctrlKey&&e.altKey&&e.code==='KeyF'){this.pfOn=!this.pfOn;try{localStorage.setItem('fpv-sim-perf',this.pfOn?'1':'0')}catch(_){}if(!this.pfOn&&this._pfEl){this._pfEl.remove();this._pfEl=null}e.preventDefault();return}const CM=keyCM();const k=CM[e.code];if(!k)return;if(e.type==='keydown'&&['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright'].includes(k))this.kbT=performance.now();if(e.type==='keydown'&&e.repeat&&[' ','r','c','m','g','f','v'].includes(k)){e.preventDefault();return}if(e.type==='keydown'){if(k===' '){e.preventDefault();this.toggleArm()}if(k==='r')this.reset();if(k==='g')this.auxCmd('gear','toggle');if(k==='f')this.auxCmd('flap','+');if(k==='v')this.auxCmd('flap','-');if((k==='f'||k==='v')&&!this.plane)this.vtx(k==='v'?1:-1);if(k==='c')simCycleCam();if(k==='m')simSetMode(({angle:'horizon',horizon:'acro',acro:'angle'})[SIM.mode]||'angle');if(['arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault()}this.keys[k]=e.type==='keydown'};
   if(!this.att){addEventListener('keydown',this.onKey);addEventListener('keyup',this.onKey)}else{this.still=PREF.motion==='reduced'||matchMedia('(prefers-reduced-motion: reduce)').matches;this.u=0}this.kthr=0;
   this.ro=new ResizeObserver(()=>this.resize());this.ro.observe(this.cv);this.resize();this.loop=this.loop.bind(this);this.raf=requestAnimationFrame(this.loop)}
@@ -13897,7 +13902,10 @@ class FPVSim{
    if(Math.hypot(de[0],de[1],de[2])>8+4*V.len(this.v)*Math.max(t-PM.t,17)/1000)de=[0,0,0];
    else{const a=cq,b=PM.q,bx=-b[0],by=-b[1],bz=-b[2],bw=b[3];let x=a[3]*bx+a[0]*bw+a[1]*bz-a[2]*by,y=a[3]*by-a[0]*bz+a[1]*bw+a[2]*bx,z=a[3]*bz+a[0]*by-a[1]*bx+a[2]*bw,w=a[3]*bw-a[0]*bx-a[1]*by-a[2]*bz;if(w<0){x=-x;y=-y;z=-z;w=-w}const sn=Math.hypot(x,y,z);if(sn>1e-7){const k=2*Math.atan2(sn,w)/sn;om=sn>.5?[0,0,0]:[x*k,y*k,z*k]}}}
   this._pm={t,e:[eye[0],eye[1],eye[2]],q:[cq[0],cq[1],cq[2],cq[3]],cam};
-  gl.uniform3f(R.u.uDe,de[0],de[1],de[2]);gl.uniform3f(R.u.uOm,om[0],om[1],om[2]);gl.uniform1f(R.u.uMb,on?(FPVSim.mbk??1.5):0)}
+  gl.uniform3f(R.u.uDe,de[0],de[1],de[2]);gl.uniform3f(R.u.uOm,om[0],om[1],om[2]);gl.uniform1f(R.u.uMb,on?(FPVSim.mbk??1.5):0);
+   /* v178: the jump of the picture per frame (travel and turn, smoothed over ~0.14 s) and the share of the grass that the quality level takes away: 0 at full quality, all of it at the lowest */
+   {const G=this._gm||(this._gm={x:0,y:0,t:t}),dl=Math.hypot(de[0],de[1],de[2]),ol=Math.hypot(om[0],om[1],om[2]),k=1-Math.exp(-Math.min(.1,Math.max(0,(t-G.t)/1000))/.14);G.t=t;G.x+=(dl-G.x)*k;G.y+=(ol-G.y)*k;
+    const th=on&&!FPVSim.noThin,qs=this.qs??(FPVSim.qs||1);gl.uniform3f(R.u.uGm,th?G.x:0,th?G.y*.5:0,th?Math.max(0,Math.min(1,(.97-qs)/.42)):0)}}
  fxDraw(cam,fov){if(this.att)return;const cv=this.cv;let F=this.fx;if(!F||!F.isConnected){F=this.fx=document.createElement('canvas');F.className='simfx';F.setAttribute('aria-hidden','true');cv.after(F)}
   const w=cv.clientWidth,h=cv.clientHeight,d=Math.min(1.5,devicePixelRatio||1);if(F.width!==Math.round(w*d)||F.height!==Math.round(h*d)){F.width=Math.round(w*d);F.height=Math.round(h*d)}
   const g=F.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,w,h);const VP=this.VP,red=PREF.motion==='reduced';
@@ -13935,7 +13943,7 @@ class FPVSim{
   this.flash(crit?`${why} · מכה בכנף · שלמות קריטית · עוד מכה קשה מרסקת`:`${why} · מכה בכנף · −${Math.round(before-this.hp)}%`,crit?2000:1500);return false}
  pdKill(){this.pd=(this.pd||[0,0,0,0]).map(()=>100)}
  doCrash(t){this.pdKill();if(PREF.motion!=='reduced')this.shk=1.7;if(SFX.on&&cfg('sound'))SFX.impact(/קרקע/.test(t)?'ground':'wall',1.3);if(this.p[1]<1.2)impactFx(this,'ground',1.4,true);this.debBreak();this.fxCrash();this.crash=performance.now();this.armed=false;this.flash(t+(this.mis||this.gates?.length?' · מתחילים מההתחלה':''),1800);SFX.play('fail');setTimeout(()=>{if(this.crash)this.reset()},this.deb?2400:1800)}
- resize(){const c=this.cv,q=this.att?1:(this.qs??(FPVSim.qs||1)),w=c.clientWidth,h=c.clientHeight;if(!w||!h)return;let d=Math.max(.6,Math.min(this.att?.8:2,Math.max(devicePixelRatio||1,this.att?1:1.5)*q));
+ resize(){if(FPVSim.qs===undefined&&!FPVSim.qL){FPVSim.qL=1;try{const o=JSON.parse(localStorage.getItem('fpv-sim-q')||'null');if(o&&o.q>=.55&&o.q<1&&Date.now()-o.t<2592e6)FPVSim.qs=o.q}catch(e){}}const c=this.cv,q=this.att?1:(this.qs??(FPVSim.qs||1)),w=c.clientWidth,h=c.clientHeight;if(!w||!h)return;let d=Math.max(.6,Math.min(this.att?.8:2,Math.max(devicePixelRatio||1,this.att?1:1.5)*q));
   /* v153: a budget of about 3.6 million multisampled pixels: a large or high-density screen used to ask for 8 million */
   d=Math.max(.6,Math.min(d,Math.sqrt((this.att?1.3e6:SIMGPU.budget())/(w*h))));const W=Math.round(w*d),H=Math.round(h*d);if(c.width!==W)c.width=W;if(c.height!==H)c.height=H;if(this.pf)this.pf.skip=8}
  /* adaptive resolution: a weak laptop GPU drops the render scale until the frame rate holds, and earns it back when there is headroom */
@@ -13943,31 +13951,31 @@ class FPVSim{
   /* a stall (another tab, a scene being built, a resize) says nothing about the load: start the window again */
   if(f>250){P.n=P.s=P.l=P.v=P.m=P.c=0;P.lo=99;P.t0=t;P.skip=6;return}
   if(P.skip>0){P.skip--;P.t0=t;return}
-  P.n++;P.s+=f;if(f>24)P.l++;if(f>40)P.v++;if(f>P.m)P.m=f;if(f>3&&f<P.lo)P.lo=f;
+  P.n++;P.s+=f;if(f>(P.LT||24))P.l++;if(f>(P.VT||40))P.v++;if(f>P.m)P.m=f;if(f>3&&f<P.lo)P.lo=f;
   if(t-P.t0<1200||P.n<20)return;
   const F=FPVSim,avg=P.s/P.n,lf=P.l/P.n,vf=P.v/P.n,mx=P.m,cpu=P.c/P.n,lo=P.lo;P.n=P.s=P.l=P.v=P.m=P.c=0;P.lo=99;P.t0=t;
   /* the shortest frame is the refresh interval of the screen (16.7 ms at 60 Hz); a 50 Hz screen has more room */
-  F.refMin=Math.min(F.refMin||99,lo);const ref=Math.min(20.5,Math.max(4,F.refMin));
+  F.refMin=Math.min(F.refMin||99,lo);const ref=Math.min(20.5,Math.max(4,F.refMin));/* v179: a late frame is one that missed a refresh: 1.45 intervals (24 ms at 60 Hz, never less) */P.LT=Math.max(24,ref*1.45);P.VT=Math.max(40,ref*2.4);
   const q=this.qs??(F.qs||1);let nq=q;
   if(this.pfOn===undefined)this.pfOn=!this.att&&(()=>{try{return localStorage.getItem('fpv-sim-perf')==='1'}catch(e){return false}})();
   if(this.pfOn&&!this.att)this.pfShow(avg,lf,mx,cpu,ref,q);
-  const bad=avg>Math.max(22,ref*1.2)||lf>.12||vf>.04;
+  /* v179: it is the stutter that shakes a fast picture, not only the average: 4 % late frames (about two a second) is already too many (it was 12 %) */const bad=avg>Math.max(20.5,ref*1.15)||lf>.04||vf>.04;
   if(bad){P.gw=0;
    if(!(F.noCutUntil>t)&&q>.55){
     /* a run of cuts: if four steps down did not make the frames faster, the card is not the limit: put the resolution back and leave it for a while */
-    if(!P.ser||t-P.ser.t>6000)P.ser={t,q0:q,a0:avg,n:0};P.ser.t=t;P.ser.n++;
-    if(P.ser.q0-q>=.39&&avg>P.ser.a0*.92){nq=P.ser.q0;F.noCutUntil=t+180000;P.ser=null}
+    if(!P.ser||t-P.ser.t>6000)P.ser={t,q0:q,a0:avg,l0:lf,n:0};P.ser.t=t;P.ser.n++;
+    if(P.ser.q0-q>=.39&&avg>P.ser.a0*.92&&lf>P.ser.l0*.6){nq=P.ser.q0;F.noCutUntil=t+180000;P.ser=null}
     else{nq=Math.max(.55,q-(avg>38?.2:.1));F.qBad=q;F.qBadT=t;if(F.qUpT&&t-F.qUpT<30000)F.qLock=Math.min(120000,(F.qLock||20000)*2)}}}
   else if(avg<Math.max(18.5,ref*1.12)&&lf<.02&&q<1){
     P.ser=null;P.gw=(P.gw||0)+1;
     /* up again only after two good windows, and a level that was too slow is not tried again for a while (longer each time it fails): no hunting */
     if(P.gw>=2&&(!F.qBad||q+.1<F.qBad||t-F.qBadT>(F.qLock||20000))){nq=Math.min(1,q+.1);F.qUpT=t;P.gw=0}}
   else P.gw=0;
-  if(nq!==q){this.qs=F.qs=+nq.toFixed(2);this.resize()}}
+  if(nq!==q){this.qs=F.qs=+nq.toFixed(2);/* the level that held is remembered for the next visit (the first minute of a flight is not spent finding it again) */try{if(this.qs<1)localStorage.setItem('fpv-sim-q',JSON.stringify({q:this.qs,t:Date.now()}));else localStorage.removeItem('fpv-sim-q')}catch(e){}this.resize()}}
  /* a hidden readout of the frame time, numbers only: Ctrl+Alt+F (also kept in localStorage 'fpv-sim-perf') */
  pfShow(avg,lf,mx,cpu,ref,q){let E=this._pfEl;
   if(!E||!E.isConnected){E=this._pfEl=document.createElement('div');E.setAttribute('aria-hidden','true');E.style.cssText='position:fixed;left:8px;bottom:8px;z-index:99999;font:11px/1.35 ui-monospace,Menlo,Consolas,monospace;color:#cfe;background:rgba(0,0,0,.55);padding:3px 6px;border-radius:4px;pointer-events:none;white-space:pre';document.body.appendChild(E)}
-  E.textContent=Math.round(1000/avg)+' fps  '+avg.toFixed(1)+' ms  (screen '+ref.toFixed(1)+')\nmax '+Math.round(mx)+'  late '+Math.round(lf*100)+'%  js '+cpu.toFixed(1)+' ms\n'+this.cv.width+'x'+this.cv.height+'  q '+q.toFixed(2)}
+  E.textContent=Math.round(1000/avg)+' fps  '+avg.toFixed(1)+' ms  (screen '+ref.toFixed(1)+')\nmax '+Math.round(mx)+'  late '+Math.round(lf*100)+'%  js '+cpu.toFixed(1)+' ms\n'+this.cv.width+'x'+this.cv.height+'  q '+q.toFixed(2)+'  thin '+Math.round(Math.max(0,Math.min(1,(.97-q)/.42))*100)+'%'+'\n'+String(this.cv.__rend||'').slice(0,72)}
  attStep(dt,t){const n=this.gates.length;if(!this.path){const s=this.scn.start;this.path=[[s[0],1.4,s[2]],...this.gates.map(({G})=>[G[0],G[1],G[2]])];this.u=this.u||0}
   const P=this.path,N=P.length,cr=u=>{u=((u%N)+N)%N;const i=Math.floor(u),f=u-i,a=P[(i-1+N)%N],b=P[i],c=P[(i+1)%N],d=P[(i+2)%N];return [0,1,2].map(k=>.5*(2*b[k]+(-a[k]+c[k])*f+(2*a[k]-5*b[k]+4*c[k]-d[k])*f*f+(-a[k]+3*b[k]-3*c[k]+d[k])*f*f*f))};
   const i=Math.floor(((this.u%N)+N)%N),L=V.len(V.sub(P[(i+1)%N],P[i]))||1;this.u+=dt*6.5/L;const p=cr(this.u),d=V.norm(V.sub(cr(this.u+.03),p));p[1]=Math.max(.6,p[1]);
@@ -14066,7 +14074,7 @@ class FPVSim{
   /* open flying fields: the far hills travel with the camera (lagging a little behind it near the field, for a touch of parallax) in a thinner haze than the ground; the ground sheet goes on for ever */
   const WA=this.world&&this.world.aux;
   if(WA&&WA.hz&&!TAC){const ox=eye[0],oz=eye[2]+115,m=Math.hypot(ox,oz),k=m>1e-3?Math.min(60,m*.04)/m:0,FK0=wxK(this.wx,this.plane)+(this.inCloud||0)*.14;gl.uniform1f(R.u.uFK,(this.plane?FK0:wxK(this.wx,true)+(this.inCloud||0)*.14)*(this.plane?.35:.2)/(hs*hs));{const HM=[hs,0,0,0,0,hs,0,0,0,0,hs,0,eye[0]-ox*k,0,eye[2]-oz*k,1];R.draw(WA.hz,HM,{lines:false});if(WA.hzp)farDraw(this,R,gl,t,HM)}gl.uniform1f(R.u.uFK,FK0)}
-  gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(2,4);if(WA&&WA.apron)R.draw(WA.apron,[1,0,0,0,0,1,0,0,0,0,1,0,eye[0],-.3,eye[2],1]);const XR=cam==='los'&&!this.att&&LD>3;if(XR)this.xrOn(gl,R,eye,LD);R.draw(this.world,I4);if(this.grassM&&SIM.gfx==='high'&&!this.r.tac)R.draw(this.grassM,I4,{lines:false});gl.disable(gl.POLYGON_OFFSET_FILL);if(this.mSolid)R.draw(this.mSolid,I4);
+  gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(2,4);const XR=cam==='los'&&!this.att&&LD>3;if(XR)this.xrOn(gl,R,eye,LD);R.draw(this.world,I4);/* v179: the sheet under the world after it: where the world covers it the depth test throws its fragments away before they are shaded (before, every pixel of the ground was shaded twice) */if(WA&&WA.apron)R.draw(WA.apron,[1,0,0,0,0,1,0,0,0,0,1,0,eye[0],-.3,eye[2],1]);if(this.grassM&&SIM.gfx==='high'&&!this.r.tac)R.draw(this.grassM,I4,{lines:false});gl.disable(gl.POLYGON_OFFSET_FILL);if(this.mSolid)R.draw(this.mSolid,I4);
    if(!TAC&&this.vg&&this.r.texOK){const VG_=this.vg;if(VG_.R)R.draw(VG_.R,I4,{lines:false});
     if(VG_.S){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(-1,-2);R.draw(VG_.S,I4,{lines:false});gl.disable(gl.POLYGON_OFFSET_FILL);gl.depthMask(true);gl.disable(gl.BLEND)}
     if(VG_.F){if(this.r.ms)gl.enable(gl.SAMPLE_ALPHA_TO_COVERAGE);R.draw(VG_.F,I4,{lines:false});if(this.r.ms)gl.disable(gl.SAMPLE_ALPHA_TO_COVERAGE)}if(this.world&&this.world.pd)propsDraw(this,R,gl,t,I4,eye)}
