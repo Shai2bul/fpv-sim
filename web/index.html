@@ -12788,13 +12788,17 @@ in vec3 aP;in vec3 aN;in vec3 aC;in float aK;in vec4 aU;uniform mat4 uVP,uM;unif
 void main(){vec4 w=uM*vec4(aP,1.);float sw=aU.z*aU.w;if(sw>0.){float ph=w.x*.31+w.z*.23,s=sin(uT*1.7+ph)*.65+sin(uT*3.1+ph*2.1+1.3)*.35,gs=.6+.4*sin(uT*.43+ph*.2);w.xz+=uWnd.xy*(s*gs*sw*uWnd.z);w.y-=abs(s)*sw*uWnd.z*.18;}
 vW=w.xyz;vL=aP;vN=mat3(uM)*aN;vC=aC;vK0=aK;vKf=aK;vU=aU;gl_Position=uVP*w;}`;
 const SIMFS=`#version 300 es
-precision highp float;precision highp sampler2DArray;in vec3 vC,vN,vW,vL;in float vK0;in vec4 vU;flat in float vKf;uniform vec3 uEye,uSun,uFog,uTint,uLp,uLd;uniform float uGlow,uAlpha,uTac,uNight,uFK,uGfx,uTexOn,uGL,uMS,uT,uGlass;uniform vec4 uWx,uPad,uXr,uXd,uHm;uniform sampler2DArray uTex;out vec4 o;
+precision highp float;precision highp sampler2DArray;in vec3 vC,vN,vW,vL;in float vK0;in vec4 vU;flat in float vKf;uniform vec3 uEye,uSun,uFog,uTint,uLp,uLd;uniform float uGlow,uAlpha,uTac,uNight,uFK,uGfx,uTexOn,uGL,uMS,uT,uGlass;uniform vec4 uWx,uPad,uXr,uXd,uHm;uniform sampler2DArray uTex;uniform vec3 uDe,uOm;uniform float uMb;out vec4 o;
 float spc;float TS(int l){return l==0?2.5:l==1?2.5:l==2?3.2:l==3?3.:l==4?3.5:l==5?3.:l==6?1.3:l==7?2.4:l==8?2.:l==21?12.:3.;}
 vec3 lamp(vec3 n){vec3 L=vW-uLp;float d=length(L);vec3 Ld=L/max(d,1e-3);float cone=smoothstep(.62,.93,dot(Ld,uLd));float near=smoothstep(2.2,0.,d)*.35;return vec3(1.,.96,.88)*(cone*7.+near)*max(dot(n,-Ld),0.)/(1.+d*d*.09);}
 float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float vn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}
 float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*vn(p);p=p*2.03+vec2(1.7,9.2);a*=.5;}return v;}
 float evh(ivec2 p,int s){uint h=uint(p.x)*374761393u+uint(p.y)*668265263u+uint(s)*1274126177u;h=(h^(h>>13u))*1274126177u;return float(h^(h>>16u))*2.3283064e-10;}
+/* v177: temporal prefilter. gdx/gdy: the derivatives of the ground coordinate (scaled up by the motion), gmv: the way the point seen by this pixel moved since the last frame (metres), gpx: the size of a pixel (metres) */
+vec2 gdx=vec2(0.),gdy=vec2(0.),gmv=vec2(0.);float gpx=0.;
+vec3 gT(vec2 p,float k,float l){return textureGrad(uTex,vec3(p,l),gdx*k,gdy*k).rgb;}
+vec3 sMot(vec3 w,vec3 n){vec3 d=normalize(w-uEye);vec3 d0=d-cross(uOm,d);vec3 e0=uEye-uDe;float dn=dot(d0,n);if(abs(dn)<.02)dn=dn<0.?-.02:.02;vec3 m=w-(e0+d0*(dot(w-e0,n)/dn));float ml=length(m);return ml>60.?m*(60./ml):m;}
 float evn(vec2 p,int s){vec2 i=floor(p),f=p-i;vec2 u=f*f*f*(f*(f*6.-15.)+10.);ivec2 ii=ivec2(i);float a=evh(ii,s),b=evh(ii+ivec2(1,0),s),c=evh(ii+ivec2(0,1),s),d=evh(ii+ivec2(1,1),s);return a+(b-a)*u.x+(c-a)*u.y+(a-b-c+d)*u.x*u.y;}
 /* v173: the meadow and the fields. Home strip (runway or practice field): mown, striped, even. Away from it: parcels (a warped grid of about 70 m) of pasture, young crop, ripe grain and ploughed earth, with rows that fade with the size of a pixel, dark edges where the hedges grow and the odd dirt track. Parcel number and edges are the same numbers as in evParcel (JavaScript). */
 vec3 evTurf(vec2 g,float dd,float px,vec3 vc){
@@ -12811,27 +12815,28 @@ vec3 evTurf(vec2 g,float dd,float px,vec3 vc){
  else if(pid<.62){fc=vc*vec3(.84,.92,.64);}
  else fc=mix(LG,DG,pid2*.6);
  vec3 col=mix(meadow,fc*(.92+.16*m3),far);
- float rw=sin(dot(g,dir)*6.2832/rowW)*rowA*(1.-smoothstep(.15,.7,px/rowW))*far;col*=1.+rw;
- col*=1.-.22*(1.-smoothstep(0.,3.,de))*far;
- col=mix(col,vec3(.46,.37,.26),(1.-smoothstep(.6,1.5,de))*step(pid2,.14)*far*.85);
+ float rw=sin(dot(g,dir)*6.2832/rowW)*rowA*(1.-smoothstep(.15,.7,max(gpx,abs(dot(gmv,dir))*uMb)/rowW))*far;col*=1.+rw;
+ col*=1.-.22*(1.-smoothstep(0.,3.,de))*(1.-smoothstep(1.,3.,px))*far;
+ col=mix(col,vec3(.46,.37,.26),(1.-smoothstep(.6,1.5,de))*(1.-smoothstep(.5,1.5,px))*step(pid2,.14)*far*.85);
  float mw=(1.-far)*step(.5,abs(uHm.y-uHm.z));float ms=sin(g.x*6.2832/9.)*.5+.5;col*=1.+mw*.11*(smoothstep(.35,.65,ms)-.5)*(1.-smoothstep(.2,1.,px/4.));
- vec3 t1=texture(uTex,vec3(g*.55,uGL)).rgb*2.,t2=texture(uTex,vec3(g*2.9+.37,uGL)).rgb*2.;float fd=1.-smoothstep(.12,1.1,px);
+ vec3 t1=gT(g*.55,.55,uGL).rgb*2.,t2=gT(g*2.9+.37,2.9,uGL).rgb*2.;float fd=1.-smoothstep(.12,1.1,gpx);
  col*=mix(vec3(1.),t1*(.55+.45*t2),fd*.95)*(.88+.24*m3);
  float we=(1.-far)*smoothstep(.72,.9,evn(g*.045,9))*smoothstep(.3,.68,evn(g*.23,11))*.5;col=mix(col,vec3(.46,.38,.27)*(.8+.4*m3),we);
  return col;}
+vec3 evTurfR(vec2 g,float dd,float px,vec3 vc,vec2 p){gdx=dFdx(p);gdy=dFdy(p);gpx=px;gmv=vec2(0.);return evTurf(g,dd,px,vc);}
 vec3 evSand(vec2 g,float dd,float px,vec3 vc){
  float m1=evn(g*.012,13),m2=evn(g*.06,15),m3=evn(g*.33,17);
  vec3 col=mix(vc*vec3(1.1,1.04,.92),vc*vec3(.82,.74,.62),smoothstep(.3,.8,m1+(m2-.5)*.4));
  vec2 wd=vec2(.8,.6);float ph=dot(g,wd)*6.2832/.34+m2*9.,rp=sin(ph)*.5+.5;col*=1.-.12*(rp-.5)*(1.-smoothstep(.08,.4,px/.34));
  col*=1.+.05*sin(dot(g,wd)*6.2832/3.2+m1*14.)*(1.-smoothstep(.4,2.5,px));
  {vec2 gg=g*14.;ivec2 ic=ivec2(floor(gg));float hh=evh(ic,19);vec2 f=fract(gg)-.5-(vec2(evh(ic,31),evh(ic,37))-.5)*.5;float rr=.1+.1*evh(ic,41);float st=step(.9,hh)*(1.-smoothstep(rr*.55,rr,length(f)))*(1.-smoothstep(.04,.2,px));col=mix(col,vc*vec3(.62,.56,.5)*(.8+.4*evh(ic,43)),st*.85);}
- vec3 t1=texture(uTex,vec3(g*.9,uGL)).rgb*2.,t2=texture(uTex,vec3(g*3.7+.2,uGL)).rgb*2.;float fd=1.-smoothstep(.1,1.,px);
+ vec3 t1=gT(g*.9,.9,uGL).rgb*2.,t2=gT(g*3.7+.2,3.7,uGL).rgb*2.;float fd=1.-smoothstep(.1,1.,gpx);
  return col*mix(vec3(1.),t1*(.6+.4*t2),fd*.9)*(.9+.2*m3);}
 vec3 evDirt(vec2 g,float dd,float px,vec3 vc){
  float m1=evn(g*.02,23),m2=evn(g*.09,25),m3=evn(g*.4,27);
  vec3 col=vc*mix(vec3(1.12,1.,.9),vec3(.76,.7,.64),smoothstep(.3,.75,m1+(m2-.5)*.4));
  float pb=step(.9,evh(ivec2(floor(g*9.)),29))*(1.-smoothstep(.06,.3,px));col=mix(col,vc*vec3(.55,.5,.46),pb*.7);
- vec3 t1=texture(uTex,vec3(g*.4,uGL)).rgb*2.,t2=texture(uTex,vec3(g*1.9+.2,uGL)).rgb*2.;float fd=1.-smoothstep(.1,1.,px);
+ vec3 t1=gT(g*.4,.4,uGL).rgb*2.,t2=gT(g*1.9+.2,1.9,uGL).rgb*2.;float fd=1.-smoothstep(.1,1.,gpx);
  return col*mix(vec3(1.),t1*(.6+.4*t2),fd*.9)*(.88+.24*m3);}
 vec3 evConc(vec2 g,float dd,float px,vec3 vc){
  float m1=evn(g*.03,51),m2=evn(g*.11,53),m3=evn(g*.5,55);
@@ -12843,7 +12848,7 @@ vec3 evConc(vec2 g,float dd,float px,vec3 vc){
  float wa=uHm.w;float wd=smoothstep(.5,.78,m1+(m2-.5)*.45)*wa+jn*wa*step(.45,evh(ivec2(floor(g*2.)),61))*.7;
  vec3 weed=mix(vec3(.22,.27,.12),vec3(.4,.36,.18),evn(g*.6,63))*(.75+.5*evh(ivec2(floor(g*4.)),65));
  col=mix(col,weed,clamp(wd,0.,1.)*.9);
- vec3 t1=texture(uTex,vec3(g*.4,uGL)).rgb*2.,t2=texture(uTex,vec3(g*1.9+.2,uGL)).rgb*2.;float fd=1.-smoothstep(.1,1.,px);
+ vec3 t1=gT(g*.4,.4,uGL).rgb*2.,t2=gT(g*1.9+.2,1.9,uGL).rgb*2.;float fd=1.-smoothstep(.1,1.,gpx);
  return col*mix(vec3(1.),t1*(.6+.4*t2),fd*.8);}
 vec3 evAsph(vec2 g,float dd,float px,vec3 vc){
  float m1=evn(g*.025,71),m2=evn(g*.1,73),m3=evn(g*.45,75);
@@ -12852,7 +12857,7 @@ vec3 evAsph(vec2 g,float dd,float px,vec3 vc){
  vec3 col=vc*(.8+.4*m1)*(.9+.2*m2)*(1.+.06*(pa-.5));col*=1.-.16*patch_;
  float ck=abs(evn(g*.7+vec2(11.,2.),79)-.5);col*=1.-.4*(1.-smoothstep(0.,.016+px*.3,ck))*(1.-smoothstep(.1,1.5,px))*step(.55,m1);
  float wear=smoothstep(.55,.85,evn(g*vec2(.9,.07)+vec2(0.,13.),81));col*=1.+.1*wear*(1.-smoothstep(.2,3.,px));
- vec3 t1=texture(uTex,vec3(g*.5,uGL)).rgb*2.,t2=texture(uTex,vec3(g*2.3+.2,uGL)).rgb*2.;float fd=1.-smoothstep(.1,1.,px);
+ vec3 t1=gT(g*.5,.5,uGL).rgb*2.,t2=gT(g*2.3+.2,2.3,uGL).rgb*2.;float fd=1.-smoothstep(.1,1.,gpx);
  return col*mix(vec3(1.),t1*(.6+.4*t2),fd*.85)*(.92+.16*m3);}
 /* weathering of the walls: strata in rock, rain streaks and a dirty foot on concrete, rust and grime on sheet metal */
 vec3 evSurf(vec3 c,float ls,vec3 w,vec3 an){
@@ -12900,7 +12905,7 @@ void main(){if(uXr.w>0.){vec3 xv=vW-uXr.xyz;float xt=dot(xv,uXd.xyz);if(xt>1.&&x
   if(uGfx<.5){float q1=vn(p*.008+sd),q2=vn(p*.034+sd*1.7+4.1);vec3 lf=bio==2?vec3(.36,.32,.19):bio==1?vec3(.1,.17,.12):bio==3?vec3(.12,.2,.13):vec3(.17,.26,.11);c=vC*(bio==2?vec3(.98,.9,.82):vec3(1.))*(.85+.3*q2);float fc2=bio==2?0.:smoothstep(.42,.6,q1+(q2-.5)*.3+hf*.5)*(1.-smoothstep(.4,.6,sl));c=mix(c,lf*(.7+.6*q2),fc2);c=mix(c,bio==2?vec3(.6,.43,.3):vec3(.48,.46,.42),smoothstep(.4,.6,sl+(q2-.5)*.3));}
   else{
   float n1=vn(p*.008+sd),n2=vn(p*.034+sd*1.7+4.1),n3=vn(p*.14+sd*.3+9.3),n4=vn(p*.55+sd*2.3+1.7)*(1.-smoothstep(.5,1.6,px)),n5=vn(p*1.9+sd*.7+5.5)*(1.-smoothstep(.15,.6,px));
-  vec3 mead=bio==2?vC*vec3(.98,.9,.82)*(.8+.4*n3)*(.9+.2*n4):evTurf(p+vec2(731.,-523.),dd,px*.5,vC)*(bio==1?vec3(.92,.94,1.):bio==3?vec3(1.02,1.02,.96):vec3(1.));
+  vec3 mead=bio==2?vC*vec3(.98,.9,.82)*(.8+.4*n3)*(.9+.2*n4):evTurfR(p+vec2(731.,-523.),dd,px*.5,vC,p)*(bio==1?vec3(.92,.94,1.):bio==3?vec3(1.02,1.02,.96):vec3(1.));
   vec3 fore=bio==2?vec3(.36,.32,.19):bio==1?vec3(.1,.17,.12):bio==3?vec3(.12,.2,.13):vec3(.17,.26,.11);
   vec3 rock=bio==2?vec3(.6,.43,.3):bio==1?vec3(.42,.4,.38):bio==3?vec3(.5,.49,.49):vec3(.56,.52,.45);
   float tl=bio==3?.5:bio==1?.82:bio==2?.5:.9;
@@ -12929,13 +12934,13 @@ void main(){if(uXr.w>0.){vec3 xv=vW-uXr.xyz;float xt=dot(xv,uXd.xyz);if(xt>1.&&x
    oa=uAlpha*a;c=tx.rgb*vC*2.;n=normalize(vN);float nd=dot(n,uSun);l=(nd*.5+.5);l=l*l*(1.-uWx.x*.62);
    tr=pow(max(dot(normalize(vW-uEye),uSun),0.),3.)*(.4+.4*(1.-vU.y))*(1.-uWx.x)*smoothstep(-.2,.6,-nd);}
   else{vec3 an=abs(vN);vec2 uv;float ls;if(kk<30){uv=vU.xy;ls=float(kk-10);}else{ls=float(kk-30);uv=an.y>max(an.x,an.z)?vW.xz:(an.x>an.z?vW.zy:vW.xy);uv/=TS(kk-30);if(ls>20.5&&ls<21.5&&an.y>.7){ls=3.;uv=vW.xz/3.;}}
-   c=texture(uTex,vec3(uv,ls)).rgb*vC*2.;if(uTac<.5&&uTexOn>.5)c=evSurf(c,ls,vW,an);}
- }else if(vK>3.5){c=vC;}else if(vK>1.5){float t=clamp(normalize(vW-uEye).y*1.6,0.,1.);if(uNight>.5){vec3 sd=normalize(vW-uEye);vec3 nc=mix(vec3(.035,.045,.08),vec3(.008,.012,.03),pow(t,.5));vec2 sp=floor(sd.xz/(sd.y+1.2)*260.);float st=step(.9965,h(sp))*smoothstep(.05,.3,sd.y)*(1.-uWx.x);o=vec4(mix(nc+vec3(.8,.85,1.)*st*(.5+.5*h(sp+7.)),uFog,clamp(uWx.z+uWx.w,0.,1.)),1.);return;}c=mix(vec3(.78,.86,.9),vec3(.32,.55,.82),pow(t,.6));vec3 sd=normalize(vW-uEye);float cv=uWx.x;{vec2 cp=sd.xz/(sd.y+.14)*1.6+vec2(uT*.0016,uT*.0009);float n=fbm(cp);float k0=.6-cv*.48,k1=.82-cv*.3;float cov=smoothstep(k0,k1,n)*smoothstep(-.03,.12,sd.y);vec2 sdr=normalize(uSun.xz+vec2(1e-4))*.12;float n2=fbm(cp+sdr);float lit=clamp(.55+(n-n2)*4.5,0.,1.),thick=smoothstep(k0,k1+.18,n);vec3 cc=mix(vec3(.64,.69,.78),vec3(1.,.99,.96),lit*(1.-thick*.4));cc=mix(cc,vec3(.42,.45,.5),clamp(cv*.75+uWx.y*.35,0.,1.)*(1.-lit*.5));c=mix(c,vec3(.6,.64,.68)*(1.-uWx.y*.25),cv*.65);c=mix(c,cc,cov);}float s=pow(max(dot(sd,uSun),0.),400.)*(1.-cv);c+=vec3(1.,.95,.8)*s*2.+vec3(1.,.9,.7)*pow(max(dot(sd,uSun),0.),8.)*.18*(1.-cv*.8);c=mix(c,uFog,clamp(uWx.z*1.15+uWx.w,0.,1.));o=vec4(c,1.);return;}
- else if(vK<-.5){vec2 g=vW.xz;vec2 wg=fwidth(g);float px=max(wg.x,wg.y);if(uGfx>.5&&uTexOn>.5&&uGL<.5){c=evTurf(g,dd,px,vC);float pm=(1.-smoothstep(uPad.z*.5,uPad.z,length(g-uPad.xy)+(evn(g*.13,7)-.5)*.8))*step(.1,uPad.z);c=mix(c,vec3(.4,.33,.24)*texture(uTex,vec3(g*.31+.5,1.)).rgb*2.,pm*.92);}else if(uGfx>.5&&uTexOn>.5&&abs(uGL-5.)<.5){c=evSand(g,dd,px,vC);}else if(uGfx>.5&&uTexOn>.5&&abs(uGL-1.)<.5){c=evDirt(g,dd,px,vC);}else if(uGfx>.5&&uTexOn>.5&&abs(uGL-3.)<.5){c=evConc(g,dd,px,vC);}else if(uGfx>.5&&uTexOn>.5&&abs(uGL-2.)<.5){c=evAsph(g,dd,px,vC);}else if(uGfx>.5&&uTexOn>.5){/* v154: textured ground: the surface of the scene at three scales, patches of lush, dry and bare earth, and the worn start pad */
-   vec3 t1=texture(uTex,vec3(g*.4,uGL)).rgb*2.,t2=texture(uTex,vec3(g*.0713+.31,uGL)).rgb*2.,t3=texture(uTex,vec3(g*1.7+.11,uGL)).rgb*2.;float fd=1.-smoothstep(4.,24.,dd);
+   vec2 ux=dFdx(uv),uy=dFdy(uv);if(uMb>0.){float pxs=max(length(dFdx(vW)),length(dFdy(vW))),mbs=length(sMot(vW,n))*uMb;if(mbs>pxs){float sc=mbs/max(pxs,1e-5);ux*=sc;uy*=sc;}}c=textureGrad(uTex,vec3(uv,ls),ux,uy).rgb*vC*2.;if(uTac<.5&&uTexOn>.5)c=evSurf(c,ls,vW,an);}
+ }else if(vK>3.5){c=vC;}else if(vK>1.5){float t=clamp(normalize(vW-uEye).y*1.6,0.,1.);if(uNight>.5){vec3 sd=normalize(vW-uEye);vec3 nc=mix(vec3(.035,.045,.08),vec3(.008,.012,.03),pow(t,.5));vec2 sp=floor(sd.xz/(sd.y+1.2)*260.);float st=step(.9965,h(sp))*smoothstep(.05,.3,sd.y)*(1.-uWx.x);o=vec4(mix(nc+vec3(.8,.85,1.)*st*(.5+.5*h(sp+7.)),uFog,clamp(uWx.z+uWx.w,0.,1.)),1.);return;}c=mix(vec3(.78,.86,.9),vec3(.32,.55,.82),pow(t,.6));vec3 sd=normalize(vW-uEye);float cv=uWx.x;{float cyk=smoothstep(-.03,.12,sd.y),cov=0.;vec3 cc=c;if(cyk>0.){vec2 cp=sd.xz/(sd.y+.14)*1.6+vec2(uT*.0016,uT*.0009);float n=fbm(cp);float k0=.6-cv*.48,k1=.82-cv*.3;cov=smoothstep(k0,k1,n)*cyk;if(cov>0.){vec2 sdr=normalize(uSun.xz+vec2(1e-4))*.12;float n2=fbm(cp+sdr);float lit=clamp(.55+(n-n2)*4.5,0.,1.),thick=smoothstep(k0,k1+.18,n);cc=mix(vec3(.64,.69,.78),vec3(1.,.99,.96),lit*(1.-thick*.4));cc=mix(cc,vec3(.42,.45,.5),clamp(cv*.75+uWx.y*.35,0.,1.)*(1.-lit*.5));}}c=mix(c,vec3(.6,.64,.68)*(1.-uWx.y*.25),cv*.65);c=mix(c,cc,cov);}float s=pow(max(dot(sd,uSun),0.),400.)*(1.-cv);c+=vec3(1.,.95,.8)*s*2.+vec3(1.,.9,.7)*pow(max(dot(sd,uSun),0.),8.)*.18*(1.-cv*.8);c=mix(c,uFog,clamp(uWx.z*1.15+uWx.w,0.,1.));o=vec4(c,1.);return;}
+ else if(vK<-.5){vec2 g=vW.xz;vec2 wg=fwidth(g);float px=max(wg.x,wg.y);gdx=dFdx(g);gdy=dFdy(g);gpx=px;gmv=vec2(0.);if(uMb>0.){gmv=sMot(vW,vec3(0.,1.,0.)).xz;float mb=length(gmv)*uMb;if(mb>px){vec2 mh=gmv/max(length(gmv),1e-5),ea=gdx-mh*dot(gdx,mh),eb=gdy-mh*dot(gdy,mh);gdy=dot(ea,ea)>dot(eb,eb)?ea:eb;gdx=mh*mb;px=mb;}}if(uGfx>.5&&uTexOn>.5&&uGL<.5){c=evTurf(g,dd,px,vC);float pm=(1.-smoothstep(uPad.z*.5,uPad.z,length(g-uPad.xy)+(evn(g*.13,7)-.5)*.8))*step(.1,uPad.z);c=mix(c,vec3(.4,.33,.24)*gT(g*.31+.5,.31,1.).rgb*2.,pm*.92);}else if(uGfx>.5&&uTexOn>.5&&abs(uGL-5.)<.5){c=evSand(g,dd,px,vC);}else if(uGfx>.5&&uTexOn>.5&&abs(uGL-1.)<.5){c=evDirt(g,dd,px,vC);}else if(uGfx>.5&&uTexOn>.5&&abs(uGL-3.)<.5){c=evConc(g,dd,px,vC);}else if(uGfx>.5&&uTexOn>.5&&abs(uGL-2.)<.5){c=evAsph(g,dd,px,vC);}else if(uGfx>.5&&uTexOn>.5){/* v154: textured ground: the surface of the scene at three scales, patches of lush, dry and bare earth, and the worn start pad */
+   vec3 t1=gT(g*.4,.4,uGL).rgb*2.,t2=gT(g*.0713+.31,.0713,uGL).rgb*2.,t3=gT(g*1.7+.11,1.7,uGL).rgb*2.;float fd=1.-smoothstep(4.,24.,dd);
    vec3 tx=t1*(.5+.5*t2)*mix(vec3(1.),t3*.8+.2,fd*.9);float gr=step(vC.r*1.05,vC.g)*step(uGL,.5);float n1=vn(g*.021+1.7),n2=vn(g*.13+7.3);
    vec3 gcn=mix(vec3(dot(vC,vec3(.3,.55,.15))),vC,.6)*vec3(.9,.9,.7);vec3 dryc=gcn*vec3(1.3,1.12,.8),lush=gcn*vec3(.86,1.02,.86);vec3 bc=mix(vC,mix(lush,dryc,smoothstep(.4,.8,n1)),gr);
-   vec3 dirt=texture(uTex,vec3(g*.31+.5,1.)).rgb*2.;c=bc*tx*(.88+.24*n2);
+   vec3 dirt=gT(g*.31+.5,.31,1.).rgb*2.;c=bc*tx*(.88+.24*n2);
    float we=gr*smoothstep(.7,.9,vn(g*.045+9.1))*smoothstep(.3,.68,vn(g*.23+3.))*.6;c=mix(c,vec3(.46,.38,.27)*dirt*(.8+.4*n2),we);
    float pm=(1.-smoothstep(uPad.z*.5,uPad.z,length(g-uPad.xy)+(n2-.5)*.8))*step(.1,uPad.z);c=mix(c,vec3(.4,.33,.24)*dirt,pm*.92);
   }else if(uGfx>.5){/* full detail: soft patches of lush and dry grass at three scales, blade grain up close, and a few flowers */float gr=step(vC.r*1.05,vC.g);float n1=vn(g*.021+1.7),n2=vn(g*.13+7.3),n3=vn(g*1.1+3.1)*(1.-smoothstep(.04,.35,px)),n4=h(floor(g*9.))*(1.-smoothstep(.015,.09,px));vec3 dry=vC*vec3(1.16,1.08,.74),lush=vC*vec3(.8,1.03,.84);c=mix(vC,mix(lush,dry,smoothstep(.38,.78,n1)),gr);c*=.86+.22*n2+.12*(n3-.5)+.1*(n4-.5);float fl=step(.988,h(floor(g*3.3)))*(1.-smoothstep(.02,.12,px))*gr;c=mix(c,mix(vec3(.96,.92,.55),vec3(.92,.94,.98),step(.5,h(floor(g*3.3)+.5))),fl*.55);vec2 g5=g/10.,w5=fwidth(g5),q=abs(fract(g5-.5)-.5)/max(w5,1e-4);float ln=(1.-min(min(q.x,q.y),1.))*(1.-smoothstep(.12,.4,max(w5.x,w5.y)));c=mix(c,c*1.08,ln*.25);}else{float fd=1.-smoothstep(.3,1.2,px);float n2=(h(floor(g*.5))*.06)*fd+h(floor(g*.08))*.08*(1.-smoothstep(4.,12.,px));c=vC*(0.9+n2);vec2 g5=g/5.,w5=fwidth(g5),q=abs(fract(g5-.5)-.5)/max(w5,1e-4);float ln=(1.-min(min(q.x,q.y),1.))*(1.-smoothstep(.12,.4,max(w5.x,w5.y)));c=mix(c,c*1.18,ln*.5);}}
@@ -12973,7 +12978,7 @@ class SimGL{
   cv.addEventListener('webglcontextlost',e=>{e.preventDefault();cv.__lost=true;SIMGPU.lost(cv)});
   const sh=(t,s)=>{const x=gl.createShader(t);gl.shaderSource(x,s);gl.compileShader(x);if(!gl.getShaderParameter(x,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(x));return x};
   const p=this.pr=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,SIMVS));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,SIMFS));gl.linkProgram(p);gl.useProgram(p);
-  this.u={};['uVP','uM','uEye','uSun','uFog','uTint','uGlow','uAlpha','uTac','uNight','uLp','uLd','uFK','uWx','uGfx','uT','uWnd','uTex','uTexOn','uGL','uMS','uPad','uGlass','uXr','uXd','uHm'].forEach(k=>this.u[k]=gl.getUniformLocation(p,k));this.a={P:gl.getAttribLocation(p,'aP'),N:gl.getAttribLocation(p,'aN'),C:gl.getAttribLocation(p,'aC'),K:gl.getAttribLocation(p,'aK'),U:gl.getAttribLocation(p,'aU')};
+  this.u={};['uVP','uM','uEye','uSun','uFog','uTint','uGlow','uAlpha','uTac','uNight','uLp','uLd','uFK','uWx','uGfx','uT','uWnd','uTex','uTexOn','uGL','uMS','uPad','uGlass','uXr','uXd','uHm','uDe','uOm','uMb'].forEach(k=>this.u[k]=gl.getUniformLocation(p,k));this.a={P:gl.getAttribLocation(p,'aP'),N:gl.getAttribLocation(p,'aN'),C:gl.getAttribLocation(p,'aC'),K:gl.getAttribLocation(p,'aK'),U:gl.getAttribLocation(p,'aU')};
   gl.enable(gl.DEPTH_TEST);gl.uniform3fv(this.u.uSun,V.norm([.4,.8,.35]));gl.uniform3fv(this.u.uFog,[.74,.82,.86]);gl.uniform1f(this.u.uFK,.000018);gl.uniform4f(this.u.uWx,0,0,0,0);
    /* v154: the material textures (one 2D array, filled as SimTex paints the layers), the sway attribute's default, multisampling for cut-out edges */
    gl.vertexAttrib4f(this.a.U,0,0,0,0);this.ms=(gl.getParameter(gl.SAMPLES)||0)>1;this.texOK=false;
@@ -13522,7 +13527,7 @@ function debSplit(G,key,sc,off){sc=sc||1;off=off||[0,0,0];if(G.u.length)G.padU()
   out.push({g,c:[(cx+off[0])*sc,(cy+off[1])*sc,(cz+off[2])*sc],h:[Math.max(.012,(mx[0]-mn[0])/2),Math.max(.012,(mx[1]-mn[1])/2),Math.max(.012,(mx[2]-mn[2])/2)],o:[(mx[0]+mn[0])/2,(mx[1]+mn[1])/2,(mx[2]+mn[2])/2]})});return out}
 class FPVSim{
  constructor(host,opt={}){this.host=host;this.att=!!opt.att;this.skey=opt.scene;this.cv=host.querySelector('canvas');this.r=this.cv.__sg||(this.cv.__sg=new SimGL(this.cv));this.cv.__owner=this;this.load(opt.scene||SIM.scene);this.keys={};this.t0=performance.now();this.last=this.t0;this.acc=0;
-  this.onKey=e=>{if(e.target.closest?.('input,select,textarea'))return;if(KEYCAP.on)return;const CM=keyCM();const k=CM[e.code];if(!k)return;if(e.type==='keydown'&&['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright'].includes(k))this.kbT=performance.now();if(e.type==='keydown'&&e.repeat&&[' ','r','c','m','g','f','v'].includes(k)){e.preventDefault();return}if(e.type==='keydown'){if(k===' '){e.preventDefault();this.toggleArm()}if(k==='r')this.reset();if(k==='g')this.auxCmd('gear','toggle');if(k==='f')this.auxCmd('flap','+');if(k==='v')this.auxCmd('flap','-');if((k==='f'||k==='v')&&!this.plane)this.vtx(k==='v'?1:-1);if(k==='c')simCycleCam();if(k==='m')simSetMode(({angle:'horizon',horizon:'acro',acro:'angle'})[SIM.mode]||'angle');if(['arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault()}this.keys[k]=e.type==='keydown'};
+  this.onKey=e=>{if(e.target.closest?.('input,select,textarea'))return;if(KEYCAP.on)return;if(e.type==='keydown'&&e.ctrlKey&&e.altKey&&e.code==='KeyF'){this.pfOn=!this.pfOn;try{localStorage.setItem('fpv-sim-perf',this.pfOn?'1':'0')}catch(_){}if(!this.pfOn&&this._pfEl){this._pfEl.remove();this._pfEl=null}e.preventDefault();return}const CM=keyCM();const k=CM[e.code];if(!k)return;if(e.type==='keydown'&&['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright'].includes(k))this.kbT=performance.now();if(e.type==='keydown'&&e.repeat&&[' ','r','c','m','g','f','v'].includes(k)){e.preventDefault();return}if(e.type==='keydown'){if(k===' '){e.preventDefault();this.toggleArm()}if(k==='r')this.reset();if(k==='g')this.auxCmd('gear','toggle');if(k==='f')this.auxCmd('flap','+');if(k==='v')this.auxCmd('flap','-');if((k==='f'||k==='v')&&!this.plane)this.vtx(k==='v'?1:-1);if(k==='c')simCycleCam();if(k==='m')simSetMode(({angle:'horizon',horizon:'acro',acro:'angle'})[SIM.mode]||'angle');if(['arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault()}this.keys[k]=e.type==='keydown'};
   if(!this.att){addEventListener('keydown',this.onKey);addEventListener('keyup',this.onKey)}else{this.still=PREF.motion==='reduced'||matchMedia('(prefers-reduced-motion: reduce)').matches;this.u=0}this.kthr=0;
   this.ro=new ResizeObserver(()=>this.resize());this.ro.observe(this.cv);this.resize();this.loop=this.loop.bind(this);this.raf=requestAnimationFrame(this.loop)}
  load(k){if(!this.att&&!String(k).startsWith('mis:')&&S.role==='trainee'&&vehOf(curTrainee()?.course)==='plane')return this.loadPlaneFree();this.objs=null;this.plane=false;this.scnKey=typeof k==='string'&&!k.startsWith('mis:')?k:'free';if(typeof k==='string'&&k.startsWith('mis:')){return this.loadMis(k.slice(4))}this.wx=!this.att&&MODE==='free'?wxNorm(PREF.wx):null;this.fwind=wxWind(this.wx);this._wxW?.remove();this._wxW=null;if(!this.att)wxAudio(this.wx?.r||0);this.neon=null;this.lm=null;this.mis=null;this.col=null;this.cpath=null;this.mSolid=this.mGlass=this.route=null;const S0=SIMSCN[k]||SIMSCN.field,R=srnd(S0.seed||(k==='forest'?77:13)),gl=this.r;this.scn=S0;this.night=!!S0.night;gl.free();this.path=null;
@@ -13887,6 +13892,12 @@ class FPVSim{
   out.push({p:V.add(N0,V.mul(back,.02)),c:[255,190,110],k:'afl',t:4,cl:1,sz:NR*(1.2+1.4*ab2),al:.25+.5*ab2,ad:1});
   out.cut=[back[0],back[1],back[2],-V.dot(back,N0)];return out}
  fxGL(gl,R,VP,eye,cq,FG,cam,WX,ic,LD,t){let P=this.parts||[];if(this.smH&&this.smH.length)P=P.concat(this.smH);const FL=this.fxFlame(t);if(FL)P=FL.concat(P);if(!P.length)return;const FK=wxK(WX,this.plane)+ic*.14;fxGLDraw(R,P,VP,eye,cq,FG,Math.max(.00006,cam==='los'?Math.min(FK*.2,.3/Math.max(100,LD*LD)):FK),FL?FL.cut:null)}
+ mbUni(gl,R,eye,cq,cam,t){let de=[0,0,0],om=[0,0,0];const PM=this._pm,on=!FPVSim.noMB&&!this.att;
+  if(on&&PM&&PM.cam===cam&&t>PM.t&&t-PM.t<150){de=[eye[0]-PM.e[0],eye[1]-PM.e[1],eye[2]-PM.e[2]];
+   if(Math.hypot(de[0],de[1],de[2])>8+4*V.len(this.v)*Math.max(t-PM.t,17)/1000)de=[0,0,0];
+   else{const a=cq,b=PM.q,bx=-b[0],by=-b[1],bz=-b[2],bw=b[3];let x=a[3]*bx+a[0]*bw+a[1]*bz-a[2]*by,y=a[3]*by-a[0]*bz+a[1]*bw+a[2]*bx,z=a[3]*bz+a[0]*by-a[1]*bx+a[2]*bw,w=a[3]*bw-a[0]*bx-a[1]*by-a[2]*bz;if(w<0){x=-x;y=-y;z=-z;w=-w}const sn=Math.hypot(x,y,z);if(sn>1e-7){const k=2*Math.atan2(sn,w)/sn;om=sn>.5?[0,0,0]:[x*k,y*k,z*k]}}}
+  this._pm={t,e:[eye[0],eye[1],eye[2]],q:[cq[0],cq[1],cq[2],cq[3]],cam};
+  gl.uniform3f(R.u.uDe,de[0],de[1],de[2]);gl.uniform3f(R.u.uOm,om[0],om[1],om[2]);gl.uniform1f(R.u.uMb,on?(FPVSim.mbk??1.5):0)}
  fxDraw(cam,fov){if(this.att)return;const cv=this.cv;let F=this.fx;if(!F||!F.isConnected){F=this.fx=document.createElement('canvas');F.className='simfx';F.setAttribute('aria-hidden','true');cv.after(F)}
   const w=cv.clientWidth,h=cv.clientHeight,d=Math.min(1.5,devicePixelRatio||1);if(F.width!==Math.round(w*d)||F.height!==Math.round(h*d)){F.width=Math.round(w*d);F.height=Math.round(h*d)}
   const g=F.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,w,h);const VP=this.VP,red=PREF.motion==='reduced';
@@ -13926,14 +13937,37 @@ class FPVSim{
  doCrash(t){this.pdKill();if(PREF.motion!=='reduced')this.shk=1.7;if(SFX.on&&cfg('sound'))SFX.impact(/קרקע/.test(t)?'ground':'wall',1.3);if(this.p[1]<1.2)impactFx(this,'ground',1.4,true);this.debBreak();this.fxCrash();this.crash=performance.now();this.armed=false;this.flash(t+(this.mis||this.gates?.length?' · מתחילים מההתחלה':''),1800);SFX.play('fail');setTimeout(()=>{if(this.crash)this.reset()},this.deb?2400:1800)}
  resize(){const c=this.cv,q=this.att?1:(this.qs??(FPVSim.qs||1)),w=c.clientWidth,h=c.clientHeight;if(!w||!h)return;let d=Math.max(.6,Math.min(this.att?.8:2,Math.max(devicePixelRatio||1,this.att?1:1.5)*q));
   /* v153: a budget of about 3.6 million multisampled pixels: a large or high-density screen used to ask for 8 million */
-  d=Math.max(.6,Math.min(d,Math.sqrt((this.att?1.3e6:SIMGPU.budget())/(w*h))));const W=Math.round(w*d),H=Math.round(h*d);if(c.width!==W)c.width=W;if(c.height!==H)c.height=H}
+  d=Math.max(.6,Math.min(d,Math.sqrt((this.att?1.3e6:SIMGPU.budget())/(w*h))));const W=Math.round(w*d),H=Math.round(h*d);if(c.width!==W)c.width=W;if(c.height!==H)c.height=H;if(this.pf)this.pf.skip=8}
  /* adaptive resolution: a weak laptop GPU drops the render scale until the frame rate holds, and earns it back when there is headroom */
- perf(t){const P=this.pf||(this.pf={n:0,s:0,t0:t});const f=t-(P.lt||t);P.lt=t;if(f<=0||f>250||document.hidden)return;P.n++;P.s+=f;if(t-P.t0<1500)return;const avg=P.s/P.n;P.n=0;P.s=0;P.t0=t;
-  const q=this.qs??(FPVSim.qs||1);let nq=q;
-  /* v153: down in bigger steps when the frame is far over its budget, and a level that was too slow is not tried again for twenty seconds (no hunting up and down) */
-  if(avg>30){nq=Math.max(.55,q-(avg>45?.2:.1));FPVSim.qBad=q;FPVSim.qBadT=t}
-  else if(avg<21&&q<1&&(!FPVSim.qBad||q+.1<FPVSim.qBad||t-FPVSim.qBadT>20000))nq=Math.min(1,q+.1);
-  if(nq!==q){this.qs=FPVSim.qs=+nq.toFixed(2);this.resize()}}
+ perf(t){const P=this.pf||(this.pf={n:0,s:0,l:0,v:0,m:0,c:0,lo:99,t0:t,skip:0,gw:0});const f=t-(P.lt||t);P.lt=t;if(f<=0||document.hidden)return;
+  /* a stall (another tab, a scene being built, a resize) says nothing about the load: start the window again */
+  if(f>250){P.n=P.s=P.l=P.v=P.m=P.c=0;P.lo=99;P.t0=t;P.skip=6;return}
+  if(P.skip>0){P.skip--;P.t0=t;return}
+  P.n++;P.s+=f;if(f>24)P.l++;if(f>40)P.v++;if(f>P.m)P.m=f;if(f>3&&f<P.lo)P.lo=f;
+  if(t-P.t0<1200||P.n<20)return;
+  const F=FPVSim,avg=P.s/P.n,lf=P.l/P.n,vf=P.v/P.n,mx=P.m,cpu=P.c/P.n,lo=P.lo;P.n=P.s=P.l=P.v=P.m=P.c=0;P.lo=99;P.t0=t;
+  /* the shortest frame is the refresh interval of the screen (16.7 ms at 60 Hz); a 50 Hz screen has more room */
+  F.refMin=Math.min(F.refMin||99,lo);const ref=Math.min(20.5,Math.max(4,F.refMin));
+  const q=this.qs??(F.qs||1);let nq=q;
+  if(this.pfOn===undefined)this.pfOn=!this.att&&(()=>{try{return localStorage.getItem('fpv-sim-perf')==='1'}catch(e){return false}})();
+  if(this.pfOn&&!this.att)this.pfShow(avg,lf,mx,cpu,ref,q);
+  const bad=avg>Math.max(22,ref*1.2)||lf>.12||vf>.04;
+  if(bad){P.gw=0;
+   if(!(F.noCutUntil>t)&&q>.55){
+    /* a run of cuts: if four steps down did not make the frames faster, the card is not the limit: put the resolution back and leave it for a while */
+    if(!P.ser||t-P.ser.t>6000)P.ser={t,q0:q,a0:avg,n:0};P.ser.t=t;P.ser.n++;
+    if(P.ser.q0-q>=.39&&avg>P.ser.a0*.92){nq=P.ser.q0;F.noCutUntil=t+180000;P.ser=null}
+    else{nq=Math.max(.55,q-(avg>38?.2:.1));F.qBad=q;F.qBadT=t;if(F.qUpT&&t-F.qUpT<30000)F.qLock=Math.min(120000,(F.qLock||20000)*2)}}}
+  else if(avg<Math.max(18.5,ref*1.12)&&lf<.02&&q<1){
+    P.ser=null;P.gw=(P.gw||0)+1;
+    /* up again only after two good windows, and a level that was too slow is not tried again for a while (longer each time it fails): no hunting */
+    if(P.gw>=2&&(!F.qBad||q+.1<F.qBad||t-F.qBadT>(F.qLock||20000))){nq=Math.min(1,q+.1);F.qUpT=t;P.gw=0}}
+  else P.gw=0;
+  if(nq!==q){this.qs=F.qs=+nq.toFixed(2);this.resize()}}
+ /* a hidden readout of the frame time, numbers only: Ctrl+Alt+F (also kept in localStorage 'fpv-sim-perf') */
+ pfShow(avg,lf,mx,cpu,ref,q){let E=this._pfEl;
+  if(!E||!E.isConnected){E=this._pfEl=document.createElement('div');E.setAttribute('aria-hidden','true');E.style.cssText='position:fixed;left:8px;bottom:8px;z-index:99999;font:11px/1.35 ui-monospace,Menlo,Consolas,monospace;color:#cfe;background:rgba(0,0,0,.55);padding:3px 6px;border-radius:4px;pointer-events:none;white-space:pre';document.body.appendChild(E)}
+  E.textContent=Math.round(1000/avg)+' fps  '+avg.toFixed(1)+' ms  (screen '+ref.toFixed(1)+')\nmax '+Math.round(mx)+'  late '+Math.round(lf*100)+'%  js '+cpu.toFixed(1)+' ms\n'+this.cv.width+'x'+this.cv.height+'  q '+q.toFixed(2)}
  attStep(dt,t){const n=this.gates.length;if(!this.path){const s=this.scn.start;this.path=[[s[0],1.4,s[2]],...this.gates.map(({G})=>[G[0],G[1],G[2]])];this.u=this.u||0}
   const P=this.path,N=P.length,cr=u=>{u=((u%N)+N)%N;const i=Math.floor(u),f=u-i,a=P[(i-1+N)%N],b=P[i],c=P[(i+1)%N],d=P[(i+2)%N];return [0,1,2].map(k=>.5*(2*b[k]+(-a[k]+c[k])*f+(2*a[k]-5*b[k]+4*c[k]-d[k])*f*f+(-a[k]+3*b[k]-3*c[k]+d[k])*f*f*f))};
   const i=Math.floor(((this.u%N)+N)%N),L=V.len(V.sub(P[(i+1)%N],P[i]))||1;this.u+=dt*6.5/L;const p=cr(this.u),d=V.norm(V.sub(cr(this.u+.03),p));p[1]=Math.max(.6,p[1]);
@@ -13943,9 +13977,9 @@ class FPVSim{
   if(this.att){const dt=Math.max(0,Math.min(.05,(t-this.last)/1000));if(this.drawn&&t-this.lastDraw<33){this.raf=requestAnimationFrame(this.loop);return}const ddt=Math.min(.1,(t-(this.lastDraw||t))/1000);this.lastDraw=t;this.last=t;this.attStep(this.still?0:ddt,t);this.render(t);this.drawn=true;if(!this.still)this.raf=requestAnimationFrame(this.loop);return}
   /* the flight is HELD (physics, recording, engine and wind sound) whenever something covers it: a lesson window, a dialog, the debrief, a tour. Nobody flies a vehicle they cannot see, and nothing should keep roaring behind a lesson. */
   if(simBlocked()||document.hidden){this.last=t;this.acc=0;MOTOR.stop();wxAudio(0);this.held=true;this.raf=requestAnimationFrame(this.loop);return}this.held=false;
-  this.perf(t);  const dt=Math.max(0,Math.min(.05,(t-this.last)/1000));this.last=t;const I=this.input();this.I=I;if(!this.att)immAuto(I);{const LK0=this.linkQ();this.lq=LK0.vid;this.ctlq=LK0.ctl;this.jam=LK0.jam||0}const IE=this.ctlLink(I,dt);if(PREF.simrc&&!this.att){const R=this.rcEl&&this.rcEl.isConnected?this.rcEl:(this.rcEl=document.getElementById('simRC'));if(R&&!R.hidden)setSticks(R,I.thr,I.yaw,I.pit,I.rol)}
+  this._c0=performance.now();this.perf(t);  const dt=Math.max(0,Math.min(.05,(t-this.last)/1000));this.last=t;const I=this.input();this.I=I;if(!this.att)immAuto(I);{const LK0=this.linkQ();this.lq=LK0.vid;this.ctlq=LK0.ctl;this.jam=LK0.jam||0}const IE=this.ctlLink(I,dt);if(PREF.simrc&&!this.att){const R=this.rcEl&&this.rcEl.isConnected?this.rcEl:(this.rcEl=document.getElementById('simRC'));if(R&&!R.hidden)setSticks(R,I.thr,I.yaw,I.pit,I.rol)}
   this.acc+=dt;const h=1/240;let n=0;while(this.acc>=h&&n<20){this.pp=this.p.slice();this.pq=this.q.slice();this.step(h,IE);this.acc-=h;n++}if(n>=20)this.acc=0;
-  {const al=Math.max(0,Math.min(1,this.acc/h)),P0=this.p,Q0=this.q;if(this.pp&&!this.crash&&V.len(V.sub(P0,this.pp))<2){let pq=this.pq;if(pq[0]*Q0[0]+pq[1]*Q0[1]+pq[2]*Q0[2]+pq[3]*Q0[3]<0)pq=pq.map(x=>-x);this.p=P0.map((v,i)=>this.pp[i]+(v-this.pp[i])*al);this.q=Q.norm(Q0.map((v,i)=>pq[i]+(v-pq[i])*al))}this.render(t);wxFx(this,t);this.p=P0;this.q=Q0}if(this.armed&&!this.crash&&this.p[1]>.2&&!SIMM.lid)airTick(dt);simHud(this,I);guideTick(this,I);orientTick(this);mapTick(this);MOTOR.set(this.armed&&!this.crash,Math.min(1,this.pwr()*1.05),V.len(this.v),this.plane?(ENGK[this.PK]||'nitro'):'quad:'+quadKey(),this.ears());if(MODE==='learn'){if(SIMM.lid)recTick(this,I,dt);else if(!this.mis)drillTick(this,dt)}this.raf=requestAnimationFrame(this.loop)}
+  {const al=Math.max(0,Math.min(1,this.acc/h)),P0=this.p,Q0=this.q;if(this.pp&&!this.crash&&V.len(V.sub(P0,this.pp))<2){let pq=this.pq;if(pq[0]*Q0[0]+pq[1]*Q0[1]+pq[2]*Q0[2]+pq[3]*Q0[3]<0)pq=pq.map(x=>-x);this.p=P0.map((v,i)=>this.pp[i]+(v-this.pp[i])*al);this.q=Q.norm(Q0.map((v,i)=>pq[i]+(v-pq[i])*al))}this.render(t);wxFx(this,t);this.p=P0;this.q=Q0}if(this.armed&&!this.crash&&this.p[1]>.2&&!SIMM.lid)airTick(dt);simHud(this,I);guideTick(this,I);orientTick(this);mapTick(this);MOTOR.set(this.armed&&!this.crash,Math.min(1,this.pwr()*1.05),V.len(this.v),this.plane?(ENGK[this.PK]||'nitro'):'quad:'+quadKey(),this.ears());if(MODE==='learn'){if(SIMM.lid)recTick(this,I,dt);else if(!this.mis)drillTick(this,dt)}{const pf=this.pf;if(pf)pf.c+=performance.now()-this._c0}this.raf=requestAnimationFrame(this.loop)}
  /* spectator view: what the ears hear (see MOTOR.space): the distance from the eye to the vehicle, whether its nose points at the eye, the Doppler shift in cents (343 m/s) and the reference distance of this kind of engine */
  ears(){const e=this.cEye;if(SIM.cam!=='los'||this.att||!e)return null;const p=this.p,dx=p[0]-e[0],dy=p[1]-e[1],dz=p[2]-e[2],d=Math.hypot(dx,dy,dz)||1,vr=(this.v[0]*dx+this.v[1]*dy+this.v[2]*dz)/d,f=this.plane?-V.dot(Q.rot(this.q,[0,0,-1]),[dx/d,dy/d,dz/d]):0;
   return {d,face:f,dc:Math.max(-170,Math.min(170,1200*Math.log2(343/(343+vr)))),ref:this.plane?({nitro:48,gas4:38,jet:85}[ENGK[this.PK]]||40):14}}
@@ -13989,7 +14023,7 @@ class FPVSim{
  /* v171: the FPV lens looks past its own frame: the front props, motors and arms at the real size, a few centimetres away. A pass of its own (near plane 6 mm, depth cleared) so they never sink into the scenery. A lens focused far away cannot show what is this close: still blades are a little soft, spinning ones are a faint dark veil with a ghost of the blades in it. Like the real thing they only show at the bottom corners, and less the more the camera is tilted up. */
  fpvProps(gl,R,cq,eye,fov,c,NT,t){const qk=quadKey();if(qk!==this.qk||!this.bm){this.qk=qk;this.dm=R.mesh(droneGeo(qk));this.pm=R.mesh(propGeo(qk));this.bm=R.mesh(bladeGeo(qk))}
   this.propStep(t);const FM=this.fpk===qk&&this.fpm&&gl.isVertexArray(this.fpm.vao)?this.fpm:(this.fpk=qk,this.fpm=R.mesh(fpvFrameGeo(qk)));
-  gl.uniformMatrix4fv(R.u.uVP,false,M4.mul(M4.persp(fov*Math.PI/180,c.width/c.height,.006,1.5),M4.view(cq,[0,0,0])));gl.uniform3fv(R.u.uEye,[0,0,0]);gl.uniform1f(R.u.uFK,0);
+  gl.uniformMatrix4fv(R.u.uVP,false,M4.mul(M4.persp(fov*Math.PI/180,c.width/c.height,.006,1.5),M4.view(cq,[0,0,0])));gl.uniform3fv(R.u.uEye,[0,0,0]);gl.uniform1f(R.u.uFK,0);gl.uniform1f(R.u.uMb,0);
   {const f0=Q.rot(this.q,[0,0,-1]);gl.uniform3fv(R.u.uLp,V.sub(V.add(this.p,V.mul(f0,.12)),eye))}
   gl.depthMask(true);gl.clear(gl.DEPTH_BUFFER_BIT);gl.disable(gl.BLEND);
   const M=M4.fromQT(this.q,V.sub(this.p,eye)),arm=this.armed&&!this.crash,rp=Math.min(1,Math.max(0,this.rpm||0)),nb=qk==='tw'?4:3,TC=NT?[.02,.02,.025]:[.07,.075,.085],TV=propSpec(qk).col.map(v=>v*(NT?.12:.5));
@@ -14027,7 +14061,7 @@ class FPVSim{
   this.fxStep(t);if(!this.att&&(cam==='fpv'||cam==='chase')){const sp=V.len(this.v),tb=PREF.motion==='reduced'?0:Math.min(14,Math.max(0,sp-7)*.6);this.fovb=(this.fovb||0)+(tb-(this.fovb||0))*(1-Math.exp(-rdt/.27));fov+=this.fovb;
    const k=this.shk||0;if(k>.01){const j=()=>(Math.random()*2-1)*k;eye=V.add(eye,[j()*.05,j()*.04,j()*.05]);cq=Q.mul(cq,Q.axis(V.norm([j()+.001,j(),j()*.5]),k*.035))}}this.fov=fov;
   const alt0=Math.max(0,eye[1]-(this.gl||0)),P=M4.persp(fov*Math.PI/180,c.width/c.height,cam==='fpv'?Math.min(1.2,Math.max(.05,alt0*.008)):Math.min(.6,Math.max(.08,alt0*.004)),700*hs),VP=M4.mul(P,M4.view(cq,eye)),R=this.r;
-  gl.uniformMatrix4fv(R.u.uVP,false,VP);gl.uniform3fv(R.u.uEye,eye);this.VP=VP;this.cEye=eye;this.fxDraw(cam,fov);
+  gl.uniformMatrix4fv(R.u.uVP,false,VP);gl.uniform3fv(R.u.uEye,eye);this.VP=VP;this.cEye=eye;this.mbUni(gl,R,eye,cq,cam,tNow);this.fxDraw(cam,fov);
   gl.depthMask(false);R.draw(this.sky,[1,0,0,0,0,1,0,0,0,0,1,0,eye[0],eye[1],eye[2],1]);gl.depthMask(true);
   /* open flying fields: the far hills travel with the camera (lagging a little behind it near the field, for a touch of parallax) in a thinner haze than the ground; the ground sheet goes on for ever */
   const WA=this.world&&this.world.aux;
@@ -14064,7 +14098,7 @@ class FPVSim{
   this.fxGL(gl,R,VP,eye,cq,FG,cam,WX,ic,LD,tNow);
   if(cam==='fpv'&&!this.plane&&!this.att&&!this.deb&&!(this.mis&&this.mis.ball))this.fpvProps(gl,R,cq,eye,fov,c,NT,t);
   if(PO)PO.end(c,t,{lq:this.lq,jam:this.jam,mode:PO.mode})}
- dispose(){this.debFree();cancelAnimationFrame(this.raf);this.ro?.disconnect();if(!this.att){wxAudio(0);this._wxCv?.remove();this._wxW?.remove();try{this.fx?.remove()}catch(e){}this.fx=null}removeEventListener('keydown',this.onKey);removeEventListener('keyup',this.onKey);if(this.cv.__owner===this){this.r.free();this.cv.__owner=null}if(!this.att){MOTOR.stop();MOTOR.space(null);MOTOR.dop(MOTOR.eng[MOTOR.cur],0,MOTOR.c?MOTOR.c.currentTime:0)}if(SIM.inst===this)SIM.inst=null;if(BG.inst===this)BG.inst=null}}
+ dispose(){this.debFree();cancelAnimationFrame(this.raf);try{this._pfEl?.remove()}catch(e){}this._pfEl=null;this.ro?.disconnect();if(!this.att){wxAudio(0);this._wxCv?.remove();this._wxW?.remove();try{this.fx?.remove()}catch(e){}this.fx=null}removeEventListener('keydown',this.onKey);removeEventListener('keyup',this.onKey);if(this.cv.__owner===this){this.r.free();this.cv.__owner=null}if(!this.att){MOTOR.stop();MOTOR.space(null);MOTOR.dop(MOTOR.eng[MOTOR.cur],0,MOTOR.c?MOTOR.c.currentTime:0)}if(SIM.inst===this)SIM.inst=null;if(BG.inst===this)BG.inst=null}}
 
 const SIMI={sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>',cloud:'<path d="M7 18.5h10.2a4.1 4.1 0 0 0 .5-8.15A5.6 5.6 0 0 0 7.1 9.3a4.6 4.6 0 0 0-.1 9.2z"/>',rain:'<path d="M7 14.5h10a3.6 3.6 0 0 0 .5-7.15A5 5 0 0 0 7.9 6.6 4 4 0 0 0 7 14.5z"/><path d="M8.5 17.5l-1 2.5M12.5 17.5l-1 2.5M16.5 17.5l-1 2.5"/>',fog:'<path d="M4 8.5h13M6 12h14M4 15.5h11M8 19h10"/>',balloon:'<path d="M12 3c3.3 0 5.5 2.6 5.5 5.8 0 3.6-2.9 6.6-5.5 6.6S6.5 12.4 6.5 8.8C6.5 5.6 8.7 3 12 3z"/><path d="M11 15.4l-.6 1.4h3.2l-.6-1.4M12 16.8c0 2-1.6 2.4-1.6 4.2"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="2"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/>',trash:'<path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v5.5M14 11v5.5"/>',arch:'<rect x="3" y="4" width="18" height="4.5" rx="1"/><path d="M5 8.5V19a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5M10 12.5h4"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',eyex:'<path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7a9.6 9.6 0 0 0 4.2-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',field:'<path d="M5 21V4M5 4h11l-2 3.5 2 3.5H5"/>',forest:'<path d="M12 3l5 7h-3l4 6H6l4-6H7z"/><path d="M12 16v5"/>',
  tac:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',real:'<circle cx="17" cy="7" r="2.5"/><path d="M3 19l6-8 4 5 3-3 5 6z"/>',
