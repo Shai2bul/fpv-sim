@@ -11616,19 +11616,19 @@ const SIMSCN={
    for(let i=0;i<8;i++)s.box(-16+R()*4,.5,-8-R()*44,1.2,1,1.2,[.6,.48,.3]);return []}},
  city:{n:'שכונת בניינים',d:'רחובות בין בניינים בגבהים שונים. מסלול בצורת ריבוע סביב הבלוקים.',start:[16,0,10],yaw:0,gc:[.27,.28,.3],seed:53,
   gates:[[16,2.2,-20,0],[16,3,-50,0],[16,3,-72,0],[-16,3,-72,0],[-16,2.4,-40,0],[-16,2.4,-8,0],[16,3,-6,0]],
-  build(g,R,s){const T=[];for(const bx of [-32,0,32])for(const bz of [-24,-56,-88]){s.kd=vgK('p','fac');const n=1+Math.floor(R()*2);for(let k=0;k<n;k++){const w=n===1?18:8.5,o=n===1?0:(k?4.75:-4.75),h=7+R()*20,c=.38+R()*.2;s.box(bx+o,h/2,bz,w,h,18,[c,c*.97,c*.92]);s.box(bx+o,h+.4,bz,w*.4,.8,4,[.3,.31,.33],0,vgK('p','concrete'))}}
+  build(g,R,s){const T=[];for(const bx of [-32,0,32])for(const bz of [-24,-56,-88]){s.kd=vgK('p','fac');const n=1+Math.floor(R()*2);for(let k=0;k<n;k++){const w=n===1?18:8.5,o=n===1?0:(k?4.75:-4.75),h=7+R()*20,c=.38+R()*.2;(g.bld||(g.bld=[])).push([bx+o,bz,w,h,c]);s.box(bx+o,h/2,bz,w,h,18,[c,c*.97,c*.92]);s.box(bx+o,h+.4,bz,w*.4,.8,4,[.3,.31,.33],0,vgK('p','concrete'))}}
    for(const x of [-23,-9,9,23])for(let z=-12;z>-110;z-=16){g.cyl(x,z,.08,5,0,[.35,.37,.4],6);g.box(x+(x<0?.6:-.6),5,z,1.4,.12,.2,[.35,.37,.4]);T.push([x,z,.1,5])}
    for(const x of [-16,16])for(let z=8;z>-112;z-=6)g.box(x,.012,z,.25,.02,2.5,[.85,.82,.6],0,0);return T}},
  canyon:{n:'קניון',d:'ערוץ מתפתל בין צוקים גבוהים, עם קשת סלע שעוברים מתחתיה.',start:[0,0,10],yaw:0,gc:[.52,.38,.27],seed:61,
   gates:[[0,2.2,-14,0],[6,2.5,-36,0],[2,2.5,-58,0],[-8,3,-80,0],[0,2.5,-104,0]],
   build(g,R,s){s.kd=vgK('p','rock');const P=[[0,14],[0,-20],[8,-40],[0,-60],[-10,-80],[0,-100],[0,-130]];
    for(let i=0;i<P.length-1;i++){const [ax,az]=P[i],[bx,bz]=P[i+1],dx=bx-ax,dz=bz-az,L=Math.hypot(dx,dz),ry=Math.atan2(dx,dz),nx=dz/L,nz=-dx/L;
-    for(let t=0;t<L;t+=5){const cx=ax+dx*t/L,cz=az+dz*t/L;[-1,1].forEach(sd=>{const off=7.5+R()*1.5,h=12+R()*10,c=.48+R()*.1;s.box(cx+nx*off*sd+nx*sd*2,h/2,cz+nz*off*sd+nz*sd*2,4.5,h,6,[c,c*.72,c*.52],ry)})}}
-   s.box(-2,9.5,-70,24,3,4,[.5,.36,.26],.6);for(let i=0;i<10;i++){const k=Math.floor(R()*(P.length-1)),[ax,az]=P[k],[bx,bz]=P[k+1],t=R();const x=ax+(bx-ax)*t+(R()-.5)*6,z=az+(bz-az)*t;s.box(x,.4,z,.9+R(),.8,.9+R(),[.45,.33,.25],R()*3)}
+    for(let t=0;t<L;t+=5){const cx=ax+dx*t/L,cz=az+dz*t/L;[-1,1].forEach(sd=>{const off=7.5+R()*1.5,h=12+R()*10,c=.48+R()*.1;(g.wl||(g.wl=[])).push([cx+nx*off*sd+nx*sd*2,cz+nz*off*sd+nz*sd*2,h,c,ry,sd]);s.box(cx+nx*off*sd+nx*sd*2,h/2,cz+nz*off*sd+nz*sd*2,4.5,h,6,[c,c*.72,c*.52],ry)})}}
+   s.box(-2,9.5,-70,24,3,4,[.5,.36,.26],.6);for(let i=0;i<10;i++){const k=Math.floor(R()*(P.length-1)),[ax,az]=P[k],[bx,bz]=P[k+1],t=R();const x=ax+(bx-ax)*t+(R()-.5)*6,z=az+(bz-az)*t;{const bw=.9+R(),bd=.9+R(),br=R()*3;(g.rk||(g.rk=[])).push([x,z,bw,bd,br]);s.box(x,.4,z,bw,.8,bd,[.45,.33,.25],br)}}
    vgTacOnly(g,()=>{for(let i=0;i<40;i++){const a=R()*Math.PI*2,d=100+R()*80;g.cone(Math.cos(a)*d,Math.sin(a)*d-40,10,14+R()*14,0,[.5,.36,.26])}});return []}},
  desert:{n:'דיונות מדבר',d:'מרחב פתוח עם דיונות, סלעים ודקלים. טוב לטיסה מהירה ולשליטה בגובה.',start:[0,0,10],yaw:0,gc:[.72,.6,.42],seed:71,
   gates:[[0,2,-16,0],[14,4,-40,0],[4,2.5,-66,0],[-16,5,-58,0],[-12,2,-28,0]],
-  build(g,R,s){const T=[];for(let i=0;i<18;i++){const x=(R()-.5)*80,z=-R()*100;if(Math.hypot(x,z)<14)continue;let ok=true;for(const G of this.gates)if(Math.hypot(G[0]-x,G[2]-z)<9)ok=false;if(!ok)continue;{const rr=6+R()*6,hh=1.2+R()*2.2;vgTacOnly(s,()=>s.cone(x,z,rr,hh,0,[.74,.62,.43],12));vgDune(g,x,z,rr,hh,R)}}
+  build(g,R,s){const T=[];for(let i=0;i<18;i++){const x=(R()-.5)*80,z=-R()*100;if(Math.hypot(x,z)<14)continue;let ok=true;for(const G of this.gates)if(Math.hypot(G[0]-x,G[2]-z)<9)ok=false;if(!ok)continue;{const rr=6+R()*6,hh=1.2+R()*2.2;vgTacOnly(s,()=>s.cone(x,z,rr,hh,0,[.74,.62,.43],12));(g.dn||(g.dn=[])).push([x,z,rr,hh]);vgDune(g,x,z,rr,hh,R)}}
    for(let i=0;i<10;i++){const x=(R()-.5)*70,z=-10-R()*90;let ok=true;for(const G of this.gates)if(Math.hypot(G[0]-x,G[2]-z)<6)ok=false;if(!ok)continue;{const bx=1.4+R()*2,by=1.2+R(),bz=1.4+R()*2,ry=R()*3;vgTacOnly(s,()=>s.box(x,.6,z,bx*.85,by*.85,bz*.85,[.55,.42,.3],ry));vgRock(g,x,z,1,R,{dims:[bx*.56,by*.6,bz*.56],col:[.62,.5,.38]})}}
    for(let i=0;i<9;i++){const x=(R()<.5?-1:1)*(24+R()*14),z=-R()*90,h=6+R()*3;vgTacOnly(g,()=>{g.cyl(x,z,.2,h,0,[.45,.34,.22],6);for(let k=0;k<6;k++){const a=k/6*Math.PI*2;g.box(x+Math.cos(a)*1.2,h,z+Math.sin(a)*1.2,2.6,.1,.5,[.25,.45,.2],-a)}});vgTree(g,x,z,h*1.15,R,'palm');T.push([x,z,.3,h])}
    vgTacOnly(g,()=>{for(let i=0;i<30;i++){const a=R()*Math.PI*2,d=110+R()*60;g.cone(Math.cos(a)*d,Math.sin(a)*d-40,18,8+R()*8,0,[.7,.57,.4])}});return T}},
@@ -11651,7 +11651,7 @@ const SIMSCN={
   build(g,R,s){s.kd=vgK('p','concrete');const T=[],Wc=[.18,.34,.44],Cn=[.55,.55,.53];g.quad([-9,.02,40],[9,.02,40],[9,.02,-240],[-9,.02,-240],Wc,8);
    [-9.4,9.4].forEach(x=>g.box(x,.08,-100,.8,.16,280,[.4,.36,.28]));s.box(0,6,-40,40,.6,7,Cn);[-20,20].forEach(x=>s.box(x,3,-40,1.5,6,7,Cn));[-6,6].forEach(x=>s.box(x,2.85,-40,1.2,5.7,2.4,Cn));
    [-1,1].forEach(sd=>{for(let x=-19;x<=19;x+=2)s.box(x,6.9,-40+sd*3.3,.12,1.2,.12,[.6,.6,.62]);s.box(0,7.5,-40+sd*3.3,40,.12,.12,[.6,.6,.62])});
-   for(let i=0;i<90;i++){const sd=R()<.5?-1:1,x=sd*(14+R()*30),z=20-R()*150;if(Math.abs(z+40)<6&&Math.abs(x)<24)continue;const h=4+R()*4,r1=1.1+R()*.6,k=R();vgTacOnly(g,()=>{g.cyl(x,z,.22,h*.5,0,[.32,.24,.16],7);g.cone(x,z,r1,h*.75,h*.35,[.12+R()*.05,.3+R()*.08,.14],8)});T.push(vgTree(g,x,z,h*1.5+R()*2.5,R,k<.35?'fir':k<.6?'birch':'oak'))}
+   for(let i=0;i<90;i++){const sd=R()<.5?-1:1,x=sd*(14+R()*30),z=20-R()*150;if(Math.abs(z+40)<6&&Math.abs(x)<24)continue;const h=4+R()*4,r1=1.1+R()*.6,k=R();vgTacOnly(g,()=>{g.cyl(x,z,.22,h*.5,0,[.32,.24,.16],7);g.cone(x,z,r1,h*.75,h*.35,[.12+R()*.05,.3+R()*.08,.14],8)});{const cr=Math.abs(z+40)<7&&Math.abs(x)>=18,rc=vgTree(cr?new Geo():g,x,z,h*1.5+R()*2.5,R,k<.35?'fir':k<.6?'birch':'oak');T.push(rc);if(cr)(g.noT||(g.noT=[])).push(rc)}}
    vgTacOnly(g,()=>{for(let i=0;i<30;i++){const a=R()*Math.PI*2,d=120+R()*50;g.cone(Math.cos(a)*d,Math.sin(a)*d-40,6,12+R()*8,0,[.13,.24,.15])}});return T}}
 };
 function gateGeo(g,[x,y,z,ry],w=2.6,h=2,col){const t=.14,cs=Math.cos(ry),sn=Math.sin(ry),P=(lx,ly)=>[x+lx*cs,ly,z-lx*sn];
@@ -11685,6 +11685,1086 @@ SIMSCN.balloons={...SIMSCN.field,n:'זירת בלונים',d:'פוגעים בב�
 SIMSCN.precision={...SIMSCN.field,n:'מטרת דיוק',d:'נוגעים ברכות במטרה על הקרקע. מרכז 50, ואז 30, 20 ו-10 נקודות.',game:'tgt',hidden:true,gates:[]};
 SIMSCN.bandoballoons={...SIMSCN.bando,n:'בלונים במבנה נטוש',d:'בלונים בין קירות, פתחים ומדרגות. דיוק בחללים צרים.',game:'bal',hidden:true,gates:[],bv:[-11,11,-29,-51,.9,10.3],bn:10};
 VGSCN.balloons=VGSCN.field;VGSCN.precision=VGSCN.field;VGSCN.bandoballoons=VGSCN.bando;
+/* ===== v175 · scenery of the real look (the simulator's own code; none of it is in the picture-signature closure) =====
+   Barns, silos, houses, hay, fences, hedgerows, power lines, a windsock, wind turbines on the far hills and flocks of birds, placed per scene by PROPS[scene].
+   The tactical look never shows any of it: everything goes into g.R / g.F / g.S (drawn only by the real look) or the dynamic list g.pd. What blocks the vehicle goes into a second set of colliders (cg, and cg.tr for tree-like ones) that load() swaps in only while the real look is drawn, so the tactical look has no invisible walls. */
+const PPK={metal:vgK('p','metal'),brick:vgK('p','brick'),conc:vgK('p','concrete'),bark:vgK('p','bark'),rock:vgK('p','rock'),sand:vgK('p','sand'),asph:vgK('p','asphalt'),flat:4,gloss:9};
+const ppCol=(c,k)=>[Math.min(1,c[0]*k),Math.min(1,c[1]*k),Math.min(1,c[2]*k)];
+const ppRv=(R,a,b)=>a+(b-a)*R();
+/* T (built around the origin, standing on y=0) copied into G at (x,y,z): pitched by rx about x, turned by ry about the vertical, scaled by s */
+function ppPut(G,T,x,y,z,ry=0,s=1,rx=0){G.padU();T.padU();const cs=Math.cos(ry),sn=Math.sin(ry),cx=Math.cos(rx),sx=Math.sin(rx),n=T.p.length/3;
+ for(let i=0;i<n;i++){const i3=i*3,i4=i*4;let px=T.p[i3]*s,py=T.p[i3+1]*s,pz=T.p[i3+2]*s,nx=T.n[i3],ny=T.n[i3+1],nz=T.n[i3+2],t;
+  if(rx){t=py*cx-pz*sx;pz=py*sx+pz*cx;py=t;t=ny*cx-nz*sx;nz=ny*sx+nz*cx;ny=t}
+  G.p.push(x+px*cs+pz*sn,y+py,z-px*sn+pz*cs);G.n.push(nx*cs+nz*sn,ny,-nx*sn+nz*cs);G.c.push(T.c[i3],T.c[i3+1],T.c[i3+2]);G.k.push(T.k[i]);G.u.push(T.u[i4],T.u[i4+1],T.u[i4+2],T.u[i4+3])}}
+/* a thin beam from a to b with a w by t cross-section */
+function ppBeam(T,a,b,w,t,col,kind=4){const d=vgNrm(b[0]-a[0],b[1]-a[1],b[2]-a[2]);let ux=-d[2],uz=d[0];const ul=Math.hypot(ux,uz);if(ul<.05){ux=1;uz=0}else{ux/=ul;uz/=ul}
+ const u=[ux,0,uz],v=[d[1]*u[2]-d[2]*u[1],d[2]*u[0]-d[0]*u[2],d[0]*u[1]-d[1]*u[0]],c=[[-1,-1],[1,-1],[1,1],[-1,1]].map(([s,r])=>[u[0]*s*w/2+v[0]*r*t/2,u[1]*s*w/2+v[1]*r*t/2,u[2]*s*w/2+v[2]*r*t/2]),
+  P0=c.map(q=>[a[0]+q[0],a[1]+q[1],a[2]+q[2]]),P1=c.map(q=>[b[0]+q[0],b[1]+q[1],b[2]+q[2]]);
+ for(let i=0;i<4;i++){const j=(i+1)%4;T.quad(P0[i],P0[j],P1[j],P1[i],col,kind)}T.quad(P0[0],P0[3],P0[2],P0[1],col,kind);T.quad(P1[0],P1[1],P1[2],P1[3],col,kind)}
+/* a gable roof over the footprint L (x) by W (z) whose eaves stand at y0 and whose ridge is RH higher: two sheets with an overhang and the two gable triangles */
+function ppGable(T,y0,L,W,RH,col,kr,o={}){const ov=o.ov??.5,ox=o.ox??.5,sl=RH/(W/2),ye=y0-ov*sl,yr=y0+RH,gc=o.gc||col,gk=o.gk??kr;
+ T.quad([-L/2-ox,ye,-W/2-ov],[L/2+ox,ye,-W/2-ov],[L/2+ox,yr,0],[-L/2-ox,yr,0],col,kr);T.quad([L/2+ox,ye,W/2+ov],[-L/2-ox,ye,W/2+ov],[-L/2-ox,yr,0],[L/2+ox,yr,0],col,kr);
+ if(o.tri!==false)for(const sx of [-1,1])T.tri([sx*L/2,y0,-W/2],[sx*L/2,y0,W/2],[sx*L/2,y0+RH,0],gc,gk);
+ if(o.trim!==false){const tc=o.trim||[.9,.88,.82];for(const sz of [-1,1])ppBeam(T,[-L/2-ox,ye,sz*(W/2+ov)],[L/2+ox,ye,sz*(W/2+ov)],.07,.22,tc,4);ppBeam(T,[-L/2-ox,yr+.04,0],[L/2+ox,yr+.04,0],.45,.1,o.ridge||ppCol(col,.7),4)}}
+/* a solid of revolution about the vertical axis through (x,z): prof = [radius,height] pairs from the bottom up, smooth normals; col = one colour or one per profile segment */
+function ppLathe(T,x,y0,z,prof,seg,col,kind,o={}){const n=prof.length,nm=[],tu=o.tu??1;
+ for(let i=0;i<n;i++){const a=prof[Math.max(0,i-1)],b=prof[Math.min(n-1,i+1)],dr=b[0]-a[0],dh=b[1]-a[1],l=Math.hypot(dr,dh)||1;nm.push([dh/l,-dr/l])}
+ const cj=j=>Array.isArray(col[0])?col[Math.min(j,col.length-1)]:col;
+ for(let j=0;j<n-1;j++){const c=cj(j),r0=prof[j][0],r1=prof[j+1][0],h0=y0+prof[j][1],h1=y0+prof[j+1][1];
+  for(let i=0;i<seg;i++){const a0=i/seg*6.2832,a1=(i+1)/seg*6.2832,c0=Math.cos(a0),s0=Math.sin(a0),c1=Math.cos(a1),s1=Math.sin(a1),N=(cc,ss,k)=>vgNrm(cc*nm[k][0],nm[k][1],ss*nm[k][0]);
+   T.quadX([x+c0*r0,h0,z+s0*r0],[x+c1*r0,h0,z+s1*r0],[x+c1*r1,h1,z+s1*r1],[x+c0*r1,h1,z+s0*r1],c,kind,[[i/seg*tu,prof[j][1]],[(i+1)/seg*tu,prof[j][1]],[(i+1)/seg*tu,prof[j+1][1]],[i/seg*tu,prof[j+1][1]]],[N(c0,s0,j),N(c1,s1,j),N(c1,s1,j+1),N(c0,s0,j+1)])}}}
+/* a frustum lying along +x from x0 to x1 (radius ra to rb): smooth normals */
+function ppTubeX(T,x0,x1,ra,rb,seg,col,kind=4){const nx=(ra-rb)/Math.max(1e-3,x1-x0);
+ for(let i=0;i<seg;i++){const a0=i/seg*6.2832,a1=(i+1)/seg*6.2832,c0=Math.cos(a0),s0=Math.sin(a0),c1=Math.cos(a1),s1=Math.sin(a1),N=(c,s)=>vgNrm(nx,c,s);
+  T.quadX([x0,c0*ra,s0*ra],[x0,c1*ra,s1*ra],[x1,c1*rb,s1*rb],[x1,c0*rb,s0*rb],col,kind,[[0,0],[0,0],[0,0],[0,0]],[N(c0,s0),N(c1,s1),N(c1,s1),N(c0,s0)])}}
+/* a round bale lying on its side (axis along local x), centre (x,y,z), radius r, length l, in rings of slightly different tone */
+function ppBale(T,x,y,z,ry,r,l,col,kind=4){const seg=14,nb=5,cs=Math.cos(ry),sn=Math.sin(ry),W=(lx,ly,lz)=>[x+lx*cs+lz*sn,y+ly,z-lx*sn+lz*cs],Nn=a=>{const ny=Math.cos(a),nz=Math.sin(a);return [nz*sn,ny,nz*cs]};
+ for(let b=0;b<nb;b++){const x0=-l/2+l*b/nb,x1=-l/2+l*(b+1)/nb,c=ppCol(col,.9+.16*((b*7+3)%5)/4);
+  for(let i=0;i<seg;i++){const a0=i/seg*6.2832,a1=(i+1)/seg*6.2832,y0=Math.cos(a0)*r,z0=Math.sin(a0)*r,y1=Math.cos(a1)*r,z1=Math.sin(a1)*r;
+   T.quadX(W(x0,y0,z0),W(x0,y1,z1),W(x1,y1,z1),W(x1,y0,z0),c,kind,[[0,0],[0,0],[0,0],[0,0]],[Nn(a0),Nn(a1),Nn(a1),Nn(a0)])}}
+ for(const sx of [-1,1]){const cc=ppCol(col,.78),nrm=[sx*cs,0,-sx*sn];for(let i=0;i<seg;i++){const a0=i/seg*6.2832,a1=(i+1)/seg*6.2832;T.triX(W(sx*l/2,0,0),W(sx*l/2,Math.cos(a0)*r,Math.sin(a0)*r),W(sx*l/2,Math.cos(a1)*r,Math.sin(a1)*r),cc,kind,[[0,0],[0,0],[0,0]],[nrm,nrm,nrm])}}}
+/* a placed copy: the geometry goes to the real look, its blocks (T.bx boxes [cx,cy,cz,sx,sy,sz], T.cy cylinders [cx,cz,r,h]) to the real-look colliders */
+function ppPlace(g,cg,T,x,z,ry=0,s=1,y=0){ppPut(g.R,T,x,y,z,ry,s);const cs=Math.cos(ry),sn=Math.sin(ry);
+ if(cg&&T.bx)for(const [cx,cy,cz,sx,sy,sz] of T.bx)cg.box(x+(cx*cs+cz*sn)*s,y+cy*s,z+(-cx*sn+cz*cs)*s,sx*s,sy*s,sz*s,[.5,.5,.5],ry);
+ if(cg&&T.cy)for(const [cx,cz,r,h] of T.cy)cg.cyl(x+(cx*cs+cz*sn)*s,z+(-cx*sn+cz*cs)*s,r*s,h*s,y,[.5,.5,.5],8);
+ if(cg&&T.ctri)for(const [a,b,c] of T.ctri){const w=q=>[x+(q[0]*cs+q[2]*sn)*s,y+q[1]*s,z+(-q[0]*sn+q[2]*cs)*s];cg.tri(w(a),w(b),w(c),[.5,.5,.5])}
+ return T}
+/* the collision twin of ppBeam: the same triangles go into the collider list T.ctri of the object (placed with the boxes in ppPlace) */
+function ppColBeam(T,a,b,w,t){const q=new Geo();ppBeam(q,a,b,w,t,[.5,.5,.5],4);const P=q.p,L=T.ctri||(T.ctri=[]);for(let i=0;i+8<P.length;i+=9)L.push([[P[i],P[i+1],P[i+2]],[P[i+3],P[i+4],P[i+5]],[P[i+6],P[i+7],P[i+8]]])}
+/* places where the ground grass must not grow */
+function ppSkip(g,x,z,r){(g.pks||(g.pks=[])).push([x,z,r]);g.pk=g.pk||((px,pz)=>g.pks.some(q=>Math.hypot(px-q[0],pz-q[1])<q[2]))}
+/* a soft shadow under a building */
+function ppShade(g,x,z,L,W,H){vgShade(g,x,z,H*.7,Math.max(L,W)*.52,.55,1.05)}
+
+/* ---------- buildings ---------- */
+/* a farm barn of sheet metal: a long low body, a gable roof, white trim, a big door and a hay loft door on the +x end, windows along the +z side, a lean-to on the -z side */
+function ppBarn(R,o={}){const T=new Geo(),L=o.l||18,W=o.w||10,H=o.h||4.6,RH=o.rh||3.2,wc=o.wall||[.5,.13,.1],rc=o.roof||[.4,.39,.38],tr=[.9,.88,.82],y0=.35;
+ T.box(0,y0/2,0,L+.3,y0,W+.3,[.52,.52,.5],0,PPK.conc);T.box(0,y0+H/2,0,L,H,W,wc,0,PPK.metal);
+ ppGable(T,y0+H,L,W,RH,rc,PPK.metal,{gc:wc,gk:PPK.metal,ov:.55,ox:.5,ridge:[.3,.3,.3]});
+ for(const sx of [-1,1])for(const sz of [-1,1])T.box(sx*L/2,y0+H/2,sz*W/2,.24,H,.24,tr,0,4);
+ T.box(L/2+.08,y0+1.95,0,.16,3.9,3.9,[.42,.1,.07],0,4);
+ for(const sz of [-1,1])ppBeam(T,[L/2+.18,y0,sz*1.98],[L/2+.18,y0+3.9,sz*1.98],.14,.06,tr,4);ppBeam(T,[L/2+.18,y0+3.9,-1.98],[L/2+.18,y0+3.9,1.98],.14,.06,tr,4);
+ ppBeam(T,[L/2+.2,y0+.1,-1.9],[L/2+.2,y0+3.8,1.9],.12,.05,tr,4);ppBeam(T,[L/2+.2,y0+.1,1.9],[L/2+.2,y0+3.8,-1.9],.12,.05,tr,4);
+ T.box(L/2+.07,y0+H+RH*.42,0,.14,1.3,1.1,[.36,.09,.06],0,4);T.box(L/2+.15,y0+H+RH*.42,0,.05,1.5,1.3,tr,0,4);
+ for(const wx of [-6.5,-2.2,2.2,6.5]){T.box(wx,y0+3.1,W/2+.04,1.2,1.0,.05,tr,0,4);T.box(wx,y0+3.1,W/2+.08,1,.8,.05,[.1,.13,.17],0,PPK.gloss)}
+ if(o.lean!==false){const lw=4,lh=2.9,ox=-L*.1,LL=L*.7;T.box(ox,y0+lh/2,-W/2-lw/2,LL,lh,lw,ppCol(wc,.92),0,PPK.metal);
+  T.quad([ox-LL/2-.3,y0+lh-.1,-W/2-lw-.35],[ox+LL/2+.3,y0+lh-.1,-W/2-lw-.35],[ox+LL/2+.3,y0+H-.4,-W/2+.04],[ox-LL/2-.3,y0+H-.4,-W/2+.04],ppCol(rc,.9),PPK.metal);
+  T.box(ox+LL/2+.02,y0+lh/2,-W/2-lw/2,.1,lh*.9,lw,ppCol(wc,.9),0,4);
+  for(let i=0;i<3;i++)T.box(ox-LL/2+LL*(i+.5)/3,y0+1.4,-W/2-lw-.02,2.2,2.4,.06,[.12,.08,.06],0,4)}
+ T.bx=[[0,y0+H/2,0,L+.2,H+y0,W+.2],[0,y0+H+RH*.35,0,L,RH*.7,W*.62]];if(o.lean!==false)T.bx.push([-L*.1,1.6,-W/2-2,L*.7,3.2,4]);return T}
+/* a grain silo: corrugated steel, hoops, a domed top, a ladder */
+function ppSilo(R,o={}){const T=new Geo(),r=o.r||2.2,h=o.h||11,sc=o.col||[.66,.68,.7],dc=[.5,.52,.55];
+ ppLathe(T,0,0,0,[[r+.2,0],[r+.2,.45],[r+.02,.5],[r,h],[r*.97,h+.18],[r*.74,h+.85],[r*.4,h+1.45],[r*.06,h+1.7]],18,[[.55,.55,.53],[.55,.55,.53],sc,dc,dc,dc,dc],PPK.metal);
+ for(let y=1.6;y<h;y+=1.9)ppLathe(T,0,y,0,[[r+.035,0],[r+.035,.12]],18,ppCol(sc,.72),4);
+ ppBeam(T,[r+.06,.5,0],[r+.06,h+.2,0],.42,.05,[.3,.3,.32],4);for(let y=.9;y<h;y+=.5)ppBeam(T,[r+.09,y,-.19],[r+.09,y,.19],.05,.05,[.3,.3,.32],4);
+ T.cy=[[0,0,r,h+1.6]];return T}
+/* a brick farmhouse (or village house) with a tiled gable roof, a chimney, windows and a door */
+function ppHouse(R,o={}){const T=new Geo(),L=o.l||10,W=o.w||7.5,H=o.h||5.2,RH=o.rh||2.8,wc=o.wall||[.62,.4,.3],rc=o.roof||[.5,.24,.17],y0=.4,tr=[.92,.9,.86],pl=o.plaster;
+ T.box(0,y0/2,0,L+.3,y0,W+.3,[.55,.54,.5],0,PPK.conc);T.box(0,y0+H/2,0,L,H,W,wc,0,pl?PPK.conc:PPK.brick);
+ ppGable(T,y0+H,L,W,RH,rc,PPK.brick,{gc:wc,gk:pl?PPK.conc:PPK.brick,ov:.45,ox:.4,trim:tr,ridge:ppCol(rc,.8)});
+ const cx=L*.28;T.box(cx,y0+H+RH*.8,.4,.9,RH*1.1+.8,.9,ppCol(wc,.85),0,PPK.brick);T.box(cx,y0+H+RH*1.42,.4,1.1,.14,1.1,[.35,.33,.31],0,4);
+ const win=(x,y,z,dir,w=1.1,h=1.3)=>{if(dir===1||dir===-1){T.box(x,y,z,w+.22,h+.22,.05,tr,0,4);T.box(x,y,z+dir*.03,w,h,.05,[.11,.15,.2],0,PPK.gloss)}else{const s=dir>0?1:-1;T.box(x,y,z,.05,h+.22,w+.22,tr,0,4);T.box(x+s*.03,y,z,.05,h,w,[.11,.15,.2],0,PPK.gloss)}};
+ const nzw=Math.max(2,Math.round(L/3)),dm=Math.floor(nzw/2);for(let i=0;i<nzw;i++){const x=-L/2+L*(i+.5)/nzw;if(i!==dm)win(x,y0+1.6,W/2+.03,1);win(x,y0+H-1.3,W/2+.03,1);win(x,y0+H-1.3,-W/2-.03,-1);win(x,y0+1.6,-W/2-.03,-1)}
+ for(const sx of [-1,1]){win(sx*(L/2+.03),y0+1.6,0,sx*2);win(sx*(L/2+.03),y0+H-1.3,0,sx*2)}
+ const dx=-L/2+L*(dm+.5)/nzw;T.box(dx,y0+1.1,W/2+.05,1.2,2.2,.08,[.18,.27,.2],0,4);T.box(dx,y0-.05,W/2+.5,1.8,.2,1,[.5,.5,.48],0,PPK.conc);
+ T.bx=[[0,y0+H/2,0,L+.2,H+y0,W+.2],[0,y0+H+RH*.35,0,L,RH*.7,W*.55]];return T}
+/* a village church: a nave with a slate roof and a square tower with a spire */
+function ppChurch(R){const T=new Geo(),L=13,W=7,H=6,RH=3.6,wc=[.7,.66,.58],y0=.4,tw=4.6,TH=17;
+ T.box(0,y0/2,0,L+.3,y0,W+.3,[.5,.5,.48],0,PPK.conc);T.box(0,y0+H/2,0,L,H,W,wc,0,PPK.rock);ppGable(T,y0+H,L,W,RH,[.3,.32,.36],PPK.rock,{gc:wc,gk:PPK.rock,ov:.4,ox:.35,trim:[.6,.58,.52],ridge:[.22,.22,.25]});
+ const tx=-L/2-tw/2+.6;T.box(tx,y0+TH/2,0,tw,TH,tw,ppCol(wc,.97),0,PPK.rock);
+ for(const sx of [-1,1])for(const sz of [-1,1])T.box(tx+sx*(tw/2),y0+TH*.4,sz*(tw/2),.5,TH*.8,.5,ppCol(wc,.86),0,PPK.rock);
+ const A=[tx-tw/2-.15,y0+TH,-tw/2-.15],B=[tx+tw/2+.15,y0+TH,-tw/2-.15],C=[tx+tw/2+.15,y0+TH,tw/2+.15],D=[tx-tw/2-.15,y0+TH,tw/2+.15],P=[tx,y0+TH+9,0],sc=[.22,.24,.28];
+ T.tri(A,B,P,sc,PPK.metal);T.tri(B,C,P,sc,PPK.metal);T.tri(C,D,P,sc,PPK.metal);T.tri(D,A,P,sc,PPK.metal);ppBeam(T,[tx,y0+TH+8.6,0],[tx,y0+TH+10.8,0],.12,.12,[.8,.7,.3],4);ppBeam(T,[tx,y0+TH+10,-.5],[tx,y0+TH+10,.5],.1,.1,[.8,.7,.3],4);
+ for(const sz of [-1,1])for(const wx of [-3.6,-1.2,1.2,3.6])T.box(wx,y0+3.2,sz*(W/2+.03),.9,2.4,.06,[.1,.12,.18],0,PPK.gloss);
+ for(const s of [-1,1])T.box(tx+s*(tw/2+.03),y0+TH-2.6,0,.06,2.2,1.1,[.08,.08,.1],0,4),T.box(tx,y0+TH-2.6,s*(tw/2+.03),1.1,2.2,.06,[.08,.08,.1],0,4);
+ T.bx=[[0,y0+H/2,0,L+.2,H+y0,W+.2],[0,y0+H+RH*.35,0,L,RH*.7,W*.55],[tx,y0+TH/2,0,tw+.2,TH+y0,tw+.2]];return T}
+/* a low shed with a lean roof (the machine shed beside a barn) */
+function ppShed(R,o={}){const T=new Geo(),L=o.l||10,W=o.w||6,H=o.h||3.4,wc=o.wall||[.42,.4,.36],rc=o.roof||[.45,.43,.4];
+ T.box(0,H/2+.2,0,L,H,W,wc,0,PPK.metal);T.box(0,.1,0,L+.2,.2,W+.2,[.5,.5,.48],0,PPK.conc);
+ T.quad([-L/2-.3,H+.15,-W/2-.4],[L/2+.3,H+.15,-W/2-.4],[L/2+.3,H+1.15,W/2+.4],[-L/2-.3,H+1.15,W/2+.4],rc,PPK.metal);
+ T.box(0,H*.5+.2,W/2+.03,L*.6,H*.8,.05,[.12,.1,.09],0,4);T.bx=[[0,H/2+.2,0,L,H+.4,W],[0,H+.8,0,L,.5,W]];return T}
+
+/* ---------- fences, hedgerows, power lines ---------- */
+/* points along a polyline every sp metres (the corners are always points) */
+function ppWalk(pts,sp){const out=[];for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1],L=Math.hypot(b[0]-a[0],b[1]-a[1]),n=Math.max(1,Math.round(L/sp));for(let k=i?1:0;k<=n;k++)out.push([a[0]+(b[0]-a[0])*k/n,a[1]+(b[1]-a[1])*k/n])}return out}
+/* a post and rail (or wire) fence along a polyline of [x,z] */
+function ppFence(G,pts,R,o={}){const h=o.h||1.2,sp=o.sp||3,nr=o.rails??3,pc=o.post||[.46,.37,.27],rc=o.rail||pc,w=o.rw||.1,t=o.rt||.035,T=new Geo(),P=ppWalk(pts,sp),tops=[];
+ P.forEach(([x,z])=>{const lx=(R()-.5)*.06,lz=(R()-.5)*.06,hh=h*(.95+.1*R());ppBeam(T,[x,-.2,z],[x+lx,hh,z+lz],.12,.12,ppCol(pc,.85+.3*R()),4);tops.push(hh)});
+ for(let i=0;i<P.length-1;i++){const a=P[i],b=P[i+1];for(let j=0;j<nr;j++){const y=h*(nr===1?1:.28+.72*j/(nr-1))*(.99+.02*R()),sag=o.wire?.05:0;
+  if(sag){const m=[(a[0]+b[0])/2,y-sag,(a[1]+b[1])/2];ppBeam(T,[a[0],y,a[1]],m,w,t,rc,4);ppBeam(T,m,[b[0],y,b[1]],w,t,rc,4)}else ppBeam(T,[a[0],y,a[1]],[b[0],y,b[1]],w,t,rc,4)}}
+ ppPut(G,T,0,0,0)}
+/* a hedgerow of bushes along a polyline with a standard tree now and then; the tree-like colliders go to cg.tr */
+function ppHedge(g,cg,pts,R,o={}){if(g.nv)return;const P=ppWalk(pts,o.sp||1.2),hh=o.h||1.7,tr=cg&&(cg.tr||(cg.tr=[])),LC=[[.17,.3,.09],[.2,.33,.1],[.14,.26,.08],[.22,.34,.12],[.19,.28,.1]];let nt=o.tree?Math.round(R()*8)+6:1e9;
+ P.forEach(([x,z],i)=>{const s=hh*(.78+.4*R()),lc=LC[Math.floor(vgNoise(i*.11+(o.seed||0),3)*LC.length*.999)];vgBush(g,x+(R()-.5)*.5,z+(R()-.5)*.5,s,R,{n:g.lod?3:5,leaf:lc});
+  if(tr&&i%2===0)tr.push([x,z,.8,hh*1.25]);
+  if(--nt<=0){nt=Math.round(14+R()*12);const k=R(),h=7+R()*5,e=vgTree(g,x+(R()-.5)*.6,z+(R()-.5)*.6,h,R,k<.25?'birch':'oak');if(tr)tr.push(e)}})}
+/* a line of wooden power poles with three wires between them: [x,z] points; the poles and the wires block the vehicle */
+function ppPoles(G,cg,pts,R,o={}){const h=o.h||9.5,T=new Geo(),sp=o.sp||38,P=ppWalk(pts,sp),pc=[.3,.23,.17];
+ ppLathe(T,0,0,0,[[.19,0],[.15,h*.5],[.12,h]],8,pc,PPK.bark);T.box(0,h-.55,0,.14,.14,2.3,ppCol(pc,.9),0,PPK.bark);ppBeam(T,[0,h-.9,.2],[0,h-.45,1.0],.08,.08,pc,4);ppBeam(T,[0,h-.9,-.2],[0,h-.45,-1.0],.08,.08,pc,4);
+ for(const z of [-.95,0,.95])ppLathe(T,0,h-.5+(z?0:.12),z,[[.05,0],[.05,.14],[.09,.18],[.05,.3]],6,[.52,.6,.62],PPK.gloss);
+ const cur=[],W=[];
+ P.forEach(([x,z],i)=>{const a=P[Math.max(0,i-1)],b=P[Math.min(P.length-1,i+1)],ry=Math.atan2(-(b[1]-a[1]),b[0]-a[0]);ppPut(G,T,x,0,z,ry,1);if(cg)cg.cyl(x,z,.2,h,0,[.4,.4,.4],8);cur.push({x,z,ry})});
+ const wc=[.09,.09,.1];
+ for(let i=0;i<cur.length-1;i++){const A=cur[i],B=cur[i+1];for(const lz of [-.95,0,.95]){const wy=h-.5+(lz?0:.12)+.3,pa=[A.x+Math.sin(A.ry)*lz,wy,A.z+Math.cos(A.ry)*lz],pb=[B.x+Math.sin(B.ry)*lz,wy,B.z+Math.cos(B.ry)*lz],L=Math.hypot(pb[0]-pa[0],pb[2]-pa[2]),sag=L*.022,n=7;let pv=pa;
+   for(let k=1;k<=n;k++){const f=k/n,q=[pa[0]+(pb[0]-pa[0])*f,wy-sag*4*f*(1-f)*1,pa[2]+(pb[2]-pa[2])*f];ppBeam(G,pv,q,.035,.035,wc,4);if(cg)cg.quad([pv[0],pv[1]-.14,pv[2]],[q[0],q[1]-.14,q[2]],[q[0],q[1]+.14,q[2]],[pv[0],pv[1]+.14,pv[2]],[.4,.4,.4]);pv=q}}}}
+/* a round bale stack in rows: n bales in a row (ends touching) with a second row on top when stacked */
+function ppBales(G,cg,R,x,z,ry,n,o={}){const T=new Geo(),r=o.r||.72,l=o.l||1.2,col=o.col||[.8,.66,.33],kd=o.kind??4,cs=Math.cos(ry),sn=Math.sin(ry);
+ for(let i=0;i<n;i++){const lx=0,lz=(i-(n-1)/2)*(2*r+.04);ppBale(T,lx+(R()-.5)*.08,r,lz,(R()-.5)*.08,r,l*(.96+.08*R()),col,kd)}
+ if(o.stack&&n>1)for(let i=0;i<n-1;i++){const lz=(i-(n-2)/2)*(2*r+.04);ppBale(T,0,r*2.75,lz,(R()-.5)*.1,r,l,col,kd)}
+ ppPut(G,T,x,0,z,ry,1);T.bx=[[0,(o.stack&&n>1?r*3.5:r*2)/2,0,l+.1,o.stack&&n>1?r*3.5:r*2,n*(2*r+.04)]];
+ if(cg)for(const [cx,cy,cz,sx,sy,sz] of T.bx)cg.box(x+cx*cs+cz*sn,cy,z-cx*sn+cz*cs,sx,sy,sz,[.5,.5,.5],ry)}
+
+/* ---------- a windsock ---------- */
+/* the sock lies along +x from its ring (the pivot is at the origin); the model matrix turns it downwind and lets it droop in a light wind */
+function ppSockGeo(){const T=new Geo(),n=5,L=2.6,r0=.37,r1=.14;
+ for(let j=0;j<n;j++)ppTubeX(T,L*j/n,L*(j+1)/n+.004,r0+(r1-r0)*j/n,r0+(r1-r0)*(j+1)/n,12,j%2?[.95,.94,.9]:[.97,.4,.08],4);
+ ppTubeX(T,-.05,.07,r0+.03,r0+.03,12,[.55,.56,.58],4);return T}
+/* the general placement matrix: T * Ry(ry) * Rz(rz) * Rx(rx) * s (column-major) */
+function ppM(x,y,z,ry=0,rz=0,rx=0,s=1){const cy=Math.cos(ry),sy=Math.sin(ry),cz=Math.cos(rz),sz=Math.sin(rz),cx=Math.cos(rx),sx=Math.sin(rx),
+ a=[cz,-sz,0,sz,cz,0,0,0,1],b=[1,0,0,0,cx,-sx,0,sx,cx],ab=[0,0,0,0,0,0,0,0,0];for(let i=0;i<3;i++)for(let j=0;j<3;j++){let v=0;for(let k=0;k<3;k++)v+=a[i*3+k]*b[k*3+j];ab[i*3+j]=v}
+ const r=[0,0,0,0,0,0,0,0,0],yy=[cy,0,sy,0,1,0,-sy,0,cy];for(let i=0;i<3;i++)for(let j=0;j<3;j++){let v=0;for(let k=0;k<3;k++)v+=yy[i*3+k]*ab[k*3+j];r[i*3+j]=v}
+ return [r[0]*s,r[3]*s,r[6]*s,0,r[1]*s,r[4]*s,r[7]*s,0,r[2]*s,r[5]*s,r[8]*s,0,x,y,z,1]}
+const ppMul=(A,B)=>{const o=new Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++){let v=0;for(let k=0;k<4;k++)v+=A[k*4+r]*B[c*4+k];o[c*4+r]=v}return o};
+function ppWindsock(g,cg,x,z,R,o={}){const h=o.h||6.6,T=new Geo();
+ ppLathe(T,0,0,0,[[.16,0],[.16,.35],[.07,.4],[.055,h],[.04,h+.1]],8,[[.5,.5,.48],[.5,.5,.48],[.78,.8,.82],[.78,.8,.82]],PPK.flat);T.box(0,h+.05,0,.12,.12,.12,[.4,.4,.42],0,4);
+ ppPut(g.R,T,x,0,z,0,1);if(cg)cg.cyl(x,z,.12,h,0,[.5,.5,.5],6);
+ (g.pd||(g.pd=[])).push({k:'sock',geo:ppSockGeo(),p:[x,h+.05,z],ph:R()*6.28})}
+
+/* ---------- birds ---------- */
+/* one bird in flight, nose along +x: body and a wing of two parts that follows the angle a (0 level, positive up) */
+function ppBird(G,x,y,z,a,s,col,tip,belly){const P=(lx,ly,lz)=>[x+lx*s,y+ly*s,z+lz*s],bc=belly||col;
+ G.tri(P(.24,0,0),P(-.15,.01,-.055),P(-.15,.01,.055),col,4);G.tri(P(.24,0,0),P(-.15,-.03,0),P(-.15,.01,-.055),bc,4);G.tri(P(.24,0,0),P(-.15,.01,.055),P(-.15,-.03,0),bc,4);
+ for(const sd of [-1,1]){const ey=Math.sin(a*.55)*.2,ez=sd*(.05+Math.cos(a*.55)*.2),ty=ey+Math.sin(a*1.2)*.26,tz=ez+sd*Math.cos(a*1.2)*.26;
+  G.quad(P(.07,0,sd*.04),P(-.12,0,sd*.04),P(-.1,ey,ez),P(.03,ey,ez),col,4);G.tri(P(.03,ey,ez),P(-.1,ey,ez),P(-.06,ty,tz),tip||col,4)}}
+/* four poses of a flock (every bird a different place in its wing beat); the flock itself circles as one */
+function ppFlockGeos(R,n,o){const poses=[.6,.15,-.45,.15],G=[0,1,2,3].map(()=>new Geo()),B=[];
+ for(let i=0;i<n;i++)B.push({x:(R()-.5)*o.sx,y:(R()-.5)*o.sy,z:(R()-.5)*o.sz,ph:(R()*4)|0,s:o.s*(.85+.3*R())});
+ for(let k=0;k<4;k++)for(const b of B)ppBird(G[k],b.x,b.y,b.z,poses[(k+b.ph)%4],b.s,o.col,o.tip,o.belly);return G}
+function ppFlock(g,R,o){if(g.nv)return;(g.pd||(g.pd=[])).push({k:'birds',geos:ppFlockGeos(R,o.n||7,{sx:o.sx||9,sy:o.sy||3,sz:o.sz||9,s:o.s||1.1,col:o.col||[.93,.93,.91],tip:o.tip||[.2,.2,.22],belly:o.belly}),c:o.c,r:o.r||34,y:o.y||30,sp:o.sp||9,th0:R()*6.28,dir:o.dir||1,fq:o.fq||5.5})}
+
+/* ---------- drawing the dynamic pieces (windsocks, flocks) ---------- */
+function propsDraw(sim,R,gl,t,I4,eye){const W=sim.world,pd=W.pd;if(!pd||!pd.length)return;
+ if(!W.pdm)W.pdm=pd.map(it=>it.k==='sock'?{it,m:R.mesh(it.geo)}:{it,ms:(it.geos||it.parts).map(q=>R.mesh(q))});
+ const ts=(t||0)/1000,wv=sim.windNow||[0,0,0],sp=Math.hypot(wv[0],wv[2]);
+ for(const E of W.pdm){const it=E.it;
+  if(it.k==='sock'){const ext=Math.max(0,Math.min(1,(sp-.8)/5.2)),ang=sp>.3?Math.atan2(-wv[2],wv[0]):(it.yaw||(it.yaw=it.ph)),gust=.04+.1*ext,
+    yaw=ang+Math.sin(ts*1.3+it.ph)*gust*1.5,pit=-(1-ext)*1.4+Math.sin(ts*3.1+it.ph*2)*gust*.6;if(sp>.3)it.yaw=ang;
+   R.draw(E.m,ppM(it.p[0],it.p[1],it.p[2],yaw,pit,0,1),{lines:false})}
+  else if(it.k==='pump'){/* a pumping unit: the crank turns, the walking beam is driven by it through the pitman arms, the horsehead rolls the cable (side view: x forward, y up, the origin at the pivot of the beam) */
+   const [Mb,Mc,Mp,Ml,Mr]=E.ms,K=it.K,ph=it.ph+ts*it.w,cs=Math.cos(it.yaw),sn=Math.sin(it.yaw),Wp=(x,y)=>[it.p[0]+x*cs,it.p[1]+y,it.p[2]-x*sn],
+    P=[K.C[0]+K.r*Math.cos(ph),K.C[1]+K.r*Math.sin(ph)],rho=Math.hypot(P[0],P[1]),psi=Math.atan2(P[1],P[0]),kk=(K.Lp*K.Lp-K.Rb*K.Rb-rho*rho)/(2*K.Rb),a=psi+Math.acos(Math.max(-1,Math.min(1,kk/rho))),
+    Q=[-K.Rb*Math.cos(a),-K.Rb*Math.sin(a)],yb=K.yb+K.Rh*a;let w=Wp(0,0);
+   R.draw(Mb,ppM(w[0],w[1],w[2],it.yaw,a,0,1),{lines:false});w=Wp(K.C[0],K.C[1]);R.draw(Mc,ppM(w[0],w[1],w[2],it.yaw,ph,0,1),{lines:false});
+   w=Wp(Q[0],Q[1]);R.draw(Mp,ppM(w[0],w[1],w[2],it.yaw,Math.atan2(P[1]-Q[1],P[0]-Q[0]),0,1),{lines:false});
+   w=Wp(K.Rh,0);R.draw(Ml,ppMul(ppM(w[0],w[1],w[2],it.yaw,0,0,1),[1,0,0,0,0,-yb,0,0,0,0,1,0,0,0,0,1]),{lines:false});w=Wp(K.Rh,yb);R.draw(Mr,ppM(w[0],w[1],w[2],it.yaw,0,0,1),{lines:false})}
+  else if(it.k==='wind'){/* a wind pump: the head turns to face the wind, the wheel spins with it */
+   const [Mr,Mh]=E.ms,dt=it.tl==null?0:Math.min(.1,Math.max(0,ts-it.tl)),ang=sp>.3?Math.atan2(-wv[2],wv[0]):(it.yaw||(it.yaw=it.ph));it.tl=ts;if(sp>.3)it.yaw=ang;it.spin=(it.spin||0)+dt*Math.min(5,sp*.9);
+   R.draw(Mh,ppM(it.p[0],it.p[1],it.p[2],ang,0,0,1),{lines:false});R.draw(Mr,ppM(it.p[0],it.p[1],it.p[2],ang,0,it.spin,1),{lines:false})}
+  else{const th=it.th0+it.dir*it.sp/it.r*ts,c=it.c,px=c[0]+Math.cos(th)*it.r,pz=c[1]+Math.sin(th)*it.r,py=it.y+Math.sin(ts*.31+it.th0)*2,tx=-Math.sin(th)*it.dir,tz=Math.cos(th)*it.dir,yw=Math.atan2(-tz,tx),
+    fr=Math.floor(ts*it.fq+it.th0*3)&3;R.draw(E.ms[fr],ppM(px,py,pz,yw,0,-it.dir*(it.bk??.35),1),{lines:false})}}}
+
+/* ---------- the far hills: wind turbines (in the frame of the far-land ring, see render) ---------- */
+function ppTurbine(){const Tw=new Geo(),Ro=new Geo(),h=64,wc=[.93,.93,.91];
+ ppLathe(Tw,0,-3,0,[[2.6,0],[2.4,3],[1.6,3+h]],14,wc,PPK.flat);Tw.box(-.8,h+.3,0,6.4,3,3,[.86,.87,.88],0,4);Tw.box(2.6,h+.3,0,1.2,2.4,2.4,[.8,.8,.82],0,4);
+ const B=new Geo(),n=7;let pv=null;for(let j=0;j<=n;j++){const f=j/n,s=1.5+34*f,c=2.7*(1-f)+.55*f,sg=.5*(1-f)+.07*f,le=[-.3*c*Math.sin(sg),s,-.3*c*Math.cos(sg)],te=[.7*c*Math.sin(sg),s,.7*c*Math.cos(sg)];if(pv){B.quad(pv[0],pv[1],te,le,wc,4)}pv=[le,te]}
+ ppPut(Ro,B,0,0,0,0,1,0);ppPut(Ro,B,0,0,0,0,1,2.0944);ppPut(Ro,B,0,0,0,0,1,4.1888);ppTubeX(Ro,-.2,2.4,1.25,.2,10,[.9,.9,.92],4);
+ return {tower:Tw,rotor:Ro,h}}
+/* a wind farm on the far ridges: found by sampling the same height field the far land is built from; the turbines stand in the ring's own metres */
+function farBuild(sim,seed,bio){const W=sim.world;if(!W||!W.aux||!W.aux.hz||bio==='conifer'||sim.noFar)return;
+ const B=EVB[bio]||EVB.temperate,s=(((Math.floor(seed*131)%997)+997)%997)+7,R=srnd(Math.floor(seed*977)+5),C=[];
+ for(let a=-1.75;a<1.75;a+=.025)for(let r=300;r<=580;r+=20){const x=Math.sin(a)*r,z=-Math.cos(a)*r,hh=evH(x,z,B,s);if(hh>B.H*.26)C.push({x,z,h:hh,sc:hh-Math.abs(a)*7})}
+ if(C.length<4)return;C.sort((p,q)=>q.sc-p.sc);const an=C[0],hub=[an];for(const c of C){if(hub.length>=7)break;if(hub.every(p=>Math.hypot(p.x-c.x,p.z-c.z)>80)&&Math.hypot(c.x-an.x,c.z-an.z)<430)hub.push(c)}
+ if(hub.length<3)return;const Tt=ppTurbine(),yaw=(R()-.5)*1.2+.4;
+ W.aux.hzp={list:hub.map(c=>({x:c.x,y:c.h,z:c.z,ph:R()*6.28,sp:1.15+.1*R()})),tower:sim.r.mesh(Tt.tower),rotor:sim.r.mesh(Tt.rotor),hh:Tt.h,yaw}}
+function farDraw(sim,R,gl,t,HM){const P=sim.world.aux.hzp,ts=(t||0)/1000;if(!P)return;
+ for(const q of P.list){R.draw(P.tower,ppMul(HM,ppM(q.x,q.y,q.z,P.yaw,0,0,1)),{lines:false});R.draw(P.rotor,ppMul(HM,ppMul(ppM(q.x,q.y,q.z,P.yaw,0,0,1),ppM(2.6,P.hh+.3,0,0,0,q.ph+ts*q.sp,1))),{lines:false})}}
+
+/* ---------- a village on the horizon ---------- */
+function ppVillage(g,cg,R,cx,cz,w,o={}){const HC=[[.78,.72,.6],[.84,.82,.76],[.64,.42,.32],[.72,.64,.5],[.88,.86,.8],[.6,.46,.36]],RC=[[.5,.24,.17],[.42,.22,.17],[.36,.37,.4],[.5,.3,.2]],n=o.n||11,tr=cg.tr||(cg.tr=[]),sk=o.skew||0;
+ const ch=ppChurch(R),ci=Math.max(0,Math.min(n-1,Math.round((o.church??.3)*n-.5)));
+ for(let i=0;i<n;i++){const f=(i+.5)/n,x=cx-w/2+w*f+(R()-.5)*4,z=cz+Math.sin(f*3.1+1)*7+(R()-.5)*6+sk*(f-.5)*w;
+  if(i===ci){ppPlace(g,cg,ch,x,z+3,.1+(R()-.5)*.1);ppShade(g,x,z+3,13,7,10);continue}
+  const T=ppHouse(R,{l:ppRv(R,7,12),w:ppRv(R,6,8.4),h:ppRv(R,4.4,5.6),rh:ppRv(R,2,3.2),wall:HC[(R()*HC.length)|0],roof:RC[(R()*RC.length)|0],plaster:R()<.5});
+  ppPlace(g,cg,T,x,z,(R()-.5)*.5);ppShade(g,x,z,10,7,5)}
+ for(let i=0;i<Math.round(n*.9);i++){const f=R(),x=cx-w/2+w*f,z=cz+(R()-.2)*18+4,h=ppRv(R,8,13);tr.push(vgTree(g,x,z,h,R,R()<.2?'fir':R()<.2?'birch':'oak'))}}
+
+/* ---------- the scenes ---------- */
+const PROPS={};
+/* the practice field: a farm to the west, a village and wind turbines on the far side, hedgerows and fences dividing the pastures, a power line, bales, birds and a windsock beside the start */
+PROPS.field=function(g,R,sg,cg,T){const lod=g.lod,Rp=srnd(8101),tr=cg.tr||(cg.tr=[]);
+ const fx=-72,fz=-74,fy=.32,fc=Math.cos(fy),fs=Math.sin(fy),W=(lx,lz)=>[fx+lx*fc+lz*fs,fz-lx*fs+lz*fc];
+ ppPlace(g,cg,ppBarn(Rp),fx,fz,fy);ppShade(g,fx,fz,18,10,8);
+ {const p=W(8.5,-10.5);ppPlace(g,cg,ppSilo(Rp),p[0],p[1],0);ppShade(g,p[0],p[1],5,5,12)}
+ {const p=W(26,13);ppPlace(g,cg,ppHouse(Rp,{l:10.5,w:7.8,h:5.4,rh:2.9}),p[0],p[1],fy+1.35);ppShade(g,p[0],p[1],10.5,7.8,7)}
+ {const p=W(-17,13);ppPlace(g,cg,ppShed(Rp),p[0],p[1],fy);ppShade(g,p[0],p[1],10,6,4)}
+ {const p=W(-3,-18);ppBales(g.R,cg,Rp,p[0],p[1],fy+1.57,4,{col:[.9,.91,.88],kind:PPK.gloss,stack:1});ppShade(g,p[0],p[1],4,4,2.5)}
+ {const p=W(19,-9);ppBales(g.R,cg,Rp,p[0],p[1],fy+.2,3,{col:[.82,.68,.34]})}
+ ppFence(g.R,[W(-24,-4),W(-24,22),W(30,26)].map(p=>p),Rp,{h:1.25,sp:3,rails:3,post:[.9,.9,.88],rail:[.92,.92,.9],rw:.14,rt:.04});
+ if(!lod)for(let i=0;i<7;i++){const p=W(-32-i*3.4,-6+(Rp()-.5)*6);tr.push(vgTree(g,p[0],p[1],ppRv(Rp,11,14),Rp,Rp()<.3?'birch':'oak'))}
+ ppSkip(g,fx,fz,28);
+ /* hedgerows: the pastures between farm and course, and the field boundaries in front */
+ ppHedge(g,cg,[[-30,-122],[-68,-136],[-128,-142]],Rp,{tree:1,seed:3});
+ ppHedge(g,cg,[[72,18],[74,-70],[70,-150]],Rp,{tree:1,seed:7});
+ ppHedge(g,cg,[[72,-150],[30,-148],[-10,-153]],Rp,{seed:11});
+ ppFence(g.R,[[-60,-10],[-61,-45],[-64,-62]],Rp,{h:1.15,sp:4,rails:3,wire:1,rail:[.6,.6,.62],rw:.012,rt:.012});
+ ppFence(g.R,[[60,-150],[60,-110]],Rp,{h:1.15,sp:4,rails:3,wire:1,rail:[.6,.6,.62],rw:.012,rt:.012});
+ ppPoles(g.R,cg,[[100,34],[99,-70],[92,-160],[80,-222]],Rp);
+ ppBales(g.R,cg,Rp,64,-34,.4,4,{col:[.9,.91,.88],kind:PPK.gloss});ppBales(g.R,cg,Rp,60,-104,1.1,2,{col:[.82,.68,.34]});ppBales(g.R,cg,Rp,-30,-110,.2,3,{col:[.82,.68,.34]});
+ ppVillage(g,cg,Rp,12,-212,150,{n:12,church:.34,skew:-.12});
+ ppWindsock(g,cg,7.6,5.5,Rp);
+ ppFlock(g,Rp,{c:[58,-96],r:26,y:27,n:9,col:[.07,.07,.08],tip:[.07,.07,.08],s:1.15,sp:8});
+ ppFlock(g,Rp,{c:[-28,-146],r:34,y:36,n:6,col:[.93,.93,.9],tip:[.22,.22,.25],s:1.35,sp:9,dir:-1})};
+PROPS.balloons=PROPS.precision=PROPS.field;
+/* wrap the builds: the real look's scenery is added after the scene's own geometry (the loads that do not offer a collider set, the missions and the poster previews, get none) */
+Object.keys(SIMSCN).forEach(k=>{const S0=SIMSCN[k],ob=S0.build;if(!ob)return;S0.build=function(g,R,sg,cg){const T=ob.call(this,g,R,sg,cg);if(cg&&!g.nv&&PROPS[k]){try{PROPS[k].call(this,g,R,sg,cg,T)}catch(e){console.warn('props',k,e)}}return T}});
+
+/* ---------- the radio mast on the horizon (the real look's replacement of the grey column with the red cap) ---------- */
+function ppMast(g,x,z){const G=g.R,T=new Geo(),H=58,n=12,W0=1.3,W1=.5,RW=[.85,.16,.12],WH=[.93,.93,.9];
+ const half=y=>W0+(W1-W0)*y/H,corner=(i,y)=>[(i&1?1:-1)*half(y),y,(i&2?1:-1)*half(y)];
+ for(let j=0;j<n;j++){const y0=H*j/n,y1=H*(j+1)/n,c=(j>>1)%2?WH:RW;
+  for(let i=0;i<4;i++)ppBeam(T,corner(i,y0),corner(i,y1),.16,.16,c,4);
+  for(const [a,b] of [[0,1],[1,3],[3,2],[2,0]])ppBeam(T,corner(a,y1),corner(b,y1),.07,.07,c,4);
+  for(const [a,b,c2,d] of [[0,1,0,1],[1,3,1,3],[3,2,3,2],[2,0,2,0]]){ppBeam(T,corner(a,y0),corner(b,y1),.06,.06,c,4);ppBeam(T,corner(b,y0),corner(a,y1),.06,.06,c,4)}}
+ ppBeam(T,[0,H,0],[0,H+7,0],.14,.14,[.8,.8,.82],4);for(const k of [0,1,2,3]){const a=k*1.5708+.4;T.box(Math.cos(a)*.9,H-4,Math.sin(a)*.9,.5,1.4,.25,[.86,.86,.88],a,4)}
+ T.box(0,H+7.2,0,.3,.3,.3,[.95,.15,.12],0,4);
+ ppPut(G,T,x,0,z,0,1)}
+
+/* ---------- more pieces: vehicles, barrels, logs, dead trees, rocks, a ship, stands, tents, masts, boats ---------- */
+const PPCAR=[[.65,.1,.1],[.12,.22,.55],[.88,.88,.86],[.62,.64,.66],[.07,.07,.08],[.12,.35,.2],[.85,.7,.12],[.25,.26,.28],[.55,.3,.12]];
+/* a car lying along +x (front at +x): a body extruded from its side profile, a tapered greenhouse with glass inset in its frame, wheels, lights. o.type sedan|hatch|suv|van, o.wreck: rusty and glassless */
+const PPCT={sedan:{L:4.5,W:1.78,he:.8,br:-1.35,rf:.05,rr:-.85,ry:1.42,by:.9,hy:.82},hatch:{L:3.9,W:1.7,he:.6,br:-1.75,rf:-.02,rr:-1.5,ry:1.45,by:.9,hy:.8},suv:{L:4.6,W:1.9,he:.95,br:-2.05,rf:.3,rr:-1.9,ry:1.72,by:1,hy:.95},van:{L:5,W:1.95,he:1.5,br:-2.45,rf:1.18,rr:-2.45,ry:2.05,by:1,hy:.9}};
+function ppCar(R,o={}){const T=new Geo(),wr=!!o.wreck,ty=o.type||['sedan','sedan','hatch','suv','van'][(R()*5)|0],C=PPCT[ty],L=C.L,hw=C.W/2,col=o.col||PPCAR[(R()*PPCAR.length)|0],glc=wr?[.05,.05,.06]:[.07,.1,.14],bk=[.07,.07,.08],kb=wr?4:PPK.gloss,hl=L/2,y0=.3;
+ const P=[[hl,y0],[hl,.6],[hl-.35,C.hy-.05],[C.he,C.hy+.03],[C.br,C.by],[-hl+.5,C.by-.02],[-hl,C.by-.18],[-hl,y0]];
+ for(let i=0;i<P.length;i++){const a=P[i],b=P[(i+1)%P.length];T.quad([a[0],a[1],-hw],[b[0],b[1],-hw],[b[0],b[1],hw],[a[0],a[1],hw],i===P.length-1?bk:col,i===P.length-1?4:kb)}
+ for(const z of [-hw,hw])for(let i=1;i<P.length-1;i++)T.tri([P[0][0],P[0][1],z],[P[i][0],P[i][1],z],[P[i+1][0],P[i+1][1],z],col,kb);
+ const wb=hw*.9,wt=hw*.74,A=[C.he,C.by,-wb],B=[C.he,C.by,wb],Dd=[C.br,C.by,-wb],E=[C.br,C.by,wb],At=[C.rf,C.ry,-wt],Bt=[C.rf,C.ry,wt],Dt=[C.rr,C.ry,-wt],Et=[C.rr,C.ry,wt];
+ T.quad(At,Bt,Et,Dt,col,kb);
+ const face=(p0,p1,p2,p3,glass)=>{T.quad(p0,p1,p2,p3,col,kb);if(!glass)return;const c=[(p0[0]+p1[0]+p2[0]+p3[0])/4,(p0[1]+p1[1]+p2[1]+p3[1])/4,(p0[2]+p1[2]+p2[2]+p3[2])/4],e=[p1[0]-p0[0],p1[1]-p0[1],p1[2]-p0[2]],f=[p3[0]-p0[0],p3[1]-p0[1],p3[2]-p0[2]];
+  let n=[e[1]*f[2]-e[2]*f[1],e[2]*f[0]-e[0]*f[2],e[0]*f[1]-e[1]*f[0]];const l=Math.hypot(n[0],n[1],n[2])||1,sg=Math.sign(n[0]*(c[0]-(C.he+C.br)/2)+n[1]*(c[1]-C.by)+n[2]*c[2])||1;n=[n[0]/l*.014*sg,n[1]/l*.014*sg,n[2]/l*.014*sg];
+  const q=(p,k)=>[c[0]+(p[0]-c[0])*k+n[0],c[1]+(p[1]-c[1])*k+n[1],c[2]+(p[2]-c[2])*k+n[2]];T.quad(q(p0,.86),q(p1,.86),q(p2,.86),q(p3,.86),glc,wr?4:PPK.gloss)};
+ face(A,B,Bt,At,!wr);face(Dd,Dt,Et,E,!wr);face(A,At,Dt,Dd,!wr);face(B,E,Et,Bt,!wr);
+ T.box(hl+.03,.5,0,.1,.24,C.W*.9,[.1,.1,.11],0,4);T.box(-hl-.03,.5,0,.1,.24,C.W*.9,[.1,.1,.11],0,4);
+ for(const s of [-1,1]){T.box(hl+.01,.66,s*hw*.66,.05,.13,.34,[.96,.95,.84],0,4);T.box(-hl-.01,.7,s*hw*.7,.05,.14,.3,wr?[.3,.1,.08]:[.82,.08,.06],0,4)}
+ const Wg=new Geo();ppLathe(Wg,0,-.11,0,[[0,0],[.33,0],[.33,.22],[0,.22]],12,bk,4);ppLathe(Wg,0,-.12,0,[[0,0],[.18,0],[.18,.24],[0,.24]],10,wr?[.4,.2,.12]:[.72,.72,.74],wr?4:PPK.gloss);
+ for(const sx of [-1,1])for(const sz of [-1,1])ppPut(T,Wg,sx*(L*.5-.82-(sx<0?.1:0)),.33,sz*(hw-.06),0,1,Math.PI/2);
+ T.bx=[[0,.75,0,L,1.5,C.W]];T.ct=C;return T}
+/* an oil drum */
+function ppBarrel(R,col){const T=new Geo();ppLathe(T,0,0,0,[[.27,0],[.3,.05],[.3,.85],[.27,.9]],10,col,PPK.metal);for(const y of [.2,.45,.7])ppLathe(T,0,y,0,[[.312,0],[.312,.04]],10,ppCol(col,.7),4);T.cy=[[0,0,.3,.9]];return T}
+/* a fallen log, its cut ends pale, and a stump */
+function ppLog(R,len,r,col){const T=new Geo(),c=col||[.3,.22,.15];ppTubeX(T,-len/2,len/2,r,r*.85,9,c,PPK.bark);
+ for(const s of [-1,1]){const rr=s>0?r*.85:r,x=s*len/2;for(let i=0;i<9;i++){const a0=i/9*6.2832,a1=(i+1)/9*6.2832;T.tri([x,0,0],[x,Math.cos(a0)*rr,Math.sin(a0)*rr],[x,Math.cos(a1)*rr,Math.sin(a1)*rr],[.62,.5,.32],4)}}
+ T.bx=[[0,r*.9,0,len,r*1.8,r*1.8]];return T}
+function ppStump(R,r,h){const T=new Geo();ppLathe(T,0,0,0,[[r*1.5,0],[r*1.15,h*.25],[r,h*.6],[r*.97,h]],9,[.3,.22,.15],PPK.bark);
+ for(let i=0;i<9;i++){const a0=i/9*6.2832,a1=(i+1)/9*6.2832;T.tri([0,h,0],[Math.cos(a0)*r*.97,h,Math.sin(a0)*r*.97],[Math.cos(a1)*r*.97,h,Math.sin(a1)*r*.97],[.62,.5,.32],4)}
+ T.cy=[[0,0,r,h]];return T}
+/* a bare tree: a trunk and a few forking branches */
+function ppDeadTree(R,h){const T=new Geo(),bc=[.42,.37,.31];ppLathe(T,0,0,0,[[h*.05,0],[h*.032,h*.5],[h*.013,h]],7,bc,PPK.bark);
+ const nb=8+((R()*4)|0);for(let i=0;i<nb;i++){const y=h*(.4+.55*R()),a=R()*6.28,L=h*(.2+.22*R()),up=.2+.55*R(),p0=[0,y,0],p1=[Math.cos(a)*L,y+L*up,Math.sin(a)*L];ppBeam(T,p0,p1,h*.02,h*.02,bc,PPK.bark);
+  for(let k=0;k<2;k++){const f=.45+.4*R(),q=[p1[0]*f,y+(p1[1]-y)*f,p1[2]*f],a2=a+(R()-.5)*1.6,L2=L*(.35+.2*R()),q2=[q[0]+Math.cos(a2)*L2,q[1]+L2*(.3+.5*R()),q[2]+Math.sin(a2)*L2];ppBeam(T,q,q2,h*.01,h*.01,bc,PPK.bark)}}
+ T.cy=[[0,0,h*.05,h]];return T}
+/* a boulder with a collider */
+function ppRock(g,cg,x,z,s,R,o={}){const dims=o.dims||[s*(.8+R()*.5),s*(.45+R()*.3),s*(.8+R()*.5)];vgRock(g,x,z,s,R,{...o,dims});if(cg)cg.box(x,dims[1]*.45,z,dims[0]*1.5,dims[1]*.9,dims[2]*1.5,[.5,.5,.5],0);return dims}
+/* a free spot among the scene's trees [x,z,crownRadius,height] */
+const ppFree=(T,x,z,r)=>!T.some(t=>t&&Math.hypot((t[0]??t.x)-x,(t[1]??t.z)-z)<r+(t[2]||0)*.7);
+/* tall reeds along a line */
+function ppReeds(g,a,b,n,R,o={}){if(g.nv)return;const F=g.F,k1=vgK('c','reed'),base=o.col||[.4,.46,.2];
+ for(let i=0;i<n;i++){const f=R(),x=a[0]+(b[0]-a[0])*f+(R()-.5)*(o.spread||1.2),z=a[1]+(b[1]-a[1])*f+(R()-.5)*(o.spread||1.2),h=(.9+R()*.9)*(o.hs||1),w=h*.55,v=.8+R()*.4,cb=vgSc(base,.55*v),ct=vgSc(base,1.15*v),col=[cb,cb,ct,ct],N=[vgUp,vgUp,vgUp,vgUp],yaw=R()*3.14;
+  vgStand(F,x,.01,z,Math.cos(yaw),Math.sin(yaw),w/2,h,col,k1,N,1,.09);vgStand(F,x,.01,z,-Math.sin(yaw),Math.cos(yaw),w/2,h,col,k1,N,1,.09)}}
+
+/* a container ship: dark hull with a red boot-topping, a white bridge at the stern, a funnel and bays of containers on deck; its plan lies along x (the bow at +x), the deck is 11 m above the water line y=0 */
+function ppShip(R,o={}){const T=new Geo(),Lh=o.l||140,B=o.b||22,Hh=11,hc=[.1,.11,.13],rd=[.46,.09,.07],CC=[[.46,.17,.13],[.13,.24,.4],[.13,.3,.2],[.66,.34,.1],[.5,.52,.52],[.72,.73,.7],[.3,.2,.15],[.1,.32,.34]];
+ const P=[[-Lh/2,-B/2],[Lh/2-26,-B/2],[Lh/2,-B*.2],[Lh/2,B*.2],[Lh/2-26,B/2],[-Lh/2,B/2]],P2=P.map(([x,z])=>[x*1.004,z*1.004]);
+ T.kd=PPK.conc;slab(T,P,-3,Hh,hc,hc);T.kd=4;slab(T,P2,-3,1.6,rd,rd);T.kd=0;
+ T.box(0,Hh+.15,0,Lh-30,.3,B-1.4,[.3,.28,.26],0,PPK.conc);
+ const bay=6.4,x0=-Lh/2+34,nb=Math.floor((Lh/2-34-x0)/bay)+1;let top=Hh;const cb=[];
+ for(let i=0;i<nb;i++){const x=x0+i*bay,rows=i>nb-4?4:7,tiers=1+((R()*4)|0)+(i%3===0?1:0);cb.push([x,Hh+.3+(tiers*2.62-.02)/2,0,6.1,tiers*2.62-.02,rows*2.56]);for(let r=0;r<rows;r++)for(let t=0;t<tiers;t++){if(R()<.04)continue;const c=CC[(R()*CC.length)|0],k=.86+.26*R();T.box(x,Hh+.3+1.3+t*2.62,(r-(rows-1)/2)*2.56,6.1,2.6,2.5,[c[0]*k,c[1]*k,c[2]*k],0,PPK.metal);top=Math.max(top,Hh+.3+2.6+t*2.62)}}
+ const bx=-Lh/2+14;T.box(bx,Hh+9,0,18,18,B-2.5,[.9,.9,.88],0,4);T.box(bx-1,Hh+21,0,13,6,B-5,[.88,.88,.86],0,4);T.box(bx+2,Hh+26,0,8,3.2,B-8,[.86,.86,.84],0,4);
+ for(const y of [4,8,12,16])T.box(bx+9.05,Hh+y,0,.1,1.6,B-5,[.1,.14,.18],0,PPK.gloss);T.box(bx+4,Hh+21,B/2-2.4,.1,2,B-6,[.1,.14,.18],0,PPK.gloss);
+ for(const s of [-1,1])T.box(bx-3,Hh+22,s*(B/2-2.45),9,2,.1,[.1,.14,.18],0,PPK.gloss);
+ {const zz=(B-2.5)/2+.03,wg=[.09,.12,.16],nW=Math.floor(15/2.1),rl=[.82,.82,.8],x0r=-Lh/2+.6,x1r=Lh/2-28;
+  for(const sd of [-1,1]){for(let r=0;r<5;r++){const y=Hh+3.2+r*3.3;for(let i=0;i<nW;i++){const x=bx-7.2+i*2.1;T.quad([x,y,sd*zz],[x+1.2,y,sd*zz],[x+1.2,y+1.3,sd*zz],[x,y+1.3,sd*zz],wg,PPK.gloss)}}
+   for(const lv of [1,.55])T.box((x0r+x1r)/2,Hh+lv,sd*(B/2-.15),x1r-x0r,.05,.05,rl,0,4);for(let x=x0r+2;x<x1r;x+=4)T.box(x,Hh+.5,sd*(B/2-.15),.05,1,.05,rl,0,4)}}
+ ppLathe(T,bx-6,Hh+18,0,[[2.6,0],[2.3,7],[2.5,7.5]],12,[.15,.15,.18],4);T.box(bx-6,Hh+22,0,5.2,2,5.2,[.7,.1,.08],0,4);ppBeam(T,[bx+2,Hh+27.6,0],[bx+2,Hh+37,0],.3,.3,[.85,.85,.86],4);
+ ppBeam(T,[Lh/2-6,Hh,0],[Lh/2-6,Hh+6,0],.25,.25,[.85,.85,.86],4);
+ const hb=[[-13,Hh/2,0,Lh-26,Hh,B]];for(let k=0;k<8;k++){const xa=Lh/2-26+k*3.25,hw=B/2-(B/2-B*.2)*((k+.5)/8);hb.push([xa+1.625,Hh/2,0,3.25,Hh,hw*2])}
+ /* colliders that follow what is drawn: the hull and its tapering bow, one box per bay of containers at its own height, the three steps of the house and the funnel */
+ T.bx=[...hb,...cb,[bx,Hh+9,0,18,18,B-2.5],[bx-1,Hh+21,0,13,6,B-5],[bx+2,Hh+26,0,8,3.2,B-8],[bx-6,Hh+22,0,5.2,8,5.2]].concat(ppShipDetail(T,Lh,B,Hh,bx));return T}
+/* the hull side as seen from the quay: plate seams, draught marks, a load line and an accommodation ladder hung from the deck to the quay */
+function ppShipDetail(T,Lh,B,Hh,bx){const sm=[.15,.16,.18],wh=[.9,.9,.87],xs=-Lh/2+.5,xe=Lh/2-27,xc=(xs+xe)/2,cb=[];
+ for(const sd of [-1,1]){const zz=sd*(B/2+.05);
+  for(const y of [1,4,7,10])T.box(xc,y,zz,xe-xs,.06,.05,sm,0,4);
+  for(let r=0;r<3;r++)for(let x=xs+4.5+(r%2)*4.5;x<xe;x+=9)T.box(x,1+r*3+1.5,zz,.06,3,.05,sm,0,4);
+  for(const xm of [xs+3,xc,xe-3])for(let k=0;k<10;k++)T.box(xm,-1.3+k*.2,zz,k%2?.17:.1,.12,.05,wh,0,4);
+  {const cx=xc+6,cy=.9,r=.34,n=18;for(let i=0;i<n;i++){const a0=i/n*6.2832,a1=(i+1)/n*6.2832,P=(a,rr)=>[cx+Math.cos(a)*rr,cy+Math.sin(a)*rr,zz];T.quad(P(a0,r),P(a1,r),P(a1,r-.045),P(a0,r-.045),wh,4)}
+   T.box(cx,cy,zz,.95,.045,.05,wh,0,4);for(let i=0;i<5;i++)T.box(cx+.7+i*.0,cy-.28+i*.14,zz,.34,.04,.05,wh,0,4);T.box(cx-.5,cy,zz,.05,.4,.05,wh,0,4)}}
+ {const x0=bx+19,x1=x0+14,y0=Hh+.35,y1=.45,zc=B/2+1.15,gr=[.76,.78,.8],wr=[.9,.9,.87],L=Math.hypot(x1-x0,y1-y0),nt=Math.floor(L/.32),P=s=>[x0+(x1-x0)*s,y0+(y1-y0)*s];
+  for(const o of [-.45,.45]){ppBeam(T,[x0,y0,zc+o],[x1,y1,zc+o],.07,.2,gr,4);ppBeam(T,[x0,y0+.95,zc+o],[x1,y1+.95,zc+o],.045,.045,wr,4);ppBeam(T,[x0,y0+.5,zc+o],[x1,y1+.5,zc+o],.03,.03,wr,4)}
+  for(let i=0;i<=nt;i++){const q=P(i/nt);T.box(q[0],q[1]+.1,zc,.2,.035,.95,gr,0,4)}
+  for(let i=0;i<=7;i++){const q=P(i/7);for(const o of [-.45,.45])ppBeam(T,[q[0],q[1],zc+o],[q[0],q[1]+.95,zc+o],.035,.035,wr,4)}
+  T.box(x0-.55,y0+.08,zc,1.3,.06,1.2,gr,0,4);T.box(x1+.55,y1-.02,zc,1.3,.06,1.2,gr,0,4);
+  for(const o of [-.6,.6])ppBeam(T,[x0-1.1,y0+.1,zc+o],[x0-1.1,y0+1,zc+o],.04,.04,wr,4);
+  for(const o of [-.6,.6])ppBeam(T,[x0+.55+14.2,y1-.02,zc+o],[x0+.55+14.2,y1+.95,zc+o],.04,.04,wr,4);
+  for(const o of [-.45,.45])ppBeam(T,[x0-.1,y0+.1,zc+o],[x0-.1,Hh+1,zc+o],.035,.035,wr,4);
+  for(let k=0;k<7;k++){const xa=x0+k*2,xb=xa+2,ya=y0+(y1-y0)*(k*2/14),yb=y0+(y1-y0)*((k*2+2)/14);cb.push([(xa+xb)/2,(ya+yb)/2+.5,zc,2.1,Math.abs(ya-yb)+1.4,1.5])}}
+ return cb}
+/* a grandstand: stepped concrete, rows of people, a metal canopy; the front faces -z */
+function ppStand(R,o={}){const T=new Geo(),L=o.l||34,tiers=o.t||7,dp=1.05,rise=.5,cc=[[.85,.2,.18],[.2,.35,.8],[.95,.8,.2],[.9,.9,.9],[.15,.15,.18],[.2,.6,.3],[.9,.5,.15],[.8,.3,.6]],sk=[[.85,.65,.5],[.6,.42,.3],[.45,.3,.22]];
+ for(let t=0;t<tiers;t++){const y=(t+1)*rise,z=t*dp+dp/2;T.box(0,y/2,z,L,y,dp,[.6,.6,.58],0,PPK.conc);const n=Math.floor(L/.62);
+  for(let i=0;i<n;i++){if(R()<.14)continue;const x=-L/2+(i+.5)*L/n,c=cc[(R()*cc.length)|0],h=.8+.15*R(),w=.4,zz=z-.12;T.quad([x-w/2,y,zz],[x+w/2,y,zz],[x+w/2,y+h,zz],[x-w/2,y+h,zz],c,4);T.quad([x-.1,y+h,zz],[x+.1,y+h,zz],[x+.1,y+h+.2,zz],[x-.1,y+h+.2,zz],sk[(R()*3)|0],4)}}
+ const H=tiers*rise+3.3,D=tiers*dp;T.box(0,H/2,D+.4,L,H,.3,[.7,.7,.7],0,PPK.metal);
+ T.quad([-L/2-.4,H-.4,-1],[L/2+.4,H-.4,-1],[L/2+.4,H+1.4,D+.6],[-L/2-.4,H+1.4,D+.6],[.88,.88,.9],PPK.metal);
+ for(let x=-L/2;x<=L/2+.1;x+=L/5)ppBeam(T,[x,0,-.8],[x,H-.4,-.8],.2,.2,[.5,.52,.55],4);
+ /* colliders as drawn: every terrace step, the back wall, the columns and the sloping canopy */
+ T.bx=[];for(let t=0;t<tiers;t++){const y=(t+1)*rise;T.bx.push([0,y/2,t*dp+dp/2,L,y,dp])}T.bx.push([0,H/2,D+.4,L,H,.3]);for(let x=-L/2;x<=L/2+.1;x+=L/5)T.bx.push([x,(H-.4)/2,-.8,.2,H-.4,.2]);
+ T.ctri=[[[-L/2-.4,H-.4,-1],[L/2+.4,H-.4,-1],[L/2+.4,H+1.4,D+.6]],[[-L/2-.4,H-.4,-1],[L/2+.4,H+1.4,D+.6],[-L/2-.4,H+1.4,D+.6]]];return T}
+/* a marquee tent: fabric walls, a gable roof, a coloured band */
+function ppTent(R,o={}){const T=new Geo(),L=o.l||10,W=o.w||6,H=2.5,RH=1.5,c=o.col||[.92,.92,.9],bc=o.band||[.8,.15,.12];
+ T.box(0,H/2,0,L,H,W,c,0,4);ppGable(T,H,L,W,RH,c,4,{ov:.15,ox:.2,trim:false});T.box(0,H-.25,0,L+.04,.5,W+.04,bc,0,4);
+ for(const sz of [-1,1])T.box(0,H*.45,sz*(W/2+.02),L*.5,H*.8,.04,[.15,.15,.17],0,4);T.bx=[[0,H/2,0,L,H,W]];{const ov=.15,ox=.2,ye=H-ov*RH/(W/2),yr=H+RH;T.ctri=[[[-L/2-ox,ye,-W/2-ov],[L/2+ox,ye,-W/2-ov],[L/2+ox,yr,0]],[[-L/2-ox,ye,-W/2-ov],[L/2+ox,yr,0],[-L/2-ox,yr,0]],[[L/2+ox,ye,W/2+ov],[-L/2-ox,ye,W/2+ov],[-L/2-ox,yr,0]],[[L/2+ox,ye,W/2+ov],[-L/2-ox,yr,0],[L/2+ox,yr,0]],[[-L/2,H,-W/2],[-L/2,H,W/2],[-L/2,yr,0]],[[L/2,H,-W/2],[L/2,H,W/2],[L/2,yr,0]]]}return T}
+/* a floodlight mast */
+function ppLightMast(R,h){h=h||18;const T=new Geo();ppLathe(T,0,0,0,[[.24,0],[.17,h*.5],[.11,h]],8,[.55,.57,.6],4);T.box(0,h+.15,0,1.8,.14,.3,[.3,.3,.32],0,4);
+ for(let i=0;i<3;i++)for(let j=0;j<2;j++)T.box((i-1)*.55,h+.5+j*.42,.14,.46,.34,.2,[1,.97,.85],0,5);T.cy=[[0,0,.24,h]];return T}
+/* a stack of tyres */
+function ppTyres(R,n){const T=new Geo();for(let i=0;i<n;i++)ppLathe(T,(i%2)*.05,i*.26,0,[[.46,0],[.5,.04],[.5,.22],[.46,.26]],12,[.07,.07,.08],4);T.cy=[[0,0,.5,n*.26]];return T}
+/* a small rowing boat */
+function ppBoat(R,o={}){const T=new Geo(),c=o.col||[.85,.85,.82],L=3.6,W=1.4,y=.35;
+ const P=[[-L/2,-W*.42],[L*.25,-W/2],[L/2,0],[L*.25,W/2],[-L/2,W*.42]];T.kd=PPK.gloss;slab(T,P,0,.5,c,c);T.kd=0;
+ for(const s of [-1,1]){T.box(0,.55,s*(W/2-.04),L*.8,.1,.1,[.5,.35,.2],0,4)}for(const x of [-.5,.5])T.box(x,.42,0,.12,.06,W*.85,[.5,.35,.2],0,4);T.bx=[[0,.3,0,L,.6,W]];return T}
+
+/* ===================== scene props, part 2: forest, … ===================== */
+/* a Catmull-Rom curve through [x,z] points, a point about every `step` metres */
+function ppSpline(P,step){const out=[],n=P.length,cr=(a,b,c,d,t)=>.5*(2*b+(-a+c)*t+(2*a-5*b+4*c-d)*t*t+(-a+3*b-3*c+d)*t*t*t);
+ for(let i=0;i<n-1;i++){const p0=P[Math.max(0,i-1)],p1=P[i],p2=P[i+1],p3=P[Math.min(n-1,i+2)],L=Math.hypot(p2[0]-p1[0],p2[1]-p1[1]),m=Math.max(2,Math.round(L/step));for(let k=0;k<m;k++){const t=k/m;out.push([cr(p0[0],p1[0],p2[0],p3[0],t),cr(p0[1],p1[1],p2[1],p3[1],t)])}}
+ out.push(P[n-1].slice());return out}
+/* a dirt track along a smoothed polyline: a worn edge, the track itself and two darker wheel ruts; the width wanders */
+function ppTrail(g,P,o={}){const G=g.R,w0=o.w||3,y=o.y??.02,kd=o.kind??vgK('p','dirt'),c=o.col||[.52,.43,.32],rc=o.rut||[.4,.33,.25],ec=o.edge||[.34,.33,.18],n=P.length;
+ const nrm=i=>{const a=P[Math.max(0,i-1)],b=P[Math.min(n-1,i+1)],dx=b[0]-a[0],dz=b[1]-a[1],l=Math.hypot(dx,dz)||1;return [-dz/l,dx/l]},Wf=i=>1+.15*Math.sin(i*.9+1.3)+.1*Math.sin(i*2.3);
+ const strip=(off,w,yy,col)=>{for(let i=0;i<n-1;i++){const na=nrm(i),nb=nrm(i+1),a=P[i],b=P[i+1],fa=Wf(i),fb=Wf(i+1),oa=off*fa,ob=off*fb,wa=w*fa,wb=w*fb;
+  G.quad([a[0]+na[0]*(oa+wa/2),yy,a[1]+na[1]*(oa+wa/2)],[a[0]+na[0]*(oa-wa/2),yy,a[1]+na[1]*(oa-wa/2)],[b[0]+nb[0]*(ob-wb/2),yy,b[1]+nb[1]*(ob-wb/2)],[b[0]+nb[0]*(ob+wb/2),yy,b[1]+nb[1]*(ob+wb/2)],col,kd)}};
+ strip(0,w0+1.1,y-.006,ec);strip(0,w0,y,c);if(o.ruts!==false){strip(-w0*.27,w0*.15,y+.005,rc);strip(w0*.27,w0*.15,y+.005,rc)}}
+/* an irregular patch on the ground (leaf litter, needles, bare earth, a puddle of mud) */
+function ppPatch(g,x,z,r,col,R,y=.016,kind){const G=g.R,n=9,ph=R()*6.28,k=kind??vgK('p','dirt'),P=[];for(let i=0;i<n;i++){const a=ph+i/n*6.2832,rr=r*(.68+.5*R());P.push([x+Math.cos(a)*rr,z+Math.sin(a)*rr*.85])}
+ for(let i=0;i<n;i++){const a=P[i],b=P[(i+1)%n];G.tri([x,y,z],[a[0],y,a[1]],[b[0],y,b[1]],col,k)}}
+/* a log cabin: notched round logs, a shingled gable roof, a stone chimney, a porch with a lean roof, a door and windows */
+function ppCabin(R,o={}){const T=new Geo(),L=o.l||7,W=o.w||5.2,r=.17,y0=.4,Nl=12,bk=[.42,.28,.17],ov=.3,kb=PPK.bark,yE=y0+r+(Nl-1)*r*1.92+r*1.9+.05,RH=1.9,fr=[.2,.14,.1],wh=[.9,.88,.8],gl=[.07,.1,.14];
+ T.box(0,y0/2,0,L+.5,y0,W+.5,[.5,.48,.45],0,PPK.rock);
+ for(let i=0;i<Nl;i++){const y=y0+r+i*r*1.92;for(const sz of [-1,1]){const G=new Geo();ppTubeX(G,-L/2-ov,L/2+ov,r,r,8,ppCol(bk,.82+.3*R()),kb);ppPut(T,G,0,y,sz*W/2,0,1)}
+  for(const sx of [-1,1]){const G=new Geo();ppTubeX(G,-W/2-ov,W/2+ov,r,r,8,ppCol(bk,.82+.3*R()),kb);ppPut(T,G,sx*L/2,y+r*.96,0,Math.PI/2,1)}}
+ T.box(0,yE-.1,0,L+.1,.3,W+.1,ppCol(bk,.6),0,4);
+ ppGable(T,yE,L,W,RH,[.24,.18,.13],kb,{gc:ppCol(bk,.9),gk:kb,ov:.55,ox:.6,trim:false,ridge:[.15,.11,.08]});
+ const cx=-L/2-.35;T.box(cx,(yE+RH+.9)/2,0,.9,yE+RH+.9,1.1,[.52,.5,.46],0,PPK.rock);T.box(cx,yE+RH+.95,0,1.1,.16,1.3,[.36,.35,.33],0,4);
+ const zf=W/2+r+.02,win=(x,y,z,dir,w=.9,h=.9)=>{if(dir===1||dir===-1){T.box(x,y,z,w+.2,h+.2,.06,wh,0,4);T.box(x,y,z+dir*.035,w,h,.05,gl,0,PPK.gloss);T.box(x,y,z+dir*.07,.05,h,.03,wh,0,4);T.box(x,y,z+dir*.07,w,.05,.03,wh,0,4)}else{const s=dir>0?1:-1;T.box(x,y,z,.06,h+.2,w+.2,wh,0,4);T.box(x+s*.035,y,z,.05,h,w,gl,0,PPK.gloss)}};
+ win(1.7,y0+1.5,zf,1);win(-L*.36,y0+1.5,zf,1);win(-1.3,y0+1.5,-zf,-1);win(1.8,y0+1.5,-zf,-1);win(L/2+r+.02,y0+1.5,.4,2);
+ T.box(-.5,y0+1.05,zf+.02,1.1,2.1,.1,fr,0,4);T.box(-.5,y0+1.05,zf+.08,.9,1.95,.05,[.5,.34,.2],0,kb);T.box(-.15,y0+1,zf+.13,.06,.06,.06,[.8,.7,.3],0,4);
+ const pz=zf+1.3;T.box(-.5,.2,pz,3.6,.12,2.4,[.55,.42,.28],0,kb);T.box(-.5,.1,pz+1.35,1.6,.14,.4,[.5,.38,.25],0,kb);
+ for(const px of [-2.1,1.1]){ppBeam(T,[px,.2,pz+1.1],[px,2.75,pz+1.1],.14,.14,[.4,.28,.18],kb)}
+ T.quad([-2.4,2.78,pz+1.3],[1.4,2.78,pz+1.3],[1.4,yE-.05,zf-.1],[-2.4,yE-.05,zf-.1],[.24,.18,.13],kb);
+ T.bx=[[0,(yE+y0)/2,0,L+.5,yE+y0,W+.4],[0,yE+RH*.35,0,L,RH*.7,W*.55],[cx,(yE+RH+.9)/2,0,1,yE+RH+.9,1.2]];return T}
+/* a stack of split logs, the cut ends toward +z */
+function ppWoodpile(R,o={}){const T=new Geo(),n=o.n||5,r=.1,l=o.l||1.1;
+ for(let row=0;row<n;row++){const m=n-row;for(let i=0;i<m;i++){const L=ppLog(R,l*(.95+.1*R()),r*(.9+.2*R()),[.4,.3,.2]);ppPut(T,L,(i-(m-1)/2)*(2*r+.01),r+row*2*r*.9,(R()-.5)*.08,Math.PI/2+(R()-.5)*.08,1)}}
+ T.bx=[[0,(n*2*r*.9+r)/2,0,n*2*r+.1,n*2*r*.9+r,l+.1]];return T}
+
+/* ---------- the forest: a dirt track, forest floor, ferns, fallen trees, stumps, mossy rocks and a log cabin at the end of the track ---------- */
+PROPS.forest=function(g,R,sg,cg,T){const Rp=srnd(9103),lod=g.lod,tr=cg.tr||(cg.tr=[]),
+ path=[[0,12],[0,0],[0,-12],[-6,-30],[2,-48],[10,-66],[4,-86],[0,-100],[-1,-110],[-5,-117],[-7,-120.5]],
+ pd=(x,z)=>{let m=1e9;for(let i=0;i<path.length-1;i++){const [ax,az]=path[i],[bx,bz]=path[i+1],dx=bx-ax,dz=bz-az,t=Math.max(0,Math.min(1,((x-ax)*dx+(z-az)*dz)/(dx*dx+dz*dz)));m=Math.min(m,Math.hypot(x-ax-dx*t,z-az-dz*t))}return m};
+ const sp=ppSpline(path,2);ppTrail(g,sp,{w:3.1});sp.forEach(([x,z],i)=>{if(i%2===0)ppSkip(g,x,z,1.9)});
+ const free=(x,z,r)=>pd(x,z)>2.9+r&&ppFree(T,x,z,r)&&Math.abs(x)<44&&z<8&&z>-108;
+ /* forest floor: patches of leaf litter and needles */
+ for(let i=0,n=lod?26:60;i<n;i++){const x=(Rp()-.5)*90,z=8-Rp()*116;if(pd(x,z)<2.3)continue;ppPatch(g,x,z,1+Rp()*2.6,Rp()<.65?[.4,.3,.19]:[.3,.29,.15],Rp)}
+ /* ferns and undergrowth round the trunks */
+ {let nb=0;const cap=lod?40:120;for(const t of T){if(nb>=cap)break;if(!t||Rp()>.42)continue;const a=Rp()*6.28,d=(t[2]||1)*.9+.5+Rp()*1.2,x=t[0]+Math.cos(a)*d,z=t[1]+Math.sin(a)*d;if(pd(x,z)<2.6)continue;vgBush(g,x,z,.7+Rp()*.8,Rp,{n:3,leaf:Rp()<.5?[.15,.33,.09]:[.2,.36,.12]});nb++}}
+ /* fallen trees, stumps, mossy rocks */
+ {let nl=0;const cap=lod?6:14;for(let k=0;k<500&&nl<cap;k++){const x=(Rp()-.5)*84,z=6-Rp()*112,len=3+Rp()*3.6,r=.18+Rp()*.16;if(!free(x,z,len*.32+.5))continue;ppPlace(g,cg,ppLog(Rp,len,r,[.3,.22,.15]),x,z,Rp()*3.14);nl++}}
+ {let ns=0;const cap=lod?5:11;for(let k=0;k<300&&ns<cap;k++){const x=(Rp()-.5)*84,z=6-Rp()*112;if(!free(x,z,1))continue;ppPlace(g,cg,ppStump(Rp,.25+Rp()*.2,.3+Rp()*.45),x,z,0);ns++}}
+ {let nr=0;const cap=lod?6:14;for(let k=0;k<300&&nr<cap;k++){const x=(Rp()-.5)*84,z=6-Rp()*112,s=.5+Rp()*.55;if(!free(x,z,s*1.2))continue;ppRock(g,cg,x,z,s,Rp,{col:[.4,.44,.35]});nr++}}
+ /* the cabin at the end of the track: a woodpile, a chopping block, a parked pickup */
+ {const cx=-7,cz=-124,ry=-.12,c=Math.cos(ry),s=Math.sin(ry),W=(lx,lz)=>[cx+lx*c+lz*s,cz-lx*s+lz*c];
+  ppPlace(g,cg,ppCabin(Rp),cx,cz,ry);ppShade(g,cx,cz,8,6,4.5);ppSkip(g,cx,cz,8);
+  {const p=W(4.6,-.3);ppPlace(g,cg,ppWoodpile(Rp),p[0],p[1],ry+1.57)}
+  {const p=W(4.2,2.8);ppPlace(g,cg,ppStump(Rp,.28,.5),p[0],p[1],0)}
+  ppPlace(g,cg,ppCar(Rp,{type:'suv',col:[.12,.3,.2]}),cx+9.5,cz+7.5,2.75);
+  ppFence(g.R,[W(-6,6.5),W(-6,-5),W(7.5,-5.5)],Rp,{h:1,sp:2.4,rails:2,post:[.4,.3,.2],rail:[.44,.33,.22],rw:.09,rt:.05})}
+ ppFlock(g,Rp,{c:[22,-62],r:30,y:25,n:8,col:[.07,.07,.08],tip:[.07,.07,.08],s:1.1,sp:8})};
+
+/* ===================== the city: sidewalks, parked cars, street trees, shopfronts, awnings, crosswalks, traffic lights, rooftops and the blocks beyond ===================== */
+const PPFAC=vgK('p','fac');
+const ppAwnCols=[[[.78,.12,.1],[.95,.94,.9]],[[.1,.4,.2],[.95,.94,.9]],[[.12,.22,.55],[.95,.94,.9]],[[.2,.2,.22],[.75,.7,.55]],[[.85,.55,.1],[.95,.94,.9]]];
+/* a striped shop awning on a wall that faces +z (the wall at z=0) */
+function ppAwning(R,w,d){const T=new Geo(),c=ppAwnCols[(R()*ppAwnCols.length)|0],n=Math.max(2,Math.round(w/.5)),y1=3.55,y2=3;
+ for(let i=0;i<n;i++){const x0=-w/2+w*i/n,x1=-w/2+w*(i+1)/n,cc=c[i%2];T.quad([x0,y1,0],[x1,y1,0],[x1,y2,d],[x0,y2,d],cc,4);T.quad([x0,y2,d],[x1,y2,d],[x1,y2-.28,d],[x0,y2-.28,d],cc,4)}
+ T.bx=[[0,(y1+y2)/2,d/2,w,.45,d]];return T}
+/* a shopfront on a wall that faces +z: dark glass in a frame, a plinth and a sign board */
+function ppShop(R,w){const T=new Geo(),gl=[.07,.1,.15],fr=[.2,.2,.22];T.box(0,1.45,.03,w-.5,2.25,.06,fr,0,4);
+ const n=Math.max(1,Math.round((w-.9)/1.8)),ww=(w-.9)/n;for(let i=0;i<n;i++)T.box(-(w-.9)/2+(i+.5)*ww,1.45,.065,ww-.12,2.05,.04,gl,0,PPK.gloss);
+ T.box(0,.15,.04,w-.4,.3,.08,[.3,.3,.32],0,PPK.conc);
+ const sc=[[.8,.15,.12],[.15,.35,.7],[.9,.75,.15],[.15,.5,.3],[.9,.9,.88],[.3,.3,.33]][(R()*6)|0];T.box(0,3.95,.06,Math.min(w*.7,6),.55,.1,sc,0,4);return T}
+/* roof gear */
+function ppAC(R){const T=new Geo();T.box(0,.55,0,1.5,.9,1.2,[.6,.62,.64],0,PPK.metal);T.box(0,.12,0,1.7,.24,1.4,[.4,.4,.42],0,4);ppLathe(T,0,.99,0,[[.0,0],[.42,0],[.42,.05],[.0,.05]],10,[.12,.12,.13],4);
+ for(let i=0;i<3;i++)T.box(.76,.35+i*.22,0,.04,.1,1.0,[.3,.3,.32],0,4);T.bx=[[0,.6,0,1.7,1.2,1.4]];return T}
+function ppTank(R){const T=new Geo(),wood=R()<.55,bc=wood?[.42,.3,.2]:[.62,.66,.7],k=wood?PPK.bark:PPK.metal;
+ for(const sx of [-1,1])for(const sz of [-1,1])ppBeam(T,[sx*1.3,0,sz*1.3],[sx*1.15,1.9,sz*1.15],.14,.14,[.3,.3,.32],4);
+ ppBeam(T,[-1.3,.9,-1.3],[1.3,.9,1.3],.07,.07,[.3,.3,.32],4);ppBeam(T,[1.3,.9,-1.3],[-1.3,.9,1.3],.07,.07,[.3,.3,.32],4);
+ ppLathe(T,0,1.9,0,[[1.45,0],[1.62,.15],[1.62,1.9],[1.5,2.05],[1.05,2.35],[.1,2.9]],14,[bc,bc,bc,ppCol(bc,.7),ppCol(bc,.7)],k);
+ for(const y of [.5,1.2,1.75])ppLathe(T,0,1.9+y,0,[[1.64,0],[1.64,.07]],14,[.2,.2,.22],4);T.cy=[[0,0,1.6,4.8]];return T}
+function ppAntenna(R){const T=new Geo(),h=5+R()*4;ppLathe(T,0,0,0,[[.09,0],[.05,h]],6,[.7,.72,.75],4);T.box(0,.2,0,.8,.4,.8,[.4,.4,.42],0,PPK.conc);
+ for(let i=0;i<3;i++){const y=h*(.45+.18*i),L=1.3-.3*i;ppBeam(T,[-L,y,0],[L,y,0],.05,.05,[.7,.72,.75],4)}
+ ppBeam(T,[0,h*.7,0],[0,h*.7,.0],.03,.03,[.7,.72,.75],4);T.cy=[[0,0,.12,h]];return T}
+function ppStairBox(R){const T=new Geo();T.box(0,1.3,0,3.2,2.6,2.8,[.55,.55,.52],0,PPK.conc);T.box(0,2.65,0,3.5,.14,3.1,[.4,.4,.38],0,PPK.conc);T.box(0,.95,1.42,.9,1.9,.06,[.3,.3,.33],0,4);T.bx=[[0,1.35,0,3.4,2.7,3]];return T}
+function ppTrafficLight(R){const T=new Geo();ppLathe(T,0,0,0,[[.12,0],[.08,4.4]],8,[.25,.25,.27],4);ppBeam(T,[0,4.3,0],[2.4,4.3,0],.09,.09,[.25,.25,.27],4);
+ for(const x of [1.2,2.3]){T.box(x,4.0,0,.34,.95,.3,[.08,.08,.09],0,4);T.box(x,4.27,.16,.2,.2,.04,[1,.2,.15],0,5);T.box(x,4.0,.16,.2,.2,.04,[.35,.3,.1],0,4);T.box(x,3.73,.16,.2,.2,.04,[.15,.4,.2],0,4)}
+ T.cy=[[0,0,.13,4.5]];return T}
+/* an extra block: one 18 x 18 building or two 8.5 x 18, on a sidewalk slab; the walls are collidable */
+function ppBlock(g,cg,R,bx,bz,hmul){const n=R()<.55?1:2,P=[[.46,.44,.4],[.5,.47,.42],[.42,.44,.47],[.5,.41,.35],[.4,.4,.38],[.54,.5,.44]];g.R.box(bx,.075,bz,23,.15,23,[.62,.61,.58],0,PPK.conc);
+ for(let k=0;k<n;k++){const w=n===1?18:8.5,o=n===1?0:(k?4.75:-4.75),h=(8+R()*24)*hmul,c=P[(R()*P.length)|0],glass=R()<.12&&h>24;
+  g.R.box(bx+o,h/2,bz,w,h,18,glass?[.22,.3,.38]:c,0,glass?PPK.gloss:PPFAC);g.R.box(bx+o,h+.3,bz,w+.3,.6,18.3,ppCol(c,.8),0,PPK.conc);cg.box(bx+o,h/2,bz,w,h,18,[.5,.5,.5],0)}}
+
+PROPS.city=function(g,R,sg,cg,T){const Rp=srnd(9201),lod=g.lod,tr=cg.tr||(cg.tr=[]),B=g.bld||[],put=(o,x,z,ry=0,s=1,y=0)=>ppPlace(g,cg,o,x,z,ry,s,y);
+ const BX=[-32,0,32],BZ=[-24,-56,-88],BZe=[40,8,-24,-56,-88,-120,-152];
+ /* sidewalks under the main blocks */
+ for(const bx of BX)for(const bz of BZ)g.R.box(bx,.075,bz,23,.15,23,[.62,.61,.58],0,PPK.conc);
+ /* the blocks beyond: the grid goes on in every direction (nothing but the real look draws them; they are solid) */
+ for(const bx of [-96,-64,-32,0,32,64,96])for(const bz of BZe){if(BX.includes(bx)&&BZ.includes(bz))continue;if(lod&&(Math.abs(bx)>64||bz>40||bz<-120))continue;const d=Math.hypot(bx,bz+50);ppBlock(g,cg,Rp,bx,bz,.8+Math.min(.9,d/120))}
+ /* parked cars along the kerbs of the two long streets; none in the crossings */
+ const lanes=[[12.7,-1],[19.3,1],[-12.7,-1],[-19.3,1]],rows=[40,8,-24,-56,-88,-120,-152];
+ for(const bz of rows)for(const [lx,dir] of lanes){if(lod&&(bz>40||bz<-120))continue;for(const dz of [-6,0,6]){if(Rp()<.38||(bz===8&&Math.abs(lx-16)<4.5))continue;const z=bz+dz+(Rp()-.5)*1.4;put(ppCar(Rp),lx+(Rp()-.5)*.3,z,dir*Math.PI/2+(Rp()<.04?.15:0))}}
+ /* street trees on the sidewalks, a shop front and an awning on every street-side wall */
+ for(const bz of rows){if(lod&&(bz>40||bz<-120))continue;for(const tx of [-21.7,-10.3,10.3,21.7])for(const dz of [-4.6,4.6]){const x=tx,z=bz+dz;if(Rp()<.18||!ppFree(T,x,z,1.7))continue;const e=vgTree(g,x,z,6.5+Rp()*2.2,Rp,Rp()<.2?'birch':'oak');tr.push(e);g.R.box(x,.16,z,1.1,.04,1.1,[.14,.14,.15],0,4)}}
+ for(const b of B){const [cx,cz,w,h]=b;if(h<4)continue;const bc=Math.round(cx/32)*32,two=w<10;
+  for(const [fx,fz,ry,fw,inner] of [[cx,cz+9.03,0,w,0],[cx,cz-9.03,Math.PI,w,0],[cx+w/2+.03,cz,Math.PI/2,18,two&&cx<bc],[cx-w/2-.03,cz,-Math.PI/2,18,two&&cx>bc]]){if(inner||Rp()<.12)continue;
+   const sw=Math.min(fw-1.2,5.2+Rp()*2.5),off=(Rp()-.5)*(fw-sw-1.2),c=Math.cos(ry),s=Math.sin(ry),px=fx+off*c,pz=fz-off*s;
+   put(ppShop(Rp,sw),px,pz,ry);put(ppAwning(Rp,sw-.3,1.5),px,pz,ry)}}
+ /* crosswalks across the two long streets at the four crossings, stop lines, a traffic light at every kerb corner */
+ for(const sx of [-1,1]){for(const zc of [-34.2,-45.8,-66.2,-77.8,-3.8,-12.9]){for(let i=0;i<8;i++){const x=sx*(12.4+i*1),z=zc;if(Math.abs(Math.abs(x)-16)<.4)continue;g.R.box(x,.017,z,.5,.02,2.4,[.86,.86,.84],0,4)}}
+}
+ for(const [x,z,ry] of [[11.6,-34.6,-1.57],[-11.6,-46,1.57],[20.4,-46,1.57],[-20.4,-34.6,-1.57],[11.6,-66.6,-1.57],[-11.6,-78,1.57],[20.4,-78,1.57],[-20.4,-66.6,-1.57]])put(ppTrafficLight(Rp),x,z,ry);
+ /* rooftops: a parapet, air-conditioners, a water tank, an antenna, a stair house */
+ for(const b of B){const [cx,cz,w,h]=b;if(h<4)continue;const y=h+.6;
+  for(const [sx,sz,L,W] of [[0,-8.85,w,.3],[0,8.85,w,.3],[-w/2+.15,0,.3,18],[w/2-.15,0,.3,18]])g.R.box(cx+sx,y+.1,cz+sz,L,.9,W,[.5,.49,.46],0,PPK.conc);
+  const sl=[[-w*.28,-5],[w*.28,5],[-w*.28,5],[w*.28,-5],[0,-6.5],[0,6.5]];const kinds=[ppAC,ppAC,ppTank,ppAntenna,ppAC,ppStairBox];
+  for(let i=0;i<sl.length;i++){if(Rp()<.28)continue;const mk=kinds[(Rp()*kinds.length)|0];const x=cx+sl[i][0]+(Rp()-.5)*1.4,z=cz+sl[i][1]+(Rp()-.5)*1.4;if(w<10&&Math.abs(sl[i][0])>w*.3)continue;put(mk(Rp),x,z,Rp()*3.14,1,y)}}
+ ppFlock(g,Rp,{c:[0,-60],r:22,y:17,n:10,col:[.5,.5,.54],tip:[.3,.3,.34],s:.8,sp:7});
+ ppFlock(g,Rp,{c:[-4,-100],r:26,y:24,n:7,col:[.55,.55,.58],tip:[.3,.3,.34],s:.8,sp:8,dir:-1})};
+
+/* ===================== the canyon: layered rock skin over the wall blocks, boulders, crags, scrub and dead trees ===================== */
+/* a lump of rock (a displaced icosphere, flat shaded) standing on y0: half extents sx,sy,sz, turned by ry; every face takes col (a colour, or a function of its height) */
+function ppLump(G,x,y0,z,sx,sy,sz,ry,R,col,kind,o={}){const cs=Math.cos(ry),sn=Math.sin(ry),sd=R()*100,k=kind??PPK.conc,
+ disp=p=>{const f=.8+.4*vgNoise(p[0]*2.1+sd,p[2]*2.1+p[1]*1.7)+.12*vgNoise(p[0]*5+sd,p[1]*5+p[2]*3);return [p[0]*f,p[1]*f,p[2]*f]},
+ W=p=>{const q=disp(p),lx=q[0]*sx,lz=q[2]*sz;return [x+lx*cs+lz*sn,Math.max(y0-.05,y0+q[1]*sy+sy*.35),z-lx*sn+lz*cs]};
+ for(const [a,b,c] of VG_IC){const A=W(a),B=W(b),C=W(c),yc=(A[1]+B[1]+C[1])/3,cc=typeof col==='function'?col(yc):col;G.tri(A,B,C,vgSc(cc,.86+.26*R()),k)}}
+/* the strata of a canyon: horizontal layers of different thickness and colour, the same at every wall */
+function ppStrata(R,ymax=48){const yb=[0],cs=[],pal=[[.6,.34,.2],[.52,.28,.18],[.66,.46,.3],[.72,.58,.42],[.45,.25,.17],[.62,.4,.3],[.56,.32,.2],[.7,.5,.34]];let y=0;
+ while(y<ymax){y+=.8+R()*1.7;yb.push(y);cs.push(vgSc(pal[(R()*pal.length)|0],.92+R()*.16))}
+ return {yb,cs,at:yy=>{for(let i=0;i<cs.length;i++)if(yy<yb[i+1])return cs[i];return cs[cs.length-1]}}}
+/* a box (centre x,z; y0..y1; half sizes hx,hz; turned by ry) clad in strata: every face a grid of flat quads, one row per layer, pushed outward by a small bump */
+function ppSkinBox(G,st,R,B,faces){const {x,z,y0,y1,hx,hz,ry}=B,cs=Math.cos(ry),sn=Math.sin(ry),P=(xl,y,zl)=>[x+xl*cs+zl*sn,y,z-xl*sn+zl*cs],K=PPK.conc,
+ ys=[y0];for(let i=1;i<st.yb.length;i++){const b=st.yb[i];if(b<=y0+.05)continue;if(b>=y1-.05)break;const t=b-ys[ys.length-1];if(t>1.6)ys.push(ys[ys.length-1]+t/2);ys.push(b)}ys.push(y1);
+ const sm=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t)};
+ for(const f of faces){const hw=f[0]==='x'?hz:hx,sg=f[1]==='+'?1:-1,seed=R()*90,ncol=Math.max(2,Math.round(2*hw/1.2));
+  if(f[0]==='y'){const top=sg>0,yy=top?y1:y0;for(let a=0;a<3;a++)for(let b=0;b<ncol;b++){const pt=(i,j)=>{const u=-hx+2*hx*i/3,v=-hz+2*hz*j/ncol,e=Math.min(sm((hx-Math.abs(u))/1),sm((hz-Math.abs(v))/1)),d=.02+.16*e*Math.max(0,vgNoise(u*.6+seed,v*.6)*1.5-.3);return P(u,yy+sg*d,v)};
+    const c=vgSc(top?[.62,.47,.33]:[.45,.3,.22],.88+.24*vgNoise(a*1.7+seed,b*1.3));G.quad(pt(a,b),pt(a+1,b),pt(a+1,b+1),pt(a,b+1),c,K)}continue}
+  const sk=[];for(let j=0;j<ncol;j++)sk.push(R()<.3?2+R()*7:0);
+  const pt=(u,y,hh)=>{const e=sm((hw-Math.abs(u))/1),t=sm((y1-y)/.8),bt=y0>.5?sm((y-y0)/.8):1,d=.02+.17*e*t*bt*Math.max(0,vgNoise(u*.62+seed,y*.5+seed*.37)*1.5-.3);return f[0]==='x'?P(sg*(hx+d),y,u):P(u,y,sg*(hz+d))};
+  for(let k=0;k<ys.length-1;k++)for(let j=0;j<ncol;j++){const u0=-hw+2*hw*j/ncol,u1=-hw+2*hw*(j+1)/ncol,ya=ys[k],yb=ys[k+1],ym=(ya+yb)/2,m=sk[j]&&ym>y1-sk[j]?.6:1,c=vgSc(st.at(ym),m*(.9+.2*vgNoise(j*1.3+seed,k*.9)));
+   G.quad(pt(u0,ya),pt(u1,ya),pt(u1,yb),pt(u0,yb),c,K)}}}
+
+PROPS.canyon=function(g,R,sg,cg,T){const Rp=srnd(9301),lod=g.lod,tr=cg.tr||(cg.tr=[]),W=g.wl||[],st=ppStrata(Rp),sc=yy=>st.at(yy);
+ /* the wall blocks and the arch wear the layers */
+ for(const [x,z,h,c,ry,sd] of W)ppSkinBox(g.R,st,Rp,{x,z,y0:0,y1:h,hx:2.25,hz:3,ry},[sd>0?'x-':'x+',sd>0?'x+':'x-','z+','z-','y+']);
+ ppSkinBox(g.R,st,Rp,{x:-2,z:-70,y0:8,y1:11,hx:12,hz:2,ry:.6},['x+','x-','z+','z-','y+','y-']);
+ /* boulders at the foot of the walls (collidable), crags on their tops */
+ for(const [x,z,h,c,ry,sd] of W){const cs=Math.cos(ry),sn=Math.sin(ry),L=(xl,zl)=>[x+xl*cs+zl*sn,z-xl*sn+zl*cs];
+  if(Rp()<(lod?.35:.62)){const n=1+((Rp()*2)|0);for(let i=0;i<n;i++){const sx=.9+Rp()*1.3,sy=.7+Rp()*1.1,sz=.9+Rp()*1.3,p=L(-sd*(2.25+sx*.35),(Rp()-.5)*5),a=Rp()*3;ppLump(g.R,p[0],0,p[1],sx,sy,sz,a,Rp,sc);cg.box(p[0],sy*.55,p[1],sx*1.55,sy*1.1,sz*1.55,[.5,.5,.5],a)}}
+  if(Rp()<(lod?.3:.5)){const p=L((Rp()-.5)*3,(Rp()-.5)*4);ppLump(g.R,p[0],h-.15,p[1],.9+Rp()*1.4,.8+Rp()*1.2,.9+Rp()*1.4,Rp()*3,Rp,sc)}}
+ /* the loose rocks of the floor are lumps now (the blocks they sit on are what hurts) */
+ for(const [x,z,bw,bd,br] of g.rk||[])ppLump(g.R,x,0,z,bw*.72,.55,bd*.72,br,Rp,sc);
+ /* the floor: lighter drifts of sand, dry scrub, a few dead trees and the odd green one at the walls */
+ for(let i=0,n=lod?14:34;i<n;i++){const x=(Rp()-.5)*40,z=-130+Rp()*150;ppPatch(g,x,z,1.4+Rp()*3,Rp()<.6?[.6,.45,.31]:[.42,.31,.22],Rp,.016,PPK.sand)}
+ for(let i=0,n=lod?24:60;i<n;i++){const x=(Rp()-.5)*26,z=-130+Rp()*150;vgBush(g,x,z,.5+Rp()*.7,Rp,{n:3,leaf:Rp()<.5?[.34,.31,.15]:[.3,.3,.14]})}
+ for(let i=0;i<(lod?3:6);i++){const w=W[(Rp()*W.length)|0];if(!w)continue;const [x,z,h,c,ry,sd]=w,cs=Math.cos(ry),sn=Math.sin(ry),xl=-sd*(2.25+1.3),zl=(Rp()-.5)*4;ppPlace(g,cg,ppDeadTree(Rp,4+Rp()*3),x+xl*cs+zl*sn,z-xl*sn+zl*cs,Rp()*6)}
+ for(let i=0;i<(lod?2:5);i++){const w=W[(Rp()*W.length)|0];if(!w)continue;const [x,z,h,c,ry,sd]=w,cs=Math.cos(ry),sn=Math.sin(ry),xl=-sd*(2.25+1.8),zl=(Rp()-.5)*4,px=x+xl*cs+zl*sn,pz=z-xl*sn+zl*cs;tr.push(vgTree(g,px,pz,5.5+Rp()*3,Rp,'oak'))}
+ ppFlock(g,Rp,{c:[0,-60],r:28,y:32,n:6,col:[.07,.07,.08],tip:[.07,.07,.08],s:1.5,sp:7})};
+
+/* ---------- the abandoned building: a ruin with its yard, a fenced lot, a dead factory on the horizon ---------- */
+/* a wooden pallet (1.2 x 1.0 m) */
+function ppPallet(R){const T=new Geo(),c=ppCol([.58,.44,.27],.8+.4*R()),K=PPK.bark;
+ for(const z of [-.4,0,.4])T.box(0,.05,z,1.2,.1,.09,ppCol(c,.85),0,K);
+ for(let i=0;i<5;i++)T.box(-.5+i*.25,.115,0,.1,.022,1,ppCol(c,.9+.2*R()),0,K);
+ for(const x of [-.55,0,.55])T.box(x,.008,0,.1,.016,1,ppCol(c,.8),0,K);
+ T.bx=[[0,.07,0,1.2,.14,1]];return T}
+/* a shipping container (6.06 x 2.44 x 2.59 m, the length along x): corrugated sides, ribbed roof, locking bars on the doors, a little rust */
+function ppContainer(R,o={}){const T=new Geo(),L=o.l||6.06,NC=o.simple?0:Math.round(24*L/6.06),W=2.44,H=2.59,CC=[[.5,.16,.12],[.14,.28,.48],[.62,.38,.1],[.18,.34,.24],[.45,.46,.47],[.38,.12,.1]],c=o.col||CC[(R()*CC.length)|0],K=PPK.metal;
+ T.box(0,H/2,0,L,H,W,ppCol(c,.8),0,K);
+ for(const sz of [-1,1]){for(let i=0;i<NC;i++){const x=-L/2+.14+i*(L-.28)/(NC-1);T.box(x,H/2,sz*(W/2+.018),.09,H-.28,.04,ppCol(c,.98+.14*R()),0,K)}
+  T.box(0,.07,sz*(W/2+.01),L,.14,.08,ppCol(c,.62),0,K);T.box(0,H-.07,sz*(W/2+.01),L,.14,.08,ppCol(c,.62),0,K);
+  for(let k=0;k<4;k++)if(R()<.7)T.box(-L/2+.4+R()*(L-.8),.3+R()*.5,sz*(W/2+.04),.4+R()*.8,.3+R()*.5,.012,[.38,.2,.11],0,4)}
+ for(let i=0;i<8;i++){const z=-W/2+.12+i*(W-.24)/7;T.box(0,H+.015,z,L-.1,.03,.09,ppCol(c,.95+.1*R()),0,K)}
+ for(const sx of [-1,1]){const x=sx*(L/2+.02);T.box(x,H/2,0,.04,H-.1,W-.1,ppCol(c,.85),0,K);for(const z of [-.55,-.2,.2,.55])T.box(x+sx*.03,H/2,z,.04,H-.3,.05,[.55,.56,.58],0,PPK.metal);
+  for(const y of [.5,H-.5])T.box(x+sx*.045,y,0,.03,.04,W-.3,ppCol(c,.6),0,4)}
+ T.bx=[[0,H/2,0,L,H,W]];return T}
+/* a brick factory chimney: a tapering shaft, two pale bands near the top, a flared cap with a dark mouth */
+function ppChimney(R,h){const T=new Geo(),pr=[[2.3,0],[1.9,h*.1],[1.5,h*.5],[1.15,h*.95],[1.35,h*.96],[1.35,h]],rad=y=>{for(let i=0;i<pr.length-1;i++){if(y<=pr[i+1][1]){const t=(y-pr[i][1])/Math.max(1e-3,pr[i+1][1]-pr[i][1]);return pr[i][0]+(pr[i+1][0]-pr[i][0])*t}}return pr[pr.length-1][0]};
+ ppLathe(T,0,0,0,pr,16,[.52,.25,.18],PPK.brick);
+ for(const f of [.84,.9]){const y=h*f,r=rad(y)+.03;ppLathe(T,0,y,0,[[r,0],[r,h*.022]],16,[.9,.9,.87],4)}
+ for(let i=0;i<16;i++){const a0=i/16*6.2832,a1=(i+1)/16*6.2832;T.tri([0,h-.1,0],[Math.cos(a0)*1.18,h-.1,Math.sin(a0)*1.18],[Math.cos(a1)*1.18,h-.1,Math.sin(a1)*1.18],[.06,.055,.05],4)}
+ T.cy=[[0,0,2,h]];return T}
+/* an old factory hall with a saw-tooth roof: brick walls, steel-roof slopes, the glazed north lights, rows of dark windows */
+function ppSawtooth(R,o={}){const T=new Geo(),L=o.l||36,W=o.w||24,H=o.h||6.5,n=o.n||5,gh=o.gh||2.4,bw=L/n,wc=o.wall||[.5,.27,.2],rc=o.roof||[.4,.33,.3],gl=[.16,.22,.25],K=PPK.brick;
+ T.box(0,H/2,0,L,H,W,wc,0,K);
+ for(let i=0;i<n;i++){const x0=-L/2+i*bw;
+  T.quad([x0,H,-W/2-.3],[x0,H,W/2+.3],[x0,H+gh,W/2+.3],[x0,H+gh,-W/2-.3],gl,4);
+  T.quad([x0,H+gh,-W/2-.3],[x0,H+gh,W/2+.3],[x0+bw,H,W/2+.3],[x0+bw,H,-W/2-.3],rc,PPK.metal);
+  for(const z of [-1,1])T.tri([x0,H,z*(W/2+.3)],[x0+bw,H,z*(W/2+.3)],[x0,H+gh,z*(W/2+.3)],wc,K);
+  for(let k=1;k<8;k++)T.box(x0+.012,H+gh/2,-W/2+k*(W/8),.04,gh,.07,[.1,.1,.11],0,4)}
+ const nw=Math.round(L/4.2);for(let i=0;i<nw;i++){const x=-L/2+(i+.5)*L/nw,br=R()<.18;for(const z of [-1,1])T.quad([x-1,2,z*(W/2+.02)],[x+1,2,z*(W/2+.02)],[x+1,4.2,z*(W/2+.02)],[x-1,4.2,z*(W/2+.02)],br?[.3,.34,.36]:[.06,.07,.08],4)}
+ T.quad([-2,0,W/2+.025],[2,0,W/2+.025],[2,3.6,W/2+.025],[-2,3.6,W/2+.025],[.34,.2,.12],4);
+ T.bx=[[0,H/2,0,L,H,W]];return T}
+/* a steel water tower: six braced legs, a round tank with a conical roof, a rust band, a ladder */
+function ppWaterTower(R,o={}){const T=new Geo(),h=o.h||15,r=o.r||3,tc=o.col||[.52,.54,.52],sc=[.32,.3,.28],nl=6,K=PPK.metal;
+ const LP=(i,y)=>{const a=i/nl*6.2832,f=.95-.17*(y/h);return [Math.cos(a)*r*f,y,Math.sin(a)*r*f]};
+ for(let i=0;i<nl;i++)ppBeam(T,LP(i,0),LP(i,h),.26,.26,sc,K);
+ for(const y of [h*.33,h*.66])for(let i=0;i<nl;i++)ppBeam(T,LP(i,y),LP((i+1)%nl,y),.12,.12,sc,K);
+ for(let i=0;i<nl;i++){ppBeam(T,LP(i,0),LP((i+1)%nl,h*.33),.07,.07,sc,K);ppBeam(T,LP((i+1)%nl,h*.33),LP(i,h*.66),.07,.07,sc,K)}
+ ppLathe(T,0,h,0,[[.01,0],[r,0],[r*1.02,.4],[r*1.02,r*1.35],[r*.7,r*1.62],[.01,r*1.95]],16,tc,K);
+ ppLathe(T,0,h+r*.8,0,[[r*1.035,0],[r*1.035,.16]],16,[.4,.2,.12],4);
+ ppBeam(T,[r*1.05,0,0],[r*1.05,h+r*1.3,0],.5,.05,[.3,.3,.32],4);
+ T.cy=[[0,0,r,h+r*1.9]];return T}
+
+PROPS.bando=function(g,R,sg,cg,T){const lod=g.lod,Rp=srnd(9401),tr=cg.tr||(cg.tr=[]);
+ /* clear of: the frame, the flight line, the start, the low gates beside the frame and the hut */
+ const ok=(x,z,r)=>!(x>-14-r&&x<14+r&&z<-26+r&&z>-54-r)&&!(Math.abs(x)<4+r&&z>-74)&&Math.hypot(x+22,z+14)>5+r&&Math.hypot(x+22,z+34)>5+r&&!(x>21-r&&x<31+r&&z>-41-r&&z<-27+r)&&Math.hypot(x,z-12)>7+r&&ppFree(T,x,z,r),
+  put=(o,x,z,ry=0,s=1,y=0)=>ppPlace(g,cg,o,x,z,ry,s,y);
+ /* rebar left standing in the column heads (taller on the outer columns; the balloon arena keeps the inner ones low) */
+ {const RB=[.38,.22,.12],B=new Geo();for(const x of [-12,-4,4,12])for(const z of [-28,-40,-52]){const hi=Math.abs(x)>8;for(let i=0,n=hi?6:3;i<n;i++){const a=Rp()*6.28,d=.1+Rp()*.12,x0=x+Math.cos(a)*d,z0=z+Math.sin(a)*d,hh=hi?.5+Rp()*.9:.18+Rp()*.2,bx=(Rp()-.5)*(hi?.5:.15),bz=(Rp()-.5)*(hi?.5:.15);
+   ppBeam(B,[x0,9.55,z0],[x0+bx*.3,9.6+hh*.6,z0+bz*.3],.035,.035,RB,4);ppBeam(B,[x0+bx*.3,9.6+hh*.6,z0+bz*.3],[x0+bx,9.6+hh,z0+bz],.035,.035,RB,4)}}
+  ppPut(g.R,B,0,0,0)}
+ /* earth and weeds that came up through the concrete */
+ for(let i=0,n=lod?8:18;i<n;i++){const a=Rp()*6.28,d=16+Rp()*26,x=Math.cos(a)*d,z=-40+Math.sin(a)*d*.75;if(!ok(x,z,2))continue;ppPatch(g,x,z,1+Rp()*2.6,Rp()<.6?[.34,.31,.22]:[.3,.32,.18],Rp)}
+ {let nb=0;const cap=lod?20:56;for(let k=0;k<500&&nb<cap;k++){const x=(Rp()-.5)*72,z=-6-Rp()*74;if(!ok(x,z,.6))continue;vgBush(g,x,z,.45+Rp()*.9,Rp,{n:3,leaf:Rp()<.5?[.26,.33,.12]:[.4,.38,.16]});nb++}}
+ /* piles of broken concrete */
+ for(const [x,z] of [[-17,-31],[16,-57],[-20,-58],[19,-26],[-27,-45],[25,-52],[-15,-22],[14,-65]])if(ok(x,z,2))for(let i=0,n=lod?3:6;i<n;i++){const a=Rp()*6.28,d=Rp()*1.6;ppRock(g,cg,x+Math.cos(a)*d,z+Math.sin(a)*d,.4+Rp()*.5,Rp,{col:[.55+.06*Rp(),.54,.5]})}
+ /* wrecks, drums, pallets, containers */
+ if(ok(17.5,-12.5,3))put(ppCar(Rp,{type:'sedan',wreck:1,col:[.5,.5,.52]}),17.5,-12.5,.55);
+ if(ok(-19,-61,3))put(ppCar(Rp,{type:'hatch',wreck:1}),-19,-61,-1.9);
+ [[33.4,-27,[.5,.18,.12]],[34.5,-28.4,[.14,.28,.5]],[33.6,-29.8,[.5,.18,.12]],[35,-26.2,[.3,.32,.34]],[34.4,-31,[.5,.18,.12]]].forEach(([x,z,c])=>{if(ok(x,z,.6))put(ppBarrel(Rp,c),x,z,Rp()*3)});
+ if(ok(33,-45,1.5))for(let k=0;k<4;k++)put(ppPallet(Rp),33+(Rp()-.5)*.1,-45,.1+(Rp()-.5)*.1,1,k*.14);
+ if(ok(-30,-30,1.5))for(let k=0;k<3;k++)put(ppPallet(Rp),-30,-30+k*1.2,.05,1);
+ if(ok(-26,-57,5)){put(ppContainer(Rp),-26,-57,.25);put(ppContainer(Rp),-26.4,-57.2,.2,1,2.6);ppShade(g,-26,-57,6,2.5,5)}
+ if(ok(29,-63,5)){put(ppContainer(Rp),29,-63,-.15);ppShade(g,29,-63,6,2.5,2.6)}
+ if(ok(-30,-12,2))put(ppTyres(Rp,5),-30,-12,0);
+ /* the fence along the back of the lot: wire strands between the posts that stand there, a few warning plates, a collider */
+ ppFence(g.R,[[-30,-70],[26,-70]],Rp,{h:1.6,sp:7,rails:6,post:[.42,.42,.44],rail:[.62,.63,.65],rw:.014,rt:.014,wire:1});cg.box(-2,.8,-70,56,1.6,.1,[.5,.5,.5],0);
+ for(const x of [-16,5,19]){g.R.box(x,1.25,-70.07,.7,.5,.03,[.82,.12,.1],0,4);g.R.box(x,1.25,-70.09,.52,.3,.02,[.95,.95,.92],0,4)}
+ /* the hut: dark windows on the west wall, a rusty door on the south side */
+ {const d=[.05,.055,.06];for(const z of [-31.2,-34,-36.8])g.R.quad([21.98,2,z-.65],[21.98,2,z+.65],[21.98,3.6,z+.65],[21.98,3.6,z-.65],d,4);g.R.quad([24.95,0,-28.98],[26.05,0,-28.98],[26.05,2.3,-28.98],[24.95,2.3,-28.98],[.35,.2,.12],4)}
+ /* a dead factory on the horizon behind the lot */
+ put(ppChimney(Rp,34),-72,-128,0);put(ppSawtooth(Rp,{l:38,w:22,h:6.5,n:5}),-48,-136,.08);put(ppSawtooth(Rp,{l:26,w:18,h:5.5,n:4,wall:[.46,.4,.32]}),-92,-128,-.1);
+ put(ppWaterTower(Rp,{h:15,r:3}),62,-140,0);put(ppShed(Rp,{l:20,w:9,h:5}),80,-122,.12);
+ /* trees that grew round the ruin, dead ones, a power line */
+ for(let i=0,n=lod?6:14;i<n;i++){const a=Rp()*6.28,d=44+Rp()*34,x=Math.cos(a)*d,z=-45+Math.sin(a)*d*.8;if(z>2||!ok(x,z,3))continue;tr.push(vgTree(g,x,z,ppRv(Rp,8,13),Rp,Rp()<.5?'birch':'oak'))}
+ for(const [x,z,h] of [[-34,-24,7],[36,-56,6],[-30,-72,8]])if(ok(x,z,2))put(ppDeadTree(Rp,h),x,z,Rp()*6);
+ ppPoles(g.R,cg,[[44,24],[46,-50],[44,-124]],Rp);
+ ppFlock(g,Rp,{c:[0,-40],r:20,y:22,n:7,col:[.06,.06,.07],tip:[.06,.06,.07],s:1.15,sp:7})};
+PROPS.bandoballoons=PROPS.bando;
+/* ---------- the container port: a ship at the quay, quay cranes, yard vehicles, container blocks, a rail siding, masts, markings, gulls ---------- */
+/* a quay crane (ship-to-shore): four legs on two rails, portal beams and braces, twin main girders with the boom over the water (-z), an A-frame with stays, a machinery house, a trolley with a cabin, a spreader and a hanging box; o.up = the boom raised (degrees) */
+function ppCrane(R,o={}){const T=new Geo(),G=o.g||16,S=o.s||18,Hg=o.hg||36,col=o.col||[.62,.7,.76],Ob=o.ob||36,Bk=o.bk||14,F=PPK.flat,dk=ppCol(col,.6),up=(o.up||0)*Math.PI/180,
+ zs=-G/2,zl=G/2,gh=Hg+1.6,gt=Hg+3.2,Ha=Hg+24,zA=zs+1.5,red=[.78,.1,.08],wh=[.93,.93,.9],bx=[],zr=zl+Bk,zh=zs-1.5,Lb=Ob-1.5;
+ for(const sx of [-1,1])for(const sz of [-1,1]){const x=sx*S/2,z=sz*G/2;
+  T.box(x,Hg/2,z,1.7,Hg,2.1,col,0,F);for(let y=6;y<Hg-2;y+=6)T.box(x,y,z,1.9,.35,2.3,dk,0,F);
+  T.box(x,.55,z,2.4,1.1,3.4,[.2,.2,.22],0,F);T.box(x+sx*.88,Hg*.5,z,.05,Hg-4,.5,[.3,.3,.32],0,F);bx.push([x,Hg/2,z,1.9,Hg,2.3])}
+ for(const sz of [-1,1]){T.box(0,18,sz*G/2,S,1.7,1.7,col,0,F);T.box(0,Hg-.9,sz*G/2,S,1.8,1.9,col,0,F);bx.push([0,18,sz*G/2,S,1.8,1.8],[0,Hg-.9,sz*G/2,S,1.8,1.9])}
+ for(const sx of [-1,1]){const x=sx*S/2;T.box(x,18,0,1.7,1.7,G,col,0,F);T.box(x,Hg-.9,0,1.8,1.8,G,col,0,F);
+  ppBeam(T,[x,18,zl],[x,Hg-.9,zs],.9,.9,dk,F);ppBeam(T,[x,18,zs],[x,Hg-.9,zl],.9,.9,dk,F);bx.push([x,18,0,1.8,1.8,G])}
+ /* the main girders: the back part and the part between the legs, then the boom */
+ for(const sx of [-1,1]){const x=sx*3.3;T.box(x,gh,(zr+zh)/2,2,3.2,zr-zh,col,0,F);bx.push([x,gh,(zr+zh)/2,2.2,3.4,zr-zh]);
+  if(!up){const zt=zs-Ob;T.box(x,gh,(zh+zt)/2,2,3.2,zh-zt,col,0,F);bx.push([x,gh,(zh+zt)/2,2.2,3.4,zh-zt]);
+   for(const [d,c] of [[.75,red],[2.25,wh],[3.75,red]])T.box(x,gh,zt+d,2.06,3.26,1.5,c,0,F)}
+  else{const ty=gh+Lb*Math.sin(up),tz=zh-Lb*Math.cos(up);ppBeam(T,[x,gh,zh],[x,ty,tz],2,3.2,col,F);ppColBeam(T,[x,gh,zh],[x,ty,tz],2.2,3.4);
+   const f=.93;ppBeam(T,[x,gh+Lb*f*Math.sin(up),zh-Lb*f*Math.cos(up)],[x,ty,tz],2.06,3.26,red,F)}}
+ for(let z=zr-2;z>zh+2;z-=7)T.box(0,gh+.6,z,6.6,.6,.9,dk,0,F);
+ if(!up){const zt=zs-Ob;T.box(0,gh+.6,zt+1,6.6,.7,1,dk,0,F);T.box(0,gh+.6,zs-Ob*.5,6.6,.7,1,dk,0,F)}
+ else{const ty=gh+Lb*Math.sin(up),tz=zh-Lb*Math.cos(up);ppBeam(T,[-3.3,ty,tz],[3.3,ty,tz],.9,.9,dk,F)}
+ /* the A-frame and the stays */
+ for(const sx of [-1,1]){ppBeam(T,[sx*(S/2-1),gt,zA],[sx*.7,Ha,zA],2,1.2,dk,F);ppColBeam(T,[sx*(S/2-1),gt,zA],[sx*.7,Ha,zA],2,1.2)}
+ ppBeam(T,[-S/2*.62,gt+(Ha-gt)*.35,zA],[S/2*.62,gt+(Ha-gt)*.35,zA],1.4,.8,dk,F);T.box(0,Ha+.6,zA,2.2,1.2,2.2,red,0,F);T.box(0,Ha+1.6,zA,.45,.45,.45,[1,.12,.1],0,5);
+ const stay=(a,b)=>ppBeam(T,a,b,.3,.3,[.12,.12,.13],F);
+ for(const sx of [-1,1]){const x=sx*3.3,ap=[sx*.7,Ha,zA];stay(ap,[x,gt,zr-.4]);
+  if(!up){stay(ap,[x,gt,zs-Ob+.4]);stay(ap,[x,gt,zs-Ob*.55])}else stay(ap,[x,gh+Lb*.93*Math.sin(up)+1.6,zh-Lb*.93*Math.cos(up)])}
+ bx.push([0,Ha-4,zA,3,8,2.4]);
+ /* the machinery house, the trolley with its cabin, the spreader and a box on it */
+ T.box(0,gt+1.9,zl+Bk*.55,8.2,3.8,Bk*.8,ppCol(col,1.08),0,F);T.box(0,gt+4,zl+Bk*.55,7,.3,Bk*.7,dk,0,F);
+ for(const z of [zl+Bk*.55-Bk*.4-.02])T.quad([-3.5,gt+1.2,z],[3.5,gt+1.2,z],[3.5,gt+3,z],[-3.5,gt+3,z],[.07,.09,.12],PPK.gloss);
+ bx.push([0,gt+1.9,zl+Bk*.55,8.4,3.8,Bk*.8]);
+ if(!up){const zt=zs-Ob*.5-3,sy=Hg-8;T.box(0,gh+.5,zt,4.7,1.5,6.6,dk,0,F);T.box(-1.9,Hg-1.4,zt+2.2,2.8,2.6,3.2,[.78,.79,.8],0,F);
+  T.quad([-3.32,Hg-2,zt+.6],[-3.32,Hg-2,zt+3.8],[-3.32,Hg-.4,zt+3.8],[-3.32,Hg-.4,zt+.6],[.07,.09,.12],PPK.gloss);
+  for(const [a,b] of [[-1.5,-1],[1.5,-1],[-1.5,1],[1.5,1]])ppBeam(T,[a,gh-.2,zt+b*2.2],[a,sy+.5,zt+b*1.1],.07,.07,[.1,.1,.1],F);
+  T.box(0,sy,zt,6.4,.5,2.7,[.16,.16,.18],0,F);ppPut(T,ppContainer(R,{simple:1}),0,sy-.25-2.59,zt,0,1)}
+ T.bx=bx;return T}
+/* a terminal tractor with a chassis trailer (the front towards +x); o.load: a 40-foot box on it */
+function ppYardTruck(R,o={}){const T=new Geo(),cc=o.col||[[.85,.62,.1],[.8,.3,.1],[.2,.35,.62],[.88,.88,.86],[.16,.45,.3]][(R()*5)|0],bk=[.07,.07,.08],F=PPK.flat,gl=[.06,.09,.12],Wg=new Geo(),dk=[.15,.15,.17];
+ ppLathe(Wg,0,-.22,0,[[0,0],[.5,0],[.5,.45],[0,.45]],12,bk,4);ppLathe(Wg,0,-.23,0,[[0,0],[.26,0],[.26,.47],[0,.47]],10,[.55,.56,.58],PPK.metal);
+ const wheel=(x,z)=>ppPut(T,Wg,x,.5,z,0,1,Math.PI/2);
+ T.box(6.9,.85,0,4.2,.5,2.1,dk,0,F);T.box(5.9,1.5,0,2.2,1,2.3,cc,0,F);T.box(7.9,2.05,0,1.9,2.2,2.45,cc,0,F);T.box(7.9,3.2,0,1.7,.12,2.3,ppCol(cc,.8),0,F);
+ T.quad([8.87,1.5,-1.1],[8.87,1.5,1.1],[8.87,3,1.1],[8.87,3,-1.1],gl,PPK.gloss);for(const z of [-1.235,1.235])T.quad([7.15,1.95,z],[8.7,1.95,z],[8.7,3,z],[7.15,3,z],gl,PPK.gloss);
+ T.box(8.95,.9,0,.12,.4,2.3,[.1,.1,.11],0,4);T.box(8.9,1.35,-.8,.06,.22,.4,[.96,.95,.84],0,4);T.box(8.9,1.35,.8,.06,.22,.4,[.96,.95,.84],0,4);T.box(5.1,1.18,0,1.1,.12,1.2,[.12,.12,.13],0,F);
+ for(const z of [-.95,.95])T.box(-1,1.05,z,12.6,.28,.28,dk,0,F);for(let x=-6.8;x<=5;x+=1.6)T.box(x,1,0,.2,.22,2.3,dk,0,F);T.box(4.6,1.2,0,1.6,.2,2.3,dk,0,F);
+ for(const z of [-.9,.9])T.box(3.4,.6,z,.12,1.2,.12,[.2,.2,.22],0,F);
+ for(const x of [8,5.4,-5.2,-3.9])for(const z of [-1.1,1.1])wheel(x,z);
+ for(const z of [-1,1])T.box(-7.4,1,z*.95,.05,.2,.3,[.82,.08,.06],0,4);
+ if(o.load!==0)ppPut(T,ppContainer(R,{l:12.19,simple:1,col:o.ccol}),-1,1.19,0,0,1);
+ T.bx=o.load!==0?[[6.9,1.6,0,4.4,3.1,2.5],[-1,2.6,0,12.8,2.9,2.55]]:[[6.9,1.6,0,4.4,3.1,2.5],[-1,1.2,0,12.8,.6,2.5]];return T}
+/* a reach stacker holding a box in front (the front towards +x) */
+function ppReachStacker(R,o={}){const T=new Geo(),cc=o.col||[.82,.55,.08],bk=[.07,.07,.08],F=PPK.flat,gl=[.06,.09,.12],Wg=new Geo(),dk=[.2,.2,.22];
+ ppLathe(Wg,0,-.45,0,[[0,0],[.9,0],[.9,.9],[0,.9]],14,bk,4);ppLathe(Wg,0,-.46,0,[[0,0],[.45,0],[.45,.92],[0,.92]],10,[.5,.5,.52],PPK.metal);
+ for(const x of [2.4,-2.6])for(const z of [-1.65,1.65])ppPut(T,Wg,x,.9,z,0,1,Math.PI/2);
+ T.box(-.2,1.75,0,6.6,1.5,2.7,cc,0,F);T.box(-3.5,1.8,0,.9,1.6,2.7,dk,0,F);T.box(1.5,3.15,-.95,2,1.8,1.5,cc,0,F);
+ T.quad([2.52,2.5,-1.7],[2.52,2.5,-.2],[2.52,3.9,-.2],[2.52,3.9,-1.7],gl,PPK.gloss);T.quad([.6,2.5,-1.71],[2.4,2.5,-1.71],[2.4,3.9,-1.71],[.6,3.9,-1.71],gl,PPK.gloss);
+ ppBeam(T,[-2.4,2.7,.55],[4.4,5.4,.55],1,1.1,cc,F);ppBeam(T,[-1.2,1.9,.55],[1.4,3.4,.55],.4,.4,dk,F);T.box(4.6,5.5,.55,.9,1.3,1.3,dk,0,F);
+ if(o.load!==0){T.box(6,5.05,.55,6.4,.3,2.6,dk,0,F);ppPut(T,ppContainer(R,{simple:1,col:o.ccol}),6,2.15,.55,0,1)}
+ T.bx=[[-.2,1.75,0,7.2,1.9,2.9],[1.5,3.2,-.95,2,1.8,1.6],[1.2,4,.55,7,1.6,1.2],...(o.load!==0?[[6,3.6,.55,6.2,2.9,2.5]]:[])];return T}
+/* a container flat wagon (length along x); 0 = empty, 1 = one 40-foot box, 2 = two 20-foot boxes */
+function ppWagon(R,o={}){const T=new Geo(),F=PPK.flat,Wg=new Geo(),dk=[.14,.14,.16],cc=o.col||[.26,.2,.17];
+ ppLathe(Wg,0,-.07,0,[[0,0],[.46,0],[.46,.14],[0,.14]],14,[.22,.22,.23],PPK.metal);
+ for(const bxp of [-6.8,6.8]){T.box(bxp,.78,0,2.7,.26,2.05,dk,0,F);for(const dx of [-.9,.9])for(const z of [-.7175,.7175])ppPut(T,Wg,bxp+dx,.46,z,0,1,Math.PI/2);T.box(bxp,.55,0,1.8,.12,1.6,[.1,.1,.11],0,F)}
+ T.box(0,1.3,0,19.4,.22,2.95,cc,0,F);T.box(0,1.05,0,19.4,.3,.6,dk,0,F);for(const x of [-9.9,9.9])for(const z of [-.9,.9])T.box(x,1.15,z,.3,.3,.3,[.3,.3,.3],0,F);
+ for(const x of [-9.3,-3.2,3.2,9.3])for(const z of [-1.2,1.2])T.box(x,1.44,z,.2,.1,.2,[.2,.2,.2],0,F);
+ const n=o.load??((R()*3)|0);if(n===1)ppPut(T,ppContainer(R,{l:12.19,simple:1}),0,1.41,0,0,1);else if(n===2){ppPut(T,ppContainer(R,{simple:1}),-3.2,1.41,0,0,1);ppPut(T,ppContainer(R,{simple:1}),3.2,1.41,0,0,1)}
+ T.bx=[[0,1.15,0,19.6,.8,2.95],...(n?[[0,2.7,0,n===1?12.2:12.6,2.6,2.45]]:[])];return T}
+/* a long line of quads on the ground: ({a,b} the ends, w width, dash and gap in metres, 0 = continuous) */
+function ppLine(G,a,b,w,col,dash,gap,y=.02){const dx=b[0]-a[0],dz=b[1]-a[1],L=Math.hypot(dx,dz),ux=dx/L,uz=dz/L,nx=-uz*w/2,nz=ux*w/2,step=dash?dash+gap:L+1;
+ for(let t=0;t<L;t+=step){const e=Math.min(L,t+(dash||L)),p=[a[0]+ux*t,a[1]+uz*t],q=[a[0]+ux*e,a[1]+uz*e];G.quad([p[0]+nx,y,p[1]+nz],[p[0]-nx,y,p[1]-nz],[q[0]-nx,y,q[1]-nz],[q[0]+nx,y,q[1]+nz],col,4)}}
+/* a railway track along z at x: ballast, sleepers and two rails */
+function ppTrack(G,x,z0,z1,lod){const ln=Math.abs(z1-z0),zc=(z0+z1)/2,sp=lod?1.3:.65;
+ G.box(x,.05,zc,4.6,.1,ln,[.44,.42,.4],0,PPK.rock);
+ for(let z=Math.min(z0,z1)+.3;z<Math.max(z0,z1);z+=sp)G.box(x,.15,z,2.6,.14,.26,[.5,.49,.47],0,PPK.conc);
+ for(const s of [-1,1]){G.box(x+s*.7175,.26,zc,.07,.17,ln,[.4,.3,.24],0,PPK.metal);G.box(x+s*.7175,.19,zc,.14,.03,ln,[.3,.26,.22],0,4)}}
+/* a bollard */
+function ppBollard(){const T=new Geo();ppLathe(T,0,0,0,[[.3,0],[.27,.12],[.2,.28],[.2,.55],[.31,.66],[.29,.74],[.15,.74]],10,[.1,.1,.11],PPK.metal);return T}
+/* a long steel hall: cladding, a low gable roof, roller doors and a loading canopy (length along x, the doors on +z) */
+function ppHall(R,o={}){const T=new Geo(),L=o.l||44,W=o.w||18,H=o.h||8,wc=o.wall||[.6,.62,.64],rc=o.roof||[.42,.44,.46],K=PPK.metal;
+ T.box(0,H/2+.15,0,L,H,W,wc,0,K);T.box(0,.12,0,L+.2,.24,W+.2,[.5,.5,.48],0,PPK.conc);ppGable(T,H+.15,L,W,2.2,rc,K,{ov:.4,ox:.3,trim:false,gc:wc,gk:K});
+ const nd=Math.max(2,Math.floor(L/12));for(let i=0;i<nd;i++){const x=-L/2+(i+.5)*L/nd,dc=[[.5,.12,.1],[.14,.28,.48],[.46,.48,.5]][(R()*3)|0];
+  T.box(x,2.5,W/2+.04,5.4,4.8,.08,dc,0,K);for(let k=1;k<10;k++)T.box(x,.5+k*.46,W/2+.09,5.4,.03,.02,ppCol(dc,.7),0,4);T.box(x,5.3,W/2+.08,5.7,.3,.14,[.25,.25,.27],0,4)}
+ T.box(0,H-.6,W/2+.9,L*.96,.12,1.9,[.34,.35,.37],0,K);for(let x=-L/2+2;x<L/2;x+=6)T.box(x,(H-.6)/2,W/2+1.8,.14,H-.6,.14,[.3,.3,.32],0,4);
+ for(let x=-L/2+4;x<L/2-3;x+=9)T.box(x,H*.78,W/2+.04,2.4,.9,.04,[.1,.13,.16],0,PPK.gloss);
+ T.bx=[[0,H/2+.3,0,L,H+.6,W],[0,H+1.1,0,L,1.6,W]];return T}
+/* a mooring line from the quay to the ship, slack in the middle */
+function ppRope(G,a,b,sag){const n=8,c=[.08,.08,.07];let pv=a;for(let k=1;k<=n;k++){const f=k/n,q=[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f-sag*4*f*(1-f),a[2]+(b[2]-a[2])*f];ppBeam(G,pv,q,.09,.09,c,4);pv=q}}
+PROPS.port=function(g,R,sg,cg,T){const lod=g.lod,Rp=srnd(9501),G=g.R,put=(o,x,z,ry=0,s=1,y=0)=>ppPlace(g,cg,o,x,z,ry,s,y),CC=[[.46,.17,.13],[.13,.24,.4],[.13,.3,.2],[.66,.34,.1],[.5,.52,.52],[.72,.73,.7],[.3,.2,.15],[.1,.32,.34]];
+ /* the quay edge beyond the old wall: a kerb, a yellow line, bollards; the crane rails and the lane lines of the yard */
+ for(const sx of [-1,1]){G.box(sx*80,.2,-95.3,100,.4,1,[.6,.6,.58],0,PPK.conc);
+  for(const [x0,x1] of [[-125,-30],[30,125]]){if(sx>0)break;ppLine(G,[x0,-93.7],[x1,-93.7],.35,[.86,.7,.08],0,0);
+   for(const z of [-94.5,-78.5]){ppLine(G,[x0,z],[x1,z],1.2,[.38,.38,.37],0,0,.017)}}}
+ ppLine(G,[-30,-93.7],[30,-93.7],.35,[.86,.7,.08],0,0);
+ {const B=ppBollard();for(let x=-120;x<=120;x+=24){if(Math.abs(x)<32)continue;ppPut(G,B,x,0,-94.4,0,1)}for(const x of [-26,-2,22])ppPut(G,B,x,2,-95,0,1)}
+ for(const s of [-1,1]){ppLine(G,[s*24.5,28],[s*24.5,-92],.18,[.92,.92,.9],0,0);ppLine(G,[s*31.5,28],[s*31.5,-92],.18,[.92,.92,.9],0,0);ppLine(G,[s*28,28],[s*28,-92],.15,[.92,.92,.9],3,6)}
+ /* the ship at the quay, two quay cranes (one working, one with the boom up), the lines from the bow and stern */
+ put(ppShip(Rp,{l:140,b:22}),-16,-108.8,0);
+ put(ppCrane(Rp,{col:[.6,.69,.78]}),-46,-86.5,0);put(ppCrane(Rp,{col:[.8,.82,.82],up:68,ob:38}),46,-86.5,0);
+ if(!lod)for(const [a,b] of [[[-80,-97.8],-96],[[-74,-97.8],-72],[[40,-100.9],72],[[34,-99.3],48]])ppRope(G,[a[0],11,a[1]],[b,.7,-94.4],1.6);
+ /* light masts along the lanes */
+ for(const [x,z] of [[-32.5,8],[32.5,8],[-32.5,-40],[32.5,-40],[-32.5,-76],[32.5,-76]])put(ppLightMast(Rp,30),x,z,0);
+ /* yard blocks of containers outside the course */
+ const yard=(x0,dir,rows,z0,z1,dens)=>{for(let k=0;k<rows;k++){const x=x0+dir*k*2.62;for(let z=z0;z>z1;z-=6.4){if(Rp()>dens)continue;const nlv=1+Math.floor(Math.pow(Rp(),1.4)*5);
+  for(let l=0;l<nlv;l++){const c=CC[Math.floor(Rp()*CC.length)],j=.86+.26*Math.abs(Math.sin(z*3.7+l*5.1+x));G.box(x,1.3+l*2.65,z,2.5,2.6,6.1,c.map(v=>v*j),0,PPK.metal)}
+  cg.box(x,1.325*nlv,z,2.5,2.65*nlv,6.1,[.5,.5,.5],0)}}};
+ yard(-36.8,-1,lod?3:5,-8,-64,.82);yard(36.8,1,lod?3:5,-8,-64,.82);
+  /* vehicles on the lanes and round the blocks */
+ put(ppYardTruck(Rp),-26.3,-26,Math.PI/2);put(ppYardTruck(Rp,{load:0}),-29.7,-64,-Math.PI/2);put(ppYardTruck(Rp),29.7,-14,Math.PI/2);put(ppYardTruck(Rp,{col:[.85,.62,.1]}),26.3,-50,-Math.PI/2);
+ put(ppReachStacker(Rp),66.5,-70,Math.PI*.15);put(ppReachStacker(Rp,{load:0,col:[.2,.38,.62]}),-34,1,-.3);
+ /* a rail siding with a rake of container wagons */
+ ppTrack(G,72,40,-76,lod);for(const z of [-12,-33,-54])put(ppWagon(Rp),72,z,Math.PI/2);
+ /* halls at the edge of the terminal, an office block */
+ put(ppHall(Rp,{l:52,w:18,h:8}),-100,-40,Math.PI/2);put(ppHall(Rp,{l:44,w:16,h:7,wall:[.5,.55,.6]}),104,-44,-Math.PI/2);
+ /* gulls over the water and the quay */
+ ppFlock(g,Rp,{c:[0,-104],r:46,y:26,n:9,col:[.94,.94,.92],tip:[.2,.2,.23],s:1.2,sp:8});ppFlock(g,Rp,{c:[-30,-80],r:24,y:14,n:5,col:[.93,.93,.9],tip:[.22,.22,.25],s:1.1,sp:6,dir:-1})};
+/* ---------- the race arena: grandstands, a start/finish arch, sponsor boards on the barrier, a dirt ring, a paddock, a car park, light masts, tyre walls, an advertising blimp ---------- */
+/* a box truss between a and b (square section w): four chords and zig-zag diagonals on the four faces */
+function ppTruss(T,a,b,w,col){const d=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],L=Math.hypot(d[0],d[1],d[2]),dn=d.map(v=>v/L);let u=[-dn[2],0,dn[0]];const ul=Math.hypot(u[0],u[2]);u=ul<.05?[1,0,0]:[u[0]/ul,0,u[2]/ul];
+ const v=[dn[1]*u[2]-dn[2]*u[1],dn[2]*u[0]-dn[0]*u[2],dn[0]*u[1]-dn[1]*u[0]],h=w/2,C=[[-1,-1],[1,-1],[1,1],[-1,1]].map(([s,t])=>[u[0]*s*h+v[0]*t*h,u[1]*s*h+v[1]*t*h,u[2]*s*h+v[2]*t*h]),
+  at=(f,k)=>[a[0]+d[0]*f+C[k][0],a[1]+d[1]*f+C[k][1],a[2]+d[2]*f+C[k][2]];
+ for(let k=0;k<4;k++)ppBeam(T,at(0,k),at(1,k),.06,.06,col,4);
+ const n=Math.max(1,Math.round(L/w));for(let i=0;i<n;i++){const f0=i/n,f1=(i+1)/n;for(let k=0;k<4;k++){const k2=(k+1)%4;ppBeam(T,i%2?at(f0,k):at(f1,k),i%2?at(f1,k2):at(f0,k2),.035,.035,col,4)}}}
+/* a start/finish arch: two truss columns, a truss beam, a chequered banner under it and lamps on top (the span along x) */
+function ppArch(R,o={}){const T=new Geo(),S=o.s||10,H=o.h||7,tc=[.2,.21,.23];
+ for(const sx of [-1,1]){ppTruss(T,[sx*S,0,0],[sx*S,H,0],.7,tc);T.box(sx*S,.06,0,1.3,.12,1.3,[.15,.15,.16],0,4)}
+ ppTruss(T,[-S,H,0],[S,H,0],.7,tc);
+ const n=Math.round(S*2/.5),w=S*2/n;for(let i=0;i<n;i++)for(let r=0;r<2;r++){const c=(i+r)%2?[.96,.96,.94]:[.06,.06,.07],x=-S+i*w,y=H-.5-(r+1)*.5;T.quad([x,y,0],[x+w,y,0],[x+w,y+.5,0],[x,y+.5,0],c,4)}
+ for(let x=-S+1.5;x<S;x+=3)T.box(x,H+.5,0,.36,.16,.36,[1,.98,.88],0,5);
+ T.bx=[[-S,H/2,0,.8,H,.8],[S,H/2,0,.8,H,.8],[0,H,0,S*2,.8,.8]];return T}
+/* a sponsor board (abstract colours and stripes, no lettering) on the inside of the barrier: P(lx,ly) -> a point on the face */
+const PPBD=[[[.1,.3,.75],[.95,.95,.95],'s'],[[.85,.12,.1],[.96,.96,.94],'b'],[[.95,.8,.1],[.08,.08,.1],'c'],[[.1,.55,.3],[.95,.95,.92],'s'],[[.08,.08,.1],[.95,.5,.1],'b'],[[.95,.95,.95],[.1,.3,.75],'c'],[[.95,.5,.1],[.1,.2,.5],'s']];
+function ppBoard(G,P,k){const [bg,fg,ty]=PPBD[k%PPBD.length],w=2.1,y0=.12,y1=.92,q=(a,b,c,d,col)=>G.quad(P(a[0],a[1]),P(b[0],b[1]),P(c[0],c[1]),P(d[0],d[1]),col,4);
+ q([-w,y0],[w,y0],[w,y1],[-w,y1],bg);
+ if(ty==='s')for(let c=-1.5;c<=1.6;c+=.8)q([c-.18,y0],[c+.18,y0],[c+.48,y1],[c+.12,y1],fg);
+ else if(ty==='b'){q([-w,.4],[w,.4],[w,.58],[-w,.58],fg);q([-.25,.62],[.25,.62],[.25,.88],[-.25,.88],fg)}
+ else for(const s of [-1,1])for(let c=.25;c<2;c+=.7)q([s*c-.15,y0],[s*(c+.2),(y0+y1)/2],[s*c-.15,y1],[s*(c-.35),(y0+y1)/2],fg)}
+/* an advertising airship, nose along +x: an ellipsoid envelope (rings denser at the ends), a blue band, four tail fins in an X, a gondola */
+function ppBlimpGeo(){const T=new Geo(),L=34,Rb=5.4,n=18,w=[.95,.96,.97],bl=[.14,.32,.7],X=i=>-L/2+L*(1-Math.cos(Math.PI*i/n))/2,r=x=>Rb*Math.sqrt(Math.max(.012,1-Math.pow(2*x/L,2)));
+ for(let i=0;i<n;i++){const x0=X(i),x1=X(i+1),c=(i>=7&&i<=10)?bl:w;ppTubeX(T,x0,x1,r(x0),r(x1),18,c,4)}
+ for(const a of [Math.PI/4,Math.PI*3/4,Math.PI*5/4,Math.PI*7/4]){const cs=Math.cos(a),sn=Math.sin(a),P=(x,rr)=>[x,cs*rr,sn*rr],xa=-L/2+11,xb=-L/2+2.4;
+  T.quad(P(xa,r(xa)*.92),P(xb,r(xb)*.92),P(-L/2+3.2,Rb*1.62),P(-L/2+7.6,Rb*1.62),[.9,.92,.95],4);T.quad(P(-L/2+3.2,Rb*1.62),P(-L/2+7.6,Rb*1.62),P(-L/2+7.1,Rb*1.28),P(-L/2+3.6,Rb*1.28),bl,4)}
+ T.box(1.5,-Rb-.95,0,8,1.9,2.6,[.86,.87,.9],0,4);T.box(1.5,-Rb-1.7,0,8.2,.2,2.7,[.35,.36,.4],0,4);T.box(5.55,-Rb-.8,0,.1,.9,2.1,[.07,.09,.13],0,PPK.gloss);
+ for(const z of [-1.31,1.31])T.quad([-1.5,-Rb-1.2,z],[5.2,-Rb-1.2,z],[5.2,-Rb-.5,z],[-1.5,-Rb-.5,z],[.07,.09,.13],PPK.gloss);
+ for(const z of [-.9,.9])ppBeam(T,[-1,-Rb+.9,z],[-1,-Rb-.1,z],.12,.12,[.3,.3,.3],4);for(const z of [-.9,.9])ppBeam(T,[4,-Rb+.9,z],[4,-Rb-.1,z],.12,.12,[.3,.3,.3],4);return T}
+PROPS.race=function(g,R,sg,cg,T){const lod=g.lod,Rp=srnd(9601),G=g.R,put=(o,x,z,ry=0,s=1,y=0)=>ppPlace(g,cg,o,x,z,ry,s,y),night=!!this.night,E=a=>[Math.cos(a)*40,-26+Math.sin(a)*46];
+ /* the barrier: red and white strips on top, sponsor boards on the inside face */
+ for(let i=0;i<60;i++){const a=i/60*Math.PI*2,[cx,cz]=E(a),ry=-a+Math.PI/2,cs=Math.cos(ry),sn=Math.sin(ry);
+  G.box(cx,1.025,cz,4.4,.05,.24,i%2?[.86,.1,.08]:[.95,.95,.93],ry,4);
+  if(i%3!==2)ppBoard(G,(lx,ly)=>[cx+lx*cs-.09*sn,ly,cz-lx*sn-.09*cs],i*5+((i/6)|0));}
+ /* a dirt ring just inside the barrier (the grass is left out under it) */
+ {const P=[],N=96;for(let i=0;i<=N;i++){const a=i/N*Math.PI*2;P.push([Math.cos(a)*34.6,-26+Math.sin(a)*40.6])}
+  ppTrail(g,P,{w:6.4,kind:vgK('p','dirt'),col:[.56,.47,.35],edge:[.36,.4,.22],ruts:false,y:.016});for(let i=0;i<N;i+=2)ppSkip(g,P[i][0],P[i][1],4.6)}
+ /* the start/finish arch between the first gate and the last one */
+ put(ppArch(Rp,{s:10,h:7}),0,-2.5,0);
+ /* grandstands: behind the start, opposite, and on both sides; a control box beside the front one */
+ put(ppStand(Rp,{l:40,t:8}),0,25,0);put(ppStand(Rp,{l:34,t:7}),0,-80,Math.PI);put(ppStand(Rp,{l:30,t:6}),50,-26,Math.PI/2);put(ppStand(Rp,{l:30,t:5}),-50,-26,-Math.PI/2);
+ {const B=new Geo();B.box(0,2.6,0,9,5.2,5,[.82,.83,.84],0,PPK.metal);B.box(0,5.4,0,9.6,.4,5.6,[.3,.31,.33],0,4);B.box(0,3.6,-2.52,8,1.5,.06,[.07,.1,.14],0,PPK.gloss);B.box(0,1.2,-2.52,1.4,2.3,.06,[.2,.2,.22],0,4);ppBeam(B,[3.5,5.6,0],[3.5,9,0],.1,.1,[.7,.72,.75],4);B.bx=[[0,2.8,0,9,5.6,5]];put(B,-27,26,0)}
+ /* floodlight masts at the corners */
+ for(const [x,z] of [[-55,14],[55,14],[-55,-66],[55,-66]])put(ppLightMast(Rp,24),x,z,0);
+ /* tyre walls on the outside of the barrier at the four bends */
+ if(!lod)for(const a0 of [.62,2.52,3.76,5.66]){const [x0,z0]=E(a0),ry=-a0+Math.PI/2,cs=Math.cos(ry),sn=Math.sin(ry),ox=Math.cos(a0)*1.5,oz=Math.sin(a0)*1.5;
+  for(let k=-3;k<=2;k++){const lx=(k+.5)*1.02;put(ppTyres(Rp,3),x0+ox+lx*cs,z0+oz-lx*sn,Rp()*3)}}
+ /* the paddock on the east side: team tents, vans, small gazebos */
+ {const TC=[[[.95,.95,.93],[.8,.12,.1]],[[.95,.95,.93],[.12,.3,.75]],[[.95,.95,.93],[.95,.75,.1]]];
+  [[72,-12],[72,-26],[72,-40]].forEach(([x,z],i)=>{put(ppTent(Rp,{l:10,w:6,col:TC[i][0],band:TC[i][1]}),x,z,Math.PI/2);{const A=new Geo(),c=TC[i][1];A.quad([-4.6,2.3,-3],[4.6,2.3,-3],[4.6,1.95,-5.4],[-4.6,1.95,-5.4],c,4);for(let k=0;k<5;k++)A.quad([-4.6+k*1.84,2.3,-3],[-4.6+k*1.84+.92,2.3,-3],[-4.6+k*1.84+.92,1.95,-5.4],[-4.6+k*1.84,1.95,-5.4],[.96,.96,.94],4);for(const xx of [-4.5,4.5])ppBeam(A,[xx,0,-5.3],[xx,1.98,-5.3],.07,.07,[.72,.74,.77],4);put(A,x,z,Math.PI/2)}ppPatch(g,x+1,z,7,[.5,.43,.33],Rp,.016,vgK('p','dirt'));ppSkip(g,x+1,z,8)});
+  [[82,-17,Math.PI/2],[83,-33,Math.PI/2+.1],[81,-47,Math.PI/2]].forEach(([x,z,ry],i)=>put(ppCar(Rp,{type:'van',col:i===1?[.9,.9,.88]:[.95,.95,.93]}),x,z,ry))}
+ /* a car park of the spectators on the west side */
+ {const rows=lod?2:3,per=lod?5:9;for(let r=0;r<rows;r++){const x=-76-r*7;G.quad([x-2.8,.016,-4],[x+2.8,.016,-4],[x+2.8,.016,-4-per*5.2],[x-2.8,.016,-4-per*5.2],[.52,.46,.36],vgK('p','dirt'));for(let k=0;k<per;k++){const z=-8-k*5.2;ppSkip(g,x,z,3.4);if(Rp()<.22)continue;put(ppCar(Rp,{}),x,z,(r%2?-1:1)*Math.PI/2+(Rp()-.5)*.08)}}}
+ /* the airship over the arena (not at night) */
+ if(!night&&!g.nv){const B=ppBlimpGeo();(g.pd||(g.pd=[])).push({k:'birds',geos:[B,B,B,B],c:[0,-26],r:150,y:88,sp:7,th0:Rp()*6.28,dir:1,fq:1,bk:.04})}
+ ppFlock(g,Rp,{c:[0,-26],r:30,y:18,n:6,col:[.12,.12,.13],tip:[.1,.1,.11],s:.8,sp:8})};
+PROPS.night=PROPS.race;
+/* ---------- the river and the bridge: a road with ramps, girders under the deck, pier caps and cutwaters, banks with reeds, a jetty with boats, swans and ducks, a hamlet, sheep ---------- */
+/* a road along 3D points [x,y,z]: asphalt, white edge lines, a dashed centre line (w = width) */
+function ppRoad(G,P,w,o={}){const col=o.col||[.27,.27,.29],ec=[.93,.93,.9],ew=o.ew??.13,ed=o.ed??(w/2-.28),dash=o.dash??3,gap=o.gap??6,yo=o.yo??.012;
+ for(let i=0;i<P.length-1;i++){const a=P[i],b=P[i+1],dx=b[0]-a[0],dz=b[2]-a[2],Lh=Math.hypot(dx,dz),ux=dx/Lh,uz=dz/Lh,nx=-uz,nz=ux,Q=(f,s,y0)=>[a[0]+dx*f+nx*s,a[1]+(b[1]-a[1])*f+y0,a[2]+dz*f+nz*s];
+  G.quad(Q(0,-w/2,0),Q(0,w/2,0),Q(1,w/2,0),Q(1,-w/2,0),col,o.kind??PPK.asph);
+  if(o.edge!==false)for(const s of [-1,1])G.quad(Q(0,s*ed-ew/2,yo),Q(0,s*ed+ew/2,yo),Q(1,s*ed+ew/2,yo),Q(1,s*ed-ew/2,yo),ec,4);
+  if(dash)for(let t=0;t<Lh;t+=dash+gap){const f0=t/Lh,f1=Math.min(1,(t+dash)/Lh);G.quad(Q(f0,-.07,yo),Q(f0,.07,yo),Q(f1,.07,yo),Q(f1,-.07,yo),ec,4)}}}
+/* a road lamp: a pole, an arm over the road (+z) and a lamp head */
+function ppRoadLamp(){const T=new Geo(),h=5.2,pc=[.42,.44,.46];ppLathe(T,0,0,0,[[.1,0],[.07,h]],8,pc,4);ppBeam(T,[0,h-.1,0],[0,h+.25,.6],.07,.07,pc,4);ppBeam(T,[0,h+.25,.6],[0,h+.3,1.9],.07,.07,pc,4);
+ T.box(0,h+.26,2.1,.28,.1,.7,[.35,.36,.38],0,4);T.box(0,h+.2,2.1,.2,.03,.55,[1,.95,.8],0,5);T.cy=[[0,0,.1,h]];return T}
+/* a swan floating, nose along +x */
+function ppSwan(R){const T=new Geo(),w=[.95,.95,.93],K=4;ppTubeX(T,-.55,-.1,.12,.25,9,w,K);ppTubeX(T,-.1,.35,.25,.2,9,w,K);ppTubeX(T,.35,.5,.2,.1,9,w,K);
+ ppBeam(T,[.4,.25,0],[.5,.5,0],.09,.09,w,K);ppBeam(T,[.5,.5,0],[.5,.78,0],.08,.08,w,K);ppBeam(T,[.5,.78,0],[.6,.86,0],.07,.07,w,K);T.box(.66,.86,0,.12,.07,.07,[.92,.55,.15],0,K);
+ ppBeam(T,[-.5,.12,-.2],[-.75,.3,-.12],.2,.03,w,K);ppBeam(T,[-.5,.12,.2],[-.75,.3,.12],.2,.03,w,K);return T}
+/* a mallard, nose along +x (drake or hen) */
+function ppDuck(R,drake){const T=new Geo(),b=drake?[.58,.57,.54]:[.5,.38,.26],h=drake?[.08,.36,.2]:[.5,.38,.26],K=4;ppTubeX(T,-.25,.05,.07,.14,8,b,K);ppTubeX(T,.05,.22,.14,.1,8,b,K);T.box(.28,.2,0,.14,.12,.12,h,0,K);T.box(.37,.18,0,.1,.04,.07,[.85,.7,.15],0,K);
+ T.box(-.28,.14,0,.12,.05,.1,drake?[.15,.15,.17]:b,0,K);return T}
+/* a sheep (nose along +x): wool body, dark face and legs */
+function ppSheep(R){const T=new Geo(),wl=ppCol([.86,.84,.78],.92+.12*R()),dk=[.16,.15,.14],K=4;ppTubeX(T,-.45,-.15,.22,.3,8,wl,K);ppTubeX(T,-.15,.2,.3,.3,8,wl,K);ppTubeX(T,.2,.45,.3,.22,8,wl,K);T.box(.62,.62,0,.26,.2,.16,dk,0,K);T.box(.5,.62,0,.18,.16,.2,wl,0,K);
+ for(const [x,z] of [[-.3,-.14],[-.3,.14],[.3,-.14],[.3,.14]])T.box(x,.2,z,.07,.4,.07,dk,0,K);T.box(.68,.7,-.1,.08,.04,.08,dk,0,K);T.box(.68,.7,.1,.08,.04,.08,dk,0,K);return T}
+/* a landing stage on piles, a deck of planks */
+function ppJetty(R,L){const T=new Geo(),pc=[.34,.26,.18],bc=[.5,.38,.26],K=PPK.bark;
+ for(let i=0;i<Math.floor(L/.26);i++)T.box(-L/2+.13+i*.26,.62,0,.22,.05,1.5,ppCol(bc,.85+.3*R()),0,K);for(const z of [-.65,.65])T.box(0,.52,z,L,.12,.12,pc,0,K);
+ for(let x=-L/2+.5;x<L/2;x+=1.8)for(const z of [-.7,.7])ppLathe(T,x,-.4,z,[[.09,0],[.08,1.3],[.1,1.34]],6,pc,K);
+ T.bx=[[0,.6,0,L,.2,1.5]];T.cy=[];return T}
+PROPS.bridge=function(g,R,sg,cg,T){const lod=g.lod,Rp=srnd(9701),G=g.R,put=(o,x,z,ry=0,s=1,y=0)=>ppPlace(g,cg,o,x,z,ry,s,y),CN=[.6,.6,.57],Lr=48,H=6.3;
+ /* the road on the deck and kerbs */
+ ppRoad(G,[[-20,H+.02,-40],[20,H+.02,-40]],6.2,{});for(const z of [-43.3,-36.7])G.box(0,H+.11,z,40,.22,.4,[.6,.6,.58],0,PPK.conc);
+ /* the deck from below: five girders on pier caps, diaphragms, bearings; the piers get a waterline stain and cutwaters */
+ {const D=new Geo();for(const z of [-2.6,-1.3,0,1.3,2.6])D.box(0,5.175,z,38.4,1.05,.5,[.56,.56,.54],0,PPK.conc);for(const z of [-2.6,-1.3,0,1.3,2.6])D.box(0,4.68,z,38.4,.08,.6,[.35,.35,.37],0,4);
+  for(let x=-18;x<=18;x+=4.5)D.box(x,5.1,0,.22,.85,5.6,[.5,.5,.48],0,PPK.conc);
+  for(const sx of [-6,6]){D.box(sx,4.4,0,1.8,.5,6.2,[.58,.58,.55],0,PPK.conc);D.box(sx,.35,0,1.26,.7,2.46,[.22,.27,.2],0,PPK.conc);
+   for(const sd of [-1,1]){const z0=sd*1.2,z1=sd*2.3,y1=4.1;D.tri([sx-.6,0,z0],[sx+.6,0,z0],[sx,0,z1],CN,PPK.conc);D.tri([sx-.6,y1,z0],[sx,y1,z1],[sx+.6,y1,z0],CN,PPK.conc);D.quad([sx-.6,0,z0],[sx,0,z1],[sx,y1,z1],[sx-.6,y1,z0],CN,PPK.conc);D.quad([sx+.6,0,z0],[sx+.6,y1,z0],[sx,y1,z1],[sx,0,z1],CN,PPK.conc)}}
+  put(D,0,-40,0);cg.box(0,5.175,-40,38.4,1.05,5.8,[.5,.5,.5],0);for(const sx of [-6,6])cg.box(sx,4.4,-40,1.8,.5,6.2,[.5,.5,.5],0);
+  for(const sx of [-6,6])for(const sd of [-1,1])cg.box(sx,2,-40+sd*1.75,1.1,4,1.1,[.5,.5,.5],0)}
+ /* lamps on the deck, alternating sides */
+ for(const [x,z,ry] of [[-16,-43.3,0],[-6,-36.7,Math.PI],[6,-43.3,0],[16,-36.7,Math.PI]])put(ppRoadLamp(),x,z,ry,1,H);
+ /* the approach roads: a ramp on two retaining walls with parapets on each side of the bridge, then the road runs on across the meadow */
+ for(const sx of [-1,1]){const x0=sx*20.75,x1=sx*(20.75+Lr);
+  ppRoad(G,[[x0,H,-40],[x1,0,-40]],6.2,{});ppRoad(G,[[x1,0,-40],[sx*(20.75+Lr+10),0,-40],[sx*175,0,-40]],6.2,{});
+  for(const sz of [-1,1]){const zo=-40+sz*3.9,zi=-40+sz*3.5,zc=(zo+zi)/2;
+   G.tri([x0,0,zo],[x0,H,zo],[x1,0,zo],CN,PPK.conc);G.tri([x0,0,zi],[x1,0,zi],[x0,H,zi],CN,PPK.conc);G.quad([x0,H,zo],[x1,0,zo],[x1,0,zi],[x0,H,zi],CN,PPK.conc);G.quad([x0,0,zo],[x0,H,zo],[x0,H,zi],[x0,0,zi],CN,PPK.conc);
+   ppBeam(G,[x0,H+.4,zc],[x1,.4,zc],.4,.8,[.66,.66,.63],PPK.conc);cg.tri([x0,0,zo+sz*.2],[x0,H,zo+sz*.2],[x1,0,zo+sz*.2],[.5,.5,.5])}
+  cg.quad([x0,H,-43.9],[x1,0,-43.9],[x1,0,-36.1],[x0,H,-36.1],[.5,.5,.5])}
+ for(const sx of [-1,1])ppPoles(G,cg,[[sx*85,-35.5],[sx*180,-35.5]],Rp);
+ /* a muddy edge along both banks, reeds in clumps, a towpath on the west bank */
+ for(const sd of [-1,1]){const P=[];for(let z=38;z>-238;z-=3)P.push([sd*(9.95+.45*Math.sin(z*.13+sd)+.3*Math.sin(z*.41)),z]);ppTrail(g,P,{w:2.3,kind:vgK('p','dirt'),col:[.36,.31,.23],edge:[.28,.31,.2],ruts:false,y:.03});
+  let z=34;while(z>-226){const len=3+Rp()*9;if(!(z<-34&&z>-46)&&!(lod&&Rp()<.5))ppReeds(g,[sd*(9.5+Rp()*.5),z],[sd*(9.5+Rp()*.5),z-len],Math.round(len*2.2),Rp,{spread:1.1});z-=len+5+Rp()*16}}
+ {const P=[];for(let z=36;z>-210;z-=3)P.push([-12.4+.5*Math.sin(z*.09)+.3*Math.sin(z*.31),z]);ppTrail(g,P,{w:1.5,kind:vgK('p','dirt'),col:[.5,.45,.34],edge:[.38,.4,.24],ruts:false,y:.02});for(let i=0;i<P.length;i+=2)ppSkip(g,P[i][0],P[i][1],2)}
+ /* a landing stage on the east bank with two boats, a rowing boat on the west bank */
+ put(ppJetty(Rp,6.8),5.9,-12,0);put(ppBoat(Rp,{col:[.85,.85,.82]}),6.5,-14.4,.05);put(ppBoat(Rp,{col:[.2,.4,.55]}),7.4,-9.6,-.1);put(ppBoat(Rp,{col:[.7,.2,.15]}),-8.3,-60,1.4);
+ /* swans and ducks on the water, geese over it */
+ for(const [x,z,r] of [[-6.2,-86,.3],[-5.4,-88.4,-.2],[6.6,-122,2.8]])put(ppSwan(Rp),x,z,r,1,.02);
+ for(let i=0;i<(lod?5:11);i++){const g0=i%2?[7.2,-102]:[-7.6,-148];put(ppDuck(Rp,i%3!==0),g0[0]+(Rp()-.5)*3,g0[1]+(Rp()-.5)*5,Rp()*6.28,1,.02)}
+ ppFlock(g,Rp,{c:[0,-120],r:42,y:15,n:7,col:[.4,.34,.27],tip:[.12,.12,.14],belly:[.7,.68,.62],s:1,sp:9});
+ /* a hamlet beyond the trees on the east, a smaller one on the west, sheep on the meadows */
+ try{ppVillage(g,cg,Rp,100,-74,70,{n:lod?5:8,church:.35});ppVillage(g,cg,Rp,-96,-112,50,{n:lod?4:6,church:.7,skew:-6})}catch(e){}
+ if(!lod)for(const [cx,cz] of [[46,-12],[-52,-60],[52,-132],[-46,-170]]){const n=6+((Rp()*5)|0),ry0=Rp()*6.28;for(let i=0;i<n;i++){const a=Rp()*6.28,d=Rp()*7,x=cx+Math.cos(a)*d,z=cz+Math.sin(a)*d;if(ppFree(T,x,z,1.5))put(ppSheep(Rp),x,z,ry0+(Rp()-.5)*1.6)}}};
+
+/* ===== v175 · the desert: an oil pump, a wind pump, a Bedouin camp, a ruin, tracks, acacias and scrub ===== */
+/* a convex polygon of [x,y] extruded along z */
+function ppExtZ(T,P,z0,z1,col,kind=4){const n=P.length;
+ for(let i=0;i<n;i++){const a=P[i],b=P[(i+1)%n];T.quad([a[0],a[1],z0],[b[0],b[1],z0],[b[0],b[1],z1],[a[0],a[1],z1],col,kind)}
+ for(let i=1;i<n-1;i++){T.tri([P[0][0],P[0][1],z0],[P[i][0],P[i][1],z0],[P[i+1][0],P[i+1][1],z0],col,kind);T.tri([P[0][0],P[0][1],z1],[P[i+1][0],P[i+1][1],z1],[P[i][0],P[i][1],z1],col,kind)}}
+/* a round frustum from a to b (radius ra to rb) with smooth normals */
+function ppTube(T,a,b,ra,rb,seg,col,kind=4){const d=vgNrm(b[0]-a[0],b[1]-a[1],b[2]-a[2]);let ux=-d[2],uz=d[0];const ul=Math.hypot(ux,uz);if(ul<.05){ux=1;uz=0}else{ux/=ul;uz/=ul}
+ const u=[ux,0,uz],v=[d[1]*u[2]-d[2]*u[1],d[2]*u[0]-d[0]*u[2],d[0]*u[1]-d[1]*u[0]],P=(p,e,r)=>[p[0]+e[0]*r,p[1]+e[1]*r,p[2]+e[2]*r];
+ for(let i=0;i<seg;i++){const a0=i/seg*6.2832,a1=(i+1)/seg*6.2832,c0=Math.cos(a0),s0=Math.sin(a0),c1=Math.cos(a1),s1=Math.sin(a1),
+  e0=[u[0]*c0+v[0]*s0,u[1]*c0+v[1]*s0,u[2]*c0+v[2]*s0],e1=[u[0]*c1+v[0]*s1,u[1]*c1+v[1]*s1,u[2]*c1+v[2]*s1];
+  T.quadX(P(a,e0,ra),P(a,e1,ra),P(b,e1,rb),P(b,e0,rb),col,kind,[[0,0],[0,0],[0,0],[0,0]],[e0,e1,e1,e0])}}
+
+/* ---------- a pumping unit (the oil field's nodding donkey) ----------
+   The frame is built standing on the ground (x toward the horsehead, the beam pivot at height Hp); the moving parts are separate meshes that propsDraw drives:
+   the crank turns, the pitman links its pin to the tail of the walking beam, the beam rocks, the horsehead pays the bridle out and takes it in. */
+const PJ={Hp:4.6,Rb:2.5,Rh:3.4,C:[-2.35,-3.1],r:.95,Lp:3.1,yb:-1.7};
+function ppPumpjack(R,o={}){const K={...PJ},Hp=K.Hp,Rh=K.Rh,Rb=K.Rb,bl=o.col||[.14,.33,.56],cw=o.cw||[.86,.45,.1],dk=[.12,.13,.15],st=[.72,.74,.77],M=PPK.metal,T=new Geo(),cx=K.C[0],cy=Hp+K.C[1];
+ T.box(-.9,.1,0,8.8,.2,2.6,[.55,.54,.5],0,PPK.conc);
+ for(const s of [-1,1])T.box(-.9,.34,s*.75,7.4,.28,.3,bl,0,M);for(const x of [-4.2,-2.6,-1,.6,2.2])T.box(x,.34,0,.2,.2,1.5,bl,0,M);
+ T.box(cx,1.1,0,1.7,1.4,.9,[.16,.22,.3],0,M);T.box(cx,cy,0,.24,.24,1.9,st,0,M);for(const s of [-1,1])T.box(cx,cy,s*.5,.55,.55,.08,[.5,.52,.55],0,M);
+ T.box(-4.3,.85,0,.8,.55,.66,[.2,.4,.42],0,M);T.box(-4.2,.5,0,1.2,.1,.9,bl,0,M);T.box(-3.3,1.15,.64,1.9,.8,.05,[.42,.42,.45],0,M);
+ const lv=y=>{const f=(y-.3)/(Hp-.65);return [1.7*(1-f),.8-.48*f]};
+ for(const sx of [-1,1])for(const sz of [-1,1])ppBeam(T,[sx*1.7,.3,sz*.8],[0,Hp-.35,sz*.32],.2,.2,bl,M);
+ for(const y of [1.5,2.8]){const [xe,ze]=lv(y);for(const sx of [-1,1])ppBeam(T,[sx*xe,y,-ze],[sx*xe,y,ze],.1,.1,bl,M);for(const sz of [-1,1])ppBeam(T,[-xe,y,sz*ze],[xe,y,sz*ze],.1,.1,bl,M)}
+ for(const sz of [-1,1]){ppBeam(T,[-1.2,1.5,sz*lv(1.5)[1]],[.7,2.8,sz*lv(2.8)[1]],.07,.07,bl,M);ppBeam(T,[1.2,1.5,sz*lv(1.5)[1]],[-.7,2.8,sz*lv(2.8)[1]],.07,.07,bl,M)}
+ T.box(0,Hp-.15,0,.5,.3,.95,dk,0,M);
+ T.box(Rh,.06,0,1.6,.12,1.6,[.55,.54,.5],0,PPK.conc);ppLathe(T,Rh,.1,0,[[.14,0],[.14,.55],[.1,.6],[.1,.95],[.12,1.0],[.12,1.1]],8,[[.5,.52,.54],[.5,.52,.54],[.55,.45,.2],[.55,.45,.2],[.3,.3,.32]],M);
+ ppTube(T,[Rh,.75,0],[Rh+.8,.75,0],.06,.06,6,[.3,.3,.32],4);T.box(Rh+.3,1.0,0,.06,.3,.3,[.7,.1,.08],0,4);
+ T.bx=[[-.9,.25,0,7.6,.5,2.6],[cx,1.1,0,1.9,1.5,1.4],[-4.3,.85,0,1.0,.7,.9],[0,2.4,0,3.6,4.2,1.7],[.5,Hp,0,6.4,3.6,.7],[cx,cy,0,2.4,2.4,1.6],[Rh,.55,0,1.5,1.1,1.5]];
+ /* the walking beam with its horsehead: the origin is the pivot */
+ const Mb=new Geo(),Ri=Rh-.2,fb=ppCol(bl,1.05);
+ ppExtZ(Mb,[[-Rb-.25,-.16],[-Rb-.25,.16],[-.9,.3],[1.0,.3],[Rh-.25,.14],[Rh-.25,-.14],[1.0,-.3],[-.9,-.3]],-.27,.27,fb);
+ for(let i=0;i<10;i++){const a0=-.5+i*.1,a1=a0+.1,c0=Math.cos(a0),s0=Math.sin(a0),c1=Math.cos(a1),s1=Math.sin(a1);
+  Mb.quad([Rh*c0,Rh*s0,-.27],[Rh*c1,Rh*s1,-.27],[Rh*c1,Rh*s1,.27],[Rh*c0,Rh*s0,.27],fb,4);Mb.quad([Ri*c0,Ri*s0,-.27],[Ri*c1,Ri*s1,-.27],[Ri*c1,Ri*s1,.27],[Ri*c0,Ri*s0,.27],ppCol(bl,.8),4);
+  for(const z of [-.27,.27])Mb.quad([Ri*c0,Ri*s0,z],[Rh*c0,Rh*s0,z],[Rh*c1,Rh*s1,z],[Ri*c1,Ri*s1,z],ppCol(bl,.92),4)}
+ for(const s of [-1,1])ppExtZ(Mb,[[1.0,s*.3],[Ri*Math.cos(.5),s*Ri*Math.sin(.5)],[Rh-.25,s*.14]],-.06,.06,ppCol(bl,.95));
+ Mb.box(0,0,0,.4,.4,1.0,dk,0,4);Mb.box(-Rb,0,0,.16,.16,1.6,dk,0,4);Mb.box(-Rb-.2,.2,0,.5,.06,.54,ppCol(bl,1.15),0,4);
+ /* the cranks with their counterweights: the origin is the crank shaft */
+ const Mc=new Geo(),rr=K.r;
+ for(const s of [-1,1]){ppExtZ(Mc,[[-.3,-.14],[-.3,.14],[rr+.12,.12],[rr+.12,-.12]],s*.48,s*.62,bl);Mc.box(-.85,0,s*.55,.7,.62,.26,cw,0,4);Mc.box(-.85,0,s*.55,.72,.5,.28,ppCol(cw,.82),0,4)}
+ Mc.box(rr,0,0,.14,.14,1.5,dk,0,4);Mc.box(0,0,0,.24,.24,1.4,st,0,4);
+ /* the pitman links: the origin is the tail of the beam, the links run along +x to the crank pin */
+ const Mp=new Geo(),Lp=K.Lp;for(const s of [-1,1]){ppTube(Mp,[0,0,s*.7],[Lp,0,s*.7],.05,.05,6,[.5,.5,.52],4);Mp.box(0,0,s*.7,.14,.14,.12,dk,0,4);Mp.box(Lp,0,s*.7,.14,.14,.12,dk,0,4)}
+ /* the bridle: two cables from the horsehead down to the carrier bar (a unit long, hanging from y=0) and the polished rod */
+ const Ml=new Geo();for(const s of [-1,1])Ml.box(0,-.5,s*.3,.03,1,.03,[.18,.18,.2],0,4);
+ const Mr=new Geo();Mr.box(0,0,0,.16,.1,.8,[.22,.22,.25],0,4);Mr.box(0,-.4,0,.12,.14,.12,[.3,.3,.32],0,4);ppTube(Mr,[0,-3.2,0],[0,.14,0],.028,.028,6,st,4);
+ return {T,K,parts:[Mb,Mc,Mp,Ml,Mr]}}
+
+/* ---------- a wind pump (a farm windmill on a lattice tower, with its stock tank) ---------- */
+const WPH=9;
+function ppWindPump(R,o={}){const T=new Geo(),Ht=WPH,gv=[.74,.76,.78],M=PPK.metal,b0=1.15,b1=.3,nL=6,bd=(y)=>b0+(b1-b0)*y/Ht;
+ T.box(0,.1,0,2.9,.2,2.9,[.55,.54,.5],0,PPK.conc);
+ for(const sx of [-1,1])for(const sz of [-1,1])ppBeam(T,[sx*b0,.2,sz*b0],[sx*b1,Ht,sz*b1],.08,.08,gv,M);
+ for(let k=0;k<=nL;k++){const y=.2+(Ht-.2)*k/nL,w=bd(y);for(const s of [-1,1]){ppBeam(T,[-w,y,s*w],[w,y,s*w],.05,.05,gv,M);ppBeam(T,[s*w,y,-w],[s*w,y,w],.05,.05,gv,M)}}
+ for(let k=0;k<nL;k++){const y0=.2+(Ht-.2)*k/nL,y1=.2+(Ht-.2)*(k+1)/nL,w0=bd(y0),w1=bd(y1),d=(k%2?1:-1);for(const s of [-1,1]){ppBeam(T,[-d*w0,y0,s*w0],[d*w1,y1,s*w1],.04,.04,gv,M);ppBeam(T,[s*w0,y0,-d*w0],[s*w1,y1,d*w1],.04,.04,gv,M)}}
+ ppLathe(T,0,Ht,0,[[.12,0],[.12,.26]],8,[.4,.4,.42],M);ppTube(T,[0,.6,0],[0,Ht,0],.025,.025,5,[.3,.3,.32],4);
+ /* the stock tank beside it, a pipe running to it */
+ const tx=3.7,tz=.4,tr=1.75;ppLathe(T,tx,0,tz,[[tr,0],[tr,.82],[tr+.07,.86],[tr+.07,.9],[tr-.1,.9]],18,[[.62,.64,.66],[.62,.64,.66],[.7,.72,.74],[.7,.72,.74]],M);
+ {const n=18,wc=[.2,.34,.4];for(let i=0;i<n;i++){const a0=i/n*6.2832,a1=(i+1)/n*6.2832;T.tri([tx,.72,tz],[tx+Math.cos(a0)*(tr-.08),.72,tz+Math.sin(a0)*(tr-.08)],[tx+Math.cos(a1)*(tr-.08),.72,tz+Math.sin(a1)*(tr-.08)],wc,PPK.gloss)}}
+ ppTube(T,[.3,.35,0],[tx-tr+.2,.35,tz],.05,.05,6,[.3,.3,.32],4);ppTube(T,[tx-tr+.2,.35,tz],[tx-tr+.2,1.05,tz],.05,.05,6,[.3,.3,.32],4);
+ T.bx=[[0,Ht/2,0,1.7,Ht,1.7]];T.cy=[[tx,tz,tr+.05,.9]];
+ /* the head (origin: the top of the tower; +x is downwind): gear box, tail boom and vane */
+ const Mh=new Geo();Mh.box(.05,0,0,.7,.4,.36,[.5,.52,.55],0,4);Mh.box(-.35,0,0,.3,.3,.3,[.35,.36,.4],0,4);ppBeam(Mh,[.3,0,0],[3.1,.12,0],.06,.12,[.55,.57,.6],4);
+ ppExtZ(Mh,[[2.3,-.38],[3.9,-.5],[3.9,.58],[2.3,.34]],-.015,.015,[.66,.22,.15]);ppExtZ(Mh,[[2.3,.02],[3.9,.04],[3.9,.58],[2.3,.34]],.016,.034,[.9,.88,.84]);
+ /* the wheel (origin: its hub on the x axis, the axle along x): 18 curved blades between two rings and 12 spokes */
+ const Mr=new Geo(),xw=-.85,Rw=1.35,Ri=.62,nb=18,nr=24;
+ ppTube(Mr,[xw-.18,0,0],[xw+.2,0,0],.13,.13,8,[.4,.4,.42],4);
+ for(let i=0;i<12;i++){const a=i/12*6.2832;ppBeam(Mr,[xw,Math.cos(a)*.12,Math.sin(a)*.12],[xw,Math.cos(a)*Rw,Math.sin(a)*Rw],.03,.03,gv,4)}
+ for(const rg of [Ri,Rw-.02])for(let i=0;i<nr;i++){const a0=i/nr*6.2832,a1=(i+1)/nr*6.2832;ppBeam(Mr,[xw,Math.cos(a0)*rg,Math.sin(a0)*rg],[xw,Math.cos(a1)*rg,Math.sin(a1)*rg],.05,.05,gv,4)}
+ for(let i=0;i<nb;i++){const a=i/nb*6.2832+.17,ca=Math.cos(a),sa=Math.sin(a),tw=.5,P=(r,w)=>[xw+w*Math.sin(tw),ca*r-sa*w*Math.cos(tw),sa*r+ca*w*Math.cos(tw)],w0=.1,w1=.19;
+  Mr.quad(P(Ri,-w0),P(Ri,w0),P(Rw-.03,w1),P(Rw-.03,-w1),ppCol(gv,.9+.2*((i*7)%5)/4),4)}
+ return {T,parts:[Mr,Mh],Ht}}
+
+/* ---------- a Bedouin tent of goat hair: a low, wide roof held up on a row of poles at the open front, curtains at the back and the ends, a rug and cushions inside ---------- */
+function ppBedouinTent(R,o={}){const T=new Geo(),L=o.l||8,W=o.w||3.6,Hf=2.15,Hb=1.3,np=4,nx=24,nz=3,K4=4,hair=[[.13,.1,.08],[.19,.15,.11],[.16,.12,.09],[.11,.085,.07]];
+ const px=i=>-L/2+L*i/(np-1),roofY=(x,z)=>{const fz=(z+W/2)/W,base=Hb+(Hf-Hb)*fz,f=((x+L/2)/L*(np-1))%1,sag=.22*(1-Math.cos(f*6.2832))/2*(.4+.6*(1-fz*.5));return base-sag*(Math.abs(x)<L/2-.01?1:0)};
+ for(let i=0;i<nx;i++){const x0=-L/2+L*i/nx,x1=-L/2+L*(i+1)/nx,c=hair[Math.floor((x0+L/2)/.72)%4];
+  for(let j=0;j<nz;j++){const z0=-W/2+W*j/nz,z1=-W/2+W*(j+1)/nz;T.quad([x0,roofY(x0,z0),z0],[x1,roofY(x1,z0),z0],[x1,roofY(x1,z1),z1],[x0,roofY(x0,z1),z1],c,K4)}
+  const wl=[[.2,.15,.11],[.16,.12,.09]][i%2];
+  T.quad([x0,roofY(x0,-W/2),-W/2],[x1,roofY(x1,-W/2),-W/2],[x1,.03,-W/2],[x0,.03,-W/2],wl,K4);
+  T.quad([x0,roofY(x0,W/2)-.02,W/2],[x1,roofY(x1,W/2)-.02,W/2],[x1,roofY(x1,W/2)-.5,W/2+.05],[x0,roofY(x0,W/2)-.5,W/2+.05],[.1,.08,.06],K4)}
+ for(const sx of [-1,1]){const x=sx*L/2;T.quad([x,0.03,-W/2],[x,.03,W/2],[x,roofY(sx*(L/2-.001),W/2)-.1,W/2],[x,roofY(sx*(L/2-.001),-W/2),-W/2],[.17,.13,.1],K4)}
+ T.quad([-L/2+.01,.7,-W/2+.01],[L/2-.01,.7,-W/2+.01],[L/2-.01,1.0,-W/2+.01],[-L/2+.01,1.0,-W/2+.01],[.62,.56,.46],K4);
+ for(let i=0;i<np;i++){const x=px(i);ppTube(T,[x,0,W/2-.08],[x,Hf-.05,W/2-.08],.045,.04,6,[.38,.3,.2],PPK.bark)}
+ for(let i=0;i<np;i++){const x=px(i);ppBeam(T,[x,Hf-.05,W/2-.08],[x,Hf+.14,W/2-.08],.1,.06,[.3,.24,.16],PPK.bark)}
+ const rp=[.52,.44,.32];for(let i=0;i<np;i++){const x=px(i),a=[x,Hf-.2,W/2+.02],b=[x+(i%2?.9:-.9)*.35,.02,W/2+2.4];ppBeam(T,a,b,.025,.025,rp,4);ppBeam(T,[b[0],0,b[2]-.2],[b[0],.3,b[2]],.05,.05,[.4,.3,.2],4)}
+ for(const sx of [-1,1])for(const dz of [-.8,.8]){const a=[sx*L/2,1.2,dz],b=[sx*(L/2+2.2),.02,dz*1.6];ppBeam(T,a,b,.025,.025,rp,4);ppBeam(T,[b[0],0,b[2]],[b[0],.3,b[2]],.05,.05,[.4,.3,.2],4)}
+ for(const dx of [-L*.3,L*.3]){const a=[dx,roofY(dx,-W/2)-.1,-W/2],b=[dx,.02,-W/2-2.2];ppBeam(T,a,b,.025,.025,rp,4);ppBeam(T,[b[0],0,b[2]],[b[0],.3,b[2]],.05,.05,[.4,.3,.2],4)}
+ /* inside: a woven rug with borders, cushions along the back wall, a hearth with a coffee pot */
+ const rx=1.9,rz0=-.9,rz1=1.3;T.quad([-rx,.022,rz0],[rx,.022,rz0],[rx,.022,rz1],[-rx,.022,rz1],[.5,.13,.1],4);T.quad([-rx+.18,.026,rz0+.18],[rx-.18,.026,rz0+.18],[rx-.18,.026,rz1-.18],[-rx+.18,.026,rz1-.18],[.34,.1,.09],4);
+ for(const z of [rz0+.1,rz1-.1])T.quad([-rx,.028,z-.04],[rx,.028,z-.04],[rx,.028,z+.04],[-rx,.028,z+.04],[.85,.72,.5],4);
+ for(let i=0;i<5;i++)T.quad([-rx+.35+i*.7,.03,rz0+.3],[-rx+.55+i*.7,.03,rz0+.3],[-rx+.55+i*.7,.03,rz1-.3],[-rx+.35+i*.7,.03,rz1-.3],[[.82,.68,.4],[.2,.3,.32],[.7,.3,.15]][i%3],4);
+ [[-2.4,.3,.5,.2,.5,[.45,.2,.15]],[-1.3,.3,.9,.2,.5,[.2,.3,.4]],[1.2,.3,.9,.2,.5,[.5,.4,.2]],[2.3,.3,.5,.2,.5,[.45,.2,.15]]].forEach(([x,y,w,h,d,c])=>T.box(x,.12,-W/2+.45,w,h,d,c,0,4));
+ const hx=-L/2+.9,hz=1.15;for(let i=0;i<10;i++){const a=i/10*6.2832;T.box(hx+Math.cos(a)*.34,.05,hz+Math.sin(a)*.34,.12,.1,.1,[.4+.1*R(),.36,.32],a,4)}
+ T.quad([hx-.28,.03,hz-.28],[hx+.28,.03,hz-.28],[hx+.28,.03,hz+.28],[hx-.28,.03,hz+.28],[.1,.09,.08],4);ppLathe(T,hx+.55,0,hz-.25,[[.09,0],[.14,.05],[.1,.22],[.05,.3],[.06,.35]],8,[.82,.62,.22],PPK.gloss);
+ /* colliders as drawn: the roof sheet, the back curtain, the two end curtains, the front valance and the four poles; the front stays open */
+ T.bx=[[0,Hb/2,-W/2+.03,L,Hb,.1],[0,Hf-.25,W/2-.04,L,.5,.1]];for(let i=0;i<np;i++)T.bx.push([px(i),Hf/2,W/2-.08,.12,Hf,.12]);
+ T.ctri=[[[-L/2,Hb,-W/2],[L/2,Hb,-W/2],[L/2,Hf,W/2]],[[-L/2,Hb,-W/2],[L/2,Hf,W/2],[-L/2,Hf,W/2]]];for(const sx of [-1,1]){const x=sx*L/2;T.ctri.push([[x,0,-W/2],[x,0,W/2],[x,Hf-.1,W/2]],[[x,0,-W/2],[x,Hf-.1,W/2],[x,Hb,-W/2]])}
+ return T}
+
+/* ---------- a pickup truck (front at +x), sun-bleached, with a few jerrycans in the bed ---------- */
+function ppPickup(R,o={}){const T=new Geo(),c=o.col||[.82,.8,.74],dk=[.1,.1,.11],gl=[.07,.1,.13],kb=PPK.gloss,bk=[.07,.07,.08];
+ T.box(0,.65,0,5.2,.6,1.8,c,0,kb);T.box(1.95,1.04,0,1.3,.2,1.72,c,0,kb);T.box(2.62,.66,0,.1,.46,1.7,dk,0,4);T.box(2.72,.46,0,.22,.2,1.9,[.55,.55,.57],0,4);T.box(-2.7,.46,0,.22,.2,1.9,[.55,.55,.57],0,4);
+ ppExtZ(T,[[1.4,.95],[.85,1.72],[-.15,1.72],[-.35,.95]],-.85,.85,c,kb);
+ for(const z of [-.862,.862])T.quad([1.12,1.07,z],[.8,1.6,z],[-.1,1.6,z],[-.26,1.07,z],gl,kb);
+ T.quad([1.345,1.03,-.72],[1.345,1.03,.72],[.905,1.64,.72],[.905,1.64,-.72],gl,kb);T.quad([-.33,1.03,-.72],[-.33,1.03,.72],[-.17,1.64,.72],[-.17,1.64,-.72],gl,kb);
+ T.box(-1.6,.98,0,2.4,.06,1.7,ppCol(c,.8),0,4);for(const s of [-1,1])T.box(-1.5,1.2,s*.82,2.2,.4,.06,c,0,kb);T.box(-2.62,1.2,0,.06,.4,1.7,c,0,kb);T.box(-.45,1.22,0,.06,.46,1.7,c,0,kb);
+ for(const [x,z,cc] of [[-2.1,.45,[.7,.55,.15]],[-1.8,.55,[.2,.35,.5]],[-1.2,-.4,[.55,.5,.4]]])T.box(x,1.2,z,.3,.4,.18,cc,.3*x,4);ppTube(T,[-1.6,1.12,-.55],[-1.6,1.12,.5],.13,.13,8,[.5,.2,.15],4);
+ for(const s of [-1,1]){T.box(2.63,.8,s*.65,.05,.14,.34,[.96,.95,.84],0,4);T.box(-2.63,.82,s*.7,.05,.14,.3,[.8,.1,.06],0,4)}
+ const Wg=new Geo();ppLathe(Wg,0,-.13,0,[[0,0],[.38,0],[.38,.26],[0,.26]],12,bk,4);ppLathe(Wg,0,-.14,0,[[0,0],[.21,0],[.21,.28],[0,.28]],10,[.7,.7,.72],4);
+ for(const x of [1.6,-1.55])for(const s of [-1,1])ppPut(T,Wg,x,.38,s*.86,0,1,Math.PI/2);
+ T.bx=[[0,.7,0,5.4,.9,1.9],[.5,1.35,0,1.8,.8,1.7]];return T}
+
+/* ---------- animals ---------- */
+/* a dromedary (nose along +x): pose 'stand' or 'rest' (couched, legs folded) */
+function ppCamel(R,o={}){const T=new Geo(),c=ppCol(o.col||[.66,.5,.33],.92+.16*R()),lt=ppCol(c,1.14),dk=ppCol(c,.6),K=4,rest=o.pose==='rest',by=rest?.72:1.3;
+ ppTube(T,[-1.05,by-.02,0],[-.45,by,0],.36,.5,10,c,K);ppTube(T,[-.45,by,0],[.55,by,0],.5,.5,10,c,K);ppTube(T,[.55,by,0],[1.02,by+.06,0],.5,.4,10,c,K);
+ ppLathe(T,-.12,by+.4,0,[[.36,0],[.34,.16],[.22,.38],[.09,.54],[0,.6]],10,c,K);ppTube(T,[-.1,by+.5,0],[-.1,by+.1,0],.16,.3,8,dk,K);
+ ppTube(T,[.8,by+.05,0],[1.1,by+.45,0],.27,.22,8,c,K);ppTube(T,[1.1,by+.45,0],[1.42,by+.78,0],.22,.17,8,c,K);ppTube(T,[1.42,by+.78,0],[1.7,by+.92,0],.17,.15,8,c,K);
+ ppTube(T,[1.7,by+.92,0],[2.2,by+.76,0],.15,.1,8,lt,K);ppTube(T,[2.2,by+.76,0],[2.38,by+.7,0],.1,.075,8,lt,K);T.box(2.28,by+.6,0,.2,.05,.14,dk,0,K);
+ for(const s of [-1,1]){T.box(1.9,by+.99,s*.13,.1,.06,.05,[.07,.06,.05],0,K);T.box(1.64,by+1.02,s*.12,.05,.14,.04,dk,0,K)}
+ ppTube(T,[-1.0,by+.1,0],[-1.08,by-.72,0],.055,.03,5,dk,K);T.box(-1.09,by-.8,0,.12,.2,.1,dk,0,K);
+ if(!rest){for(const [x,hx] of [[.7,.05],[-.78,-.1]])for(const z of [-.25,.25]){const a=[x,by-.25,z],kn=[x+hx,by-.78,z],ft=[x+hx*.2,.07,z];ppTube(T,a,kn,.14,.08,7,c,K);ppTube(T,kn,ft,.07,.06,7,c,K);T.box(ft[0],.03,z,.28,.06,.22,dk,0,K)}
+  T.box(.78,by-.52,0,.3,.22,.5,dk,0,K)}
+ else{for(const z of [-.32,.32]){ppTube(T,[.6,.3,z],[1.2,.14,z],.12,.07,6,c,K);ppTube(T,[-.4,.32,z],[-1.0,.16,z],.13,.07,6,c,K)}}
+ T.bx=[[.2,rest?1:1.4,0,3.4,rest?1.6:2.4,1.1]];return T}
+/* a goat (nose along +x): body, a thin neck, small horns, a beard, a short tail held up; col = coat */
+function ppGoat(R,col,o={}){const T=new Geo(),c=col,lt=ppCol(c,1.25),dk=ppCol(c,.55),K=4,hy=o.horns!==false;
+ ppTube(T,[-.4,.64,0],[0,.62,0],.17,.22,8,c,K);ppTube(T,[0,.62,0],[.4,.66,0],.22,.18,8,c,K);ppTube(T,[.36,.7,0],[.6,.98,0],.1,.075,6,c,K);ppTube(T,[.6,.98,0],[.78,.9,0],.075,.04,6,lt,K);
+ for(const s of [-1,1]){if(hy)ppTube(T,[.6,1.04,s*.035],[.5,1.2,s*.07],.02,.01,4,[.3,.28,.25],K);T.box(.64,.98,s*.1,.1,.03,.05,dk,0,K)}T.box(.78,.84,0,.03,.1,.03,lt,0,K);
+ for(const [x,z] of [[-.3,-.1],[-.3,.1],[.3,-.1],[.3,.1]]){ppTube(T,[x,.5,z],[x,.04,z],.045,.03,5,dk,K)}ppTube(T,[-.42,.7,0],[-.5,.84,0],.03,.02,4,c,K);return T}
+/* a plastic water tank on the ground */
+function ppWaterTank(R,col){const T=new Geo();ppLathe(T,0,0,0,[[.6,0],[.62,.06],[.62,1.22],[.5,1.38],[.28,1.46],[.1,1.48]],12,col,PPK.gloss);ppLathe(T,0,1.46,0,[[.1,0],[.1,.07]],8,[.15,.15,.17],4);
+ for(const y of [.4,.8,1.15])ppLathe(T,0,y,0,[[.625,0],[.625,.025]],12,ppCol(col,.8),4);ppTube(T,[.6,.3,0],[.85,.3,0],.03,.03,5,[.15,.15,.17],4);T.cy=[[0,0,.65,1.5]];return T}
+
+/* ---------- a ruined mud-brick house ---------- */
+function ppRuin(R,o={}){const T=new Geo(),L=7,W=5.2,t=.5,hm=2.7,col=[.78,.66,.5],K=PPK.conc;T.bx=[];
+ const run=(x0,z0,x1,z1,hh,gaps,broken)=>{const alongX=Math.abs(z1-z0)<1e-6,len=Math.abs(alongX?x1-x0:z1-z0),n=Math.max(1,Math.round(len/.9)),w=len/n,dir=alongX?Math.sign(x1-x0):Math.sign(z1-z0);
+  for(let i=0;i<n;i++){const s0=i*w,s1=s0+w;let h=hh*(.92+.1*R());if(R()<broken&&i>0&&i<n-1)h*=.3+.55*R();const c=ppCol(col,.86+.26*R());let gp=null;for(const g of gaps)if(s1>g[0]&&s0<g[1])gp=g;
+   const m=(s0+s1)/2,cx=alongX?x0+dir*m:x0,cz=alongX?z0:z0+dir*m,sx=alongX?w:t,sz=alongX?t:w,piece=(y0,y1)=>{if(y1-y0<.05)return;T.box(cx,(y0+y1)/2,cz,sx,y1-y0,sz,c,0,K);T.bx.push([cx,(y0+y1)/2,cz,sx,y1-y0,sz])};
+   if(gp){piece(0,Math.min(h,gp[2]));piece(gp[3],h)}else piece(0,h)}};
+ run(-L/2,-W/2,L/2,-W/2,hm,[[2.6,3.6,.9,1.9]],.45);run(L/2,-W/2,L/2,W/2,hm,[],.8);run(L/2,W/2,-L/2,W/2,hm,[[1.1,2.3,0,2.05]],.5);run(-L/2,W/2,-L/2,-W/2,hm,[[1.6,2.6,.95,1.95]],.35);
+ for(const [x,z] of [[-L/2,-W/2],[-L/2,W/2],[L/2,-W/2],[L/2,W/2]]){T.box(x,hm*.5,z,t*1.05,hm,t*1.05,ppCol(col,.8),0,K);T.bx.push([x,hm*.5,z,t*1.05,hm,t*1.05])}
+ for(let i=0;i<14;i++){const a=R()*6.28,d=.4+R()*1.3,x=L/2+Math.cos(a)*d*.8,z=-W/2+.8+R()*3,s=.28+.26*R();T.box(x,s*.45,z,s*1.2,s*.9,s*.8,ppCol(col,.8+.3*R()),R()*3,K)}
+ for(const x of [-2.4,-.6,1.3]){if(R()<.8)ppTube(T,[x,hm+.1,-W/2-.3],[x+.05,hm+.1,W/2*(R()<.5?1:.35)],.1,.09,6,[.3,.23,.16],PPK.bark)}
+ return T}
+
+/* ---------- a fence of dry thorn brush (a zariba) ---------- */
+function ppBrush(G,pts,R,o={}){const h=o.h||1.05,P=ppWalk(pts,.28),tc=[[.42,.35,.26],[.36,.3,.22],[.48,.4,.28],[.3,.26,.2]],g=o.g;
+ P.forEach(([x,z],i)=>{const k=3+((R()*3)|0);for(let q=0;q<k;q++){const a=R()*6.28,l=.35+.5*R(),y=h*(.45+.6*R()),c=tc[(R()*4)|0],w=.022+.02*R();ppBeam(G,[x+(R()-.5)*.3,0,z+(R()-.5)*.3],[x+Math.cos(a)*l*.7,y,z+Math.sin(a)*l*.7],w,w,c,PPK.bark);
+   if(R()<.5){const b=R()*6.28;ppBeam(G,[x+Math.cos(a)*l*.5,y*.8,z+Math.sin(a)*l*.5],[x+Math.cos(a)*l*.5+Math.cos(b)*.3,y*.8+.25,z+Math.sin(a)*l*.5+Math.sin(b)*.3],w*.7,w*.7,c,PPK.bark)}}
+  if(g&&i%4===0)vgBush(g,x,z,.75+.4*R(),R,{n:3,leaf:[.5,.45,.27]})});
+ for(let i=0;i<P.length-1;i++){const a=P[i],b=P[i+1];if(R()<.7){const y=.3+.7*R(),c=tc[(R()*4)|0];ppBeam(G,[a[0],y,a[1]],[b[0]+(R()-.5)*.2,y+.2*(R()-.5),b[1]+(R()-.5)*.2],.03,.03,c,PPK.bark)}}}
+
+/* ---------- an umbrella thorn (acacia): a short leaning trunk, a few limbs and a flat crown of small leaves ---------- */
+function ppAcacia(g,cg,x,z,h,R,o={}){if(g.nv)return null;const G=g.R,F=g.F,bark=ppCol([.34,.27,.2],.8+R()*.4),leaf=o.leaf||[.5,.52,.26],lk=[vgK('c','leaf'),vgK('c','leafB')];
+ const th=h*(.52+.1*R()),r0=h*.034,lean=[(R()-.5)*.22,(R()-.5)*.22],top=vgTrunk(G,x,z,th,r0,r0*.6,bark,R,{lean,seg:7,rings:4,bend:.05,wr:2});
+ const rc=h*(.78+.14*R()),ry=h*.12,C=[top.x,top.y+ry*.55,top.z],nl=3+((R()*2)|0);
+ for(let i=0;i<nl;i++){const a=i/nl*6.2832+R()*1.2,L=rc*(.5+.3*R());vgLimb(G,[top.x,top.y-.3,top.z],[top.x+Math.cos(a)*L,top.y+.5+R()*.4,top.z+Math.sin(a)*L],r0*.6,r0*.18,bark,R)}
+ const n=g.lod?12:22;for(let i=0;i<n;i++){const a=R()*6.2832,d=Math.sqrt(R())*rc*.92,P=[C[0]+Math.cos(a)*d,C[1]+(R()-.5)*ry*.8-Math.pow(d/rc,2)*ry*.5,C[2]+Math.sin(a)*d],s=rc*(.26+.14*R()),col=vgSc(vgMix(leaf,[.62,.56,.24],R()<.1?.5:0),.9+R()*.26);vgClump(F,P,C,rc,ry,s,col,lk[(R()*2)|0],R,.35+.4*d/rc,.05+h*.004)}
+ vgShade(g,x,z,C[1],rc*1.05,.55);
+ if(cg){cg.cyl(top.x,top.z,r0*1.3,top.y,0,[.5,.5,.5],6);cg.cyl(C[0],C[2],rc*.8,ry*1.7,C[1]-ry*.85,[.5,.5,.5],10)}
+ return [x,z,rc,C[1]+ry]}
+
+PROPS.desert=function(g,R,sg,cg,T){const lod=g.lod,Rp=srnd(9801),G=g.R,DN=g.dn||[],tk=[],gates=this.gates||[],put=(o,x,z,ry=0,s=1,y=0)=>ppPlace(g,cg,o,x,z,ry,s,y),
+  way=[this.start||[0,0,10],...gates],segD=(x,z,a,b)=>{const dx=b[0]-a[0],dz=b[2]-a[2],L=dx*dx+dz*dz,t=L?Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[2])*dz)/L)):0;return Math.hypot(x-a[0]-dx*t,z-a[2]-dz*t)},
+  onRoute=(x,z,m)=>way.some((a,i)=>i&&segD(x,z,way[i-1],a)<m),
+  free=(x,z,r,rt)=>(!rt||!onRoute(x,z,r+rt))&&!DN.some(d=>Math.hypot(x-d[0],z-d[1])<d[2]*.9+r)&&!tk.some(q=>Math.hypot(x-q[0],z-q[1])<q[2]+r)&&ppFree(T,x,z,r)&&!gates.some(q=>Math.hypot(x-q[0],z-q[2])<r+6)&&Math.hypot(x,z-10)>r+7,
+  take=(x,z,r)=>{tk.push([x,z,r])};
+ const tr=(g.pks||[]);
+ /* tracks: a service road to the oil pump from the south-west, another from the Bedouin camp round the start area to it */
+ const trk=(P,w)=>{ppTrail(g,P,{w,kind:vgK('p','dirt'),col:[.66,.55,.4],rut:[.56,.46,.33],edge:[.7,.59,.42],y:.02});for(let i=0;i<P.length;i+=2)ppSkip(g,P[i][0],P[i][1],w)};
+ const pa=[];for(let i=0;i<=26;i++){const f=i/26,z=70-f*84,x=-58+f*32+5*Math.sin(f*5.1)+Math.sin(f*17)*.6;pa.push([x,z])}trk(pa,3.2);
+ const pb=[[29,-28],[33,-14],[30,0],[22,14],[8,25],[-12,32],[-30,36],[-48,44],[-60,60]];{const P=[];for(let i=0;i<pb.length-1;i++)for(let k=0;k<6;k++){const f=k/6,a=pb[i],b=pb[i+1];P.push([a[0]+(b[0]-a[0])*f+Math.sin(i*2+k)*.5,a[1]+(b[1]-a[1])*f])}P.push(pb[pb.length-1]);trk(P,2.6)}
+ /* the oil pump on its gravel pad, a tank and the flow line */
+ {const px=-26,pz=-10,yw=.55,J=ppPumpjack(Rp);ppPatch(g,px,pz,8.5,[.64,.56,.43],Rp,.017,vgK('p','dirt'));put(J.T,px,pz,yw);
+  const cs=Math.cos(yw),sn=Math.sin(yw),wx=px+J.K.Rh*cs,wz=pz-J.K.Rh*sn;ppPatch(g,wx,wz,1.5,[.16,.13,.1],Rp,.02,vgK('p','dirt'));
+  (g.pd||(g.pd=[])).push({k:'pump',parts:J.parts,K:J.K,p:[px,J.K.Hp,pz],yaw:yw,ph:Rp()*6.28,w:.75});take(px,pz,6);
+  const tx=wx+7.3*sn,tz=wz+7.3*cs;ppLathe(G,tx,0,tz,[[2.6,0],[2.6,4.3],[2.2,4.6],[.2,4.8]],18,[[.7,.7,.68],[.62,.62,.6],[.55,.55,.55]],PPK.metal);ppTube(G,[tx+2.6,.5,tz],[tx+2.6,3.8,tz],.04,.04,4,[.2,.2,.22],4);for(let i=0;i<9;i++)G.box(tx+2.66,.4+i*.4,tz+.2*Math.sin(i*.5),.08,.05,.34,[.3,.3,.32],0,4);
+  cg.cyl(tx,tz,2.6,4.8,0,[.5,.5,.5],12);take(tx,tz,3.4);
+  {const a=[wx+.8*cs,wz-.8*sn],dx=tx-a[0],dz=tz-a[1],L=Math.hypot(dx,dz),b=[tx-dx/L*2.55,tz-dz/L*2.55];ppTube(G,[a[0],.75,a[1]],[a[0],.2,a[1]],.06,.06,6,[.26,.26,.28],4);ppTube(G,[a[0],.2,a[1]],[b[0],.45,b[1]],.07,.07,6,[.26,.26,.28],4)}
+  ppRock(g,cg,-31,-3.5,.7,Rp);ppRock(g,cg,-21.8,-15.5,.5,Rp,{col:[.62,.5,.38]})}
+ /* a wind pump with its stock tank, goats and a camel at the water */
+ {const wx=41,wz=-10,W=ppWindPump(Rp);put(W.T,wx,wz,0);(g.pd||(g.pd=[])).push({k:'wind',parts:W.parts,p:[wx,W.Ht+.25,wz],ph:Rp()*6.28});cg.cyl(wx,wz,2.3,3.2,W.Ht-1.5,[.5,.5,.5],10);take(wx,wz,5.5);ppSkip(g,wx+3.7,wz,4);
+  ppPatch(g,wx+2.5,wz+.4,4.4,[.6,.5,.37],Rp,.016,vgK('p','dirt'));
+  const gc=[[.1,.09,.09],[.36,.22,.13],[.74,.69,.6],[.16,.13,.11],[.5,.38,.25]];for(let i=0;i<(lod?3:6);i++){const a=Rp()*6.28,d=2.3+Rp()*1.6;put(ppGoat(Rp,gc[i%5]),wx+3.7+Math.cos(a)*d,wz+.4+Math.sin(a)*d,a+1.57+(Rp()-.5)*.6)}
+  put(ppCamel(Rp),wx+3.5,wz+4.6,-.9)}
+ /* the Bedouin camp under the palms: the tent open to the west, a pickup, a water tank, a brush pen with goats, camels */
+ {const cx=34.5,cz=-28;put(ppBedouinTent(Rp),cx,cz,-Math.PI/2);take(cx,cz,5.5);
+  put(ppPickup(Rp),26.5,-31,Math.PI/2);take(26.5,-31,3.2);put(ppWaterTank(Rp,[.12,.3,.52]),37.8,-22.4);put(ppWaterTank(Rp,[.1,.1,.12]),38.8,-23.6,0,.85);take(38,-23,1.6);
+  const pen=[[40.5,-36],[47.5,-36],[47.5,-25.5],[40.5,-25.5],[40.5,-36]];ppBrush(G,pen,Rp,{h:1.15,g:g});for(let i=0;i<4;i++){const a=pen[i],b=pen[i+1];cg.box((a[0]+b[0])/2,.55,(a[1]+b[1])/2,Math.abs(b[0]-a[0])+.5,1.1,Math.abs(b[1]-a[1])+.5,[.5,.5,.5],0)}take(44,-30.7,6.5);
+  const gc=[[.1,.09,.09],[.36,.22,.13],[.74,.69,.6],[.16,.13,.11],[.5,.38,.25],[.28,.2,.14]];for(let i=0;i<(lod?4:9);i++)put(ppGoat(Rp,gc[i%6]),41.2+Rp()*5.6,-35+Rp()*8.6,Rp()*6.28);
+  for(let i=0;i<(lod?2:4);i++)put(ppGoat(Rp,gc[(i+2)%6]),30+Rp()*5,-24+Rp()*3,Rp()*6.28);
+  put(ppCamel(Rp),30.8,-16.5,2.2);if(!lod)put(ppCamel(Rp,{col:[.74,.6,.42]}),34.4,-12.3,1.2);put(ppCamel(Rp,{pose:'rest',col:[.6,.45,.3]}),38.8,-39.4,2.9)}
+ /* a ruined house of mud brick with fallen rubble, a dead tree and boulders */
+ {const rx=-43,rz=-58,ry=.3;put(ppRuin(Rp),rx,rz,ry);take(rx,rz,6);
+  put(ppDeadTree(Rp,3.8),-49.5,-52.5,.5);ppRock(g,cg,-37.5,-63,.9,Rp);ppRock(g,cg,-47.5,-64.5,.7,Rp,{col:[.62,.5,.38]});ppRock(g,cg,-38,-53,.6,Rp)}
+ /* a power line on the far west, a pair of eagles and a few pigeons at the camp */
+ ppPoles(G,cg,[[-72,60],[-68,-35],[-76,-135]],Rp,{h:10,sp:42});
+ ppFlock(g,Rp,{c:[-30,-70],r:38,y:52,n:3,col:[.27,.21,.15],tip:[.08,.08,.08],belly:[.55,.5,.42],s:2.1,sp:5,fq:2.4});ppFlock(g,Rp,{c:[34,-28],r:13,y:10,n:9,col:[.72,.7,.66],tip:[.35,.33,.3],s:.9,sp:8,fq:6});
+ /* acacias scattered over the plain, mostly in loose groups; dry scrub and tufts everywhere */
+ const AC=[[28,-42],[-30,-45],[-20,6],[48,-48],[-52,-22],[18,-8],[-14,-74],[54,10],[-14,-100],[26,-96],[-58,-90],[62,-70]];let na=0;
+ for(const [ax,az] of AC){if(lod&&na>=6)break;const x=ax+(Rp()-.5)*6,z=az+(Rp()-.5)*6;if(!free(x,z,3.2,2.5))continue;const A=ppAcacia(g,cg,x,z,4.2+Rp()*2.4,Rp);if(A){tk.push([x,z,A[2]*.7]);na++}}
+ const SL=[[.55,.5,.29],[.46,.46,.27],[.6,.52,.3],[.42,.42,.24],[.64,.56,.33]];
+ for(let i=0;i<(lod?30:85);i++){const x=(Rp()-.5)*150,z=30-Rp()*165;if(!free(x,z,1))continue;const s=.35+Rp()*.9,c=SL[(Rp()*5)|0];vgBush(g,x,z,s,Rp,{n:lod?3:4,leaf:c});if(s>.7)cg.cyl(x,z,s*.3,s*.8,0,[.5,.5,.5],6)}
+ for(let i=0;i<(lod?8:22);i++){const x=(Rp()-.5)*120,z=20-Rp()*140;if(!free(x,z,1.5))continue;ppRock(g,cg,x,z,.35+Rp()*.5,Rp,{col:[.62,.5,.38]})}
+};
+
+/* ===== v175 · the warehouse: ceiling lights and skylights, ducts, a forklift, loaded pallets, an office booth, floor markings, the yard outside ===== */
+/* a fork-lift truck (front at +x), the mast and the forks lowered */
+function ppForklift(R,o={}){const T=new Geo(),y=o.col||[.95,.62,.08],dk=[.15,.15,.17],gr=[.3,.3,.32],K=PPK.metal;
+ T.box(.1,.5,0,2.0,.5,1.1,y,0,K);T.box(.6,.95,0,.7,.55,.95,y,0,K);T.box(-.95,.68,0,.75,.95,1.14,ppCol(y,.86),0,K);T.box(-.62,.3,0,.35,.3,1.0,dk,0,4);
+ T.box(-.4,1.0,0,.5,.12,.5,[.08,.08,.09],0,4);T.box(-.66,1.32,0,.1,.55,.5,[.08,.08,.09],0,4);
+ ppTube(T,[.28,.95,0],[.42,1.4,0],.03,.03,6,dk,4);{const Sw=new Geo();ppLathe(Sw,0,0,0,[[.17,0],[.17,.03],[.14,.03],[.14,0]],10,dk,4);ppPut(T,Sw,.43,1.4,0,Math.PI/2,1,-.5)}
+ for(const sx of [-.55,.45])for(const sz of [-.52,.52])T.box(sx,1.55,sz,.07,1.2,.07,dk,0,4);T.box(-.05,2.17,0,1.25,.06,1.18,dk,0,4);for(let i=0;i<5;i++)T.box(-.05,2.2,-.45+i*.225,1.25,.03,.04,dk,0,4);
+ for(const z of [-.32,.32])T.box(1.08,1.15,z,.1,2.3,.12,gr,0,K);T.box(1.08,2.25,0,.1,.1,.76,gr,0,K);T.box(1.08,.35,0,.1,.12,.76,gr,0,K);T.box(1.17,.62,0,.06,.8,.9,dk,0,4);
+ for(const z of [-.34,.34]){T.box(1.8,.05,z,1.3,.06,.14,dk,0,4);T.box(1.17,.3,z,.06,.55,.14,dk,0,4)}
+ const Wf=new Geo();ppLathe(Wf,0,-.12,0,[[0,0],[.3,0],[.3,.24],[0,.24]],12,[.07,.07,.08],4);ppLathe(Wf,0,-.13,0,[[0,0],[.16,0],[.16,.26],[0,.26]],10,[.6,.6,.62],4);
+ const Wr=new Geo();ppLathe(Wr,0,-.1,0,[[0,0],[.22,0],[.22,.2],[0,.2]],10,[.07,.07,.08],4);ppLathe(Wr,0,-.11,0,[[0,0],[.12,0],[.12,.22],[0,.22]],8,[.6,.6,.62],4);
+ for(const s of [-1,1]){ppPut(T,Wf,.72,.3,s*.6,0,1,Math.PI/2);ppPut(T,Wr,-.85,.22,s*.5,0,1,Math.PI/2)}
+ T.box(-.05,2.26,0,.14,.12,.14,[.25,.45,1],0,5);for(const s of [-1,1]){T.box(.96,1.0,s*.4,.05,.1,.16,[1,.95,.8],0,5);T.box(-1.33,.9,s*.45,.04,.1,.16,[.9,.1,.06],0,4)}
+ T.bx=[[.1,.6,0,2.0,1.2,1.2],[1.08,1.15,0,.35,2.3,.95],[-.05,1.6,0,1.25,1.2,1.2],[1.8,.06,0,1.3,.12,1.0]];return T}
+/* a high-bay light hanging from a beam: the origin is at its fixing, it hangs 1.4 m */
+function ppLuminaire(){const T=new Geo();ppTube(T,[0,0,0],[0,-1.15,0],.015,.015,5,[.2,.2,.22],4);ppLathe(T,0,-1.4,0,[[.3,0],[.3,.02],[.12,.2],[.09,.25]],12,[.22,.23,.25],4);
+ for(let i=0;i<12;i++){const a0=i/12*6.2832,a1=(i+1)/12*6.2832;T.tri([0,-1.402,0],[Math.cos(a0)*.28,-1.402,Math.sin(a0)*.28],[Math.cos(a1)*.28,-1.402,Math.sin(a1)*.28],[1,.97,.88],5)}
+ T.bx=[[0,-.75,0,.6,1.0,.6]];return T}
+/* a fire extinguisher on its wall bracket with a sign above it */
+function ppExtinguisher(){const T=new Geo();ppLathe(T,0,.9,0,[[.085,0],[.085,.32],[.06,.38],[.03,.42]],8,[.78,.07,.05],PPK.gloss);T.box(0,1.28,0,.06,.07,.06,[.1,.1,.11],0,4);T.box(0,1.12,0,.18,.07,.18,[.95,.95,.9],0,4);
+ T.box(0,1.9,.02,.34,.34,.02,[.78,.07,.05],0,4);T.box(0,1.9,.035,.06,.22,.01,[.95,.95,.92],0,4);T.box(0,1.9,.035,.22,.06,.01,[.95,.95,.92],0,4);return T}
+/* a pallet with a load of cartons and a few turns of film: n layers of 2 x 2 */
+function ppLoad(R,o={}){const T=new Geo(),n=o.n||2+((R()*3)|0),h=.36,cc=[[.66,.5,.32],[.6,.45,.29],[.7,.56,.36]];ppPut(T,ppPallet(R),0,0,0,0,1);
+ for(let l=0;l<n;l++)for(const ix of [-1,1])for(const iz of [-1,1])if(R()<.97)T.box(ix*.3,.14+h*(l+.5),iz*.25,.58,h-.01,.48,ppCol(cc[(R()*3)|0],.88+.2*R()),0,4);
+ for(const y of [.2,.14+h*n*.5,.14+h*n-.1])T.box(0,y,0,1.215,.1,1.015,[.85,.88,.9],0,PPK.gloss);
+ T.bx=[[0,(.14+n*h)/2,0,1.22,.14+n*h,1.02]];return T}
+/* an office booth: a raised floor, panel walls, a band of glazing, a door with steps, a flat roof with a lamp */
+function ppOffice(R){const T=new Geo(),L=5.2,W=3.2,pc=[.82,.82,.8],gl=[.09,.13,.18],K=PPK.metal;
+ T.box(0,.15,0,L,.3,W,[.45,.45,.43],0,PPK.conc);T.box(0,.7,0,L,.8,W,pc,0,K);T.box(0,2.8,0,L,.6,W,pc,0,K);T.box(0,3.15,0,L+.3,.12,W+.3,[.3,.3,.32],0,K);
+ for(const sx of [-1,1])for(const sz of [-1,1])T.box(sx*L/2,1.8,sz*W/2,.1,1.4,.1,[.5,.5,.52],0,K);
+ T.box(0,1.8,-W/2+.02,L-.1,1.4,.04,gl,0,PPK.gloss);
+ for(const sz of [1])T.quad([-L/2+1.6,1.1,W/2+.02],[L/2-.1,1.1,W/2+.02],[L/2-.1,2.5,W/2+.02],[-L/2+1.6,2.5,W/2+.02],gl,PPK.gloss);
+ T.quad([-L/2-.02,1.1,-W/2+.2],[-L/2-.02,1.1,W/2-.2],[-L/2-.02,2.5,W/2-.2],[-L/2-.02,2.5,-W/2+.2],gl,PPK.gloss);
+ T.box(-L/2+.8,1.4,W/2+.03,.95,2.1,.06,[.28,.28,.3],0,4);for(let i=0;i<3;i++)T.box(-L/2+.8,.1+i*.1,W/2+.3+(2-i)*.28,1.2,.1,.28,[.5,.5,.48],0,PPK.conc);
+ T.box(1.4,3.35,0,.5,.18,.18,[1,.97,.88],0,5);T.bx=[[0,1.7,0,L,3.4,W]];return T}
+/* a traffic post in yellow with a black band */
+function ppPost(){const T=new Geo();ppLathe(T,0,0,0,[[.16,0],[.12,.05],[.12,.45],[.125,.5],[.125,.62],[.12,.67],[.12,.95],[.08,1.0],[0,1.0]],10,[[.4,.4,.4],[.95,.78,.1],[.08,.08,.09],[.08,.08,.09],[.95,.78,.1],[.95,.78,.1],[.95,.78,.1],[.95,.78,.1]],PPK.gloss);return T}
+/* diagonal yellow and black hazard stripes over x0..x1, z0..z1 (the stripes lean by the depth) */
+function ppHazard(G,x0,x1,z0,z1,n){const d=Math.abs(z1-z0),w=(x1-x0-d)/n;G.quad([x0,.02,z0],[x1,.02,z0],[x1,.02,z1],[x0,.02,z1],[.08,.08,.08],PPK.asph);
+ for(let i=0;i<n;i+=2){const xa=x0+i*w;const xb=xa+w;G.quad([xa,.024,z0],[xb,.024,z0],[xb+d,.024,z1],[xa+d,.024,z1],[.9,.76,.12],4)}}
+
+PROPS.warehouse=function(g,R,sg,cg,T){const lod=g.lod,Rp=srnd(9901),G=g.R,put=(o,x,z,ry=0,s=1,y=0)=>ppPlace(g,cg,o,x,z,ry,s,y),H=10;
+ /* the floor: a pedestrian way along the main aisle, hazard stripes and a stop line at the door */
+ for(const x of [-5,5])ppLine(G,[x,-4],[x,-58],.12,[.9,.78,.15],0,0,.02);ppLine(G,[-5,-4],[5,-4],.12,[.9,.78,.15],0,0,.02);ppHazard(G,-5,5,-.6,-2.6,12);
+ /* the ceiling: high-bay lights under every beam, daylight panels between the beams, two ventilation ducts along the hall */
+ for(const bz of [-6,-15,-24,-33,-42,-51])for(const x of [-15,-5,5,15]){if(lod&&((Math.round(-bz/9)+(x>0?1:0))%2))continue;put(ppLuminaire(),x,bz,0,1,H-.65)}
+ for(const bz of [-10.5,-19.5,-28.5,-37.5,-46.5,-55.5])for(const x of [-11,11])G.quad([x-1.4,H+.04,bz-2.6],[x+1.4,H+.04,bz-2.6],[x+1.4,H+.04,bz+2.6],[x-1.4,H+.04,bz+2.6],[.66,.76,.88],5);
+ for(const x of [-17.2,17.2]){ppTube(G,[x,9.0,-1.5],[x,9.0,-58.5],.4,.4,12,[.72,.74,.76],PPK.metal);for(let z=-4;z>-58;z-=3.4)ppTube(G,[x,9.0,z],[x,9.0,z-.14],.44,.44,12,[.62,.64,.66],4);cg.box(x,9.0,-30,.9,.9,57,[.5,.5,.5],0)}
+ /* the door: a roll-up shutter housing and its guides over the opening */
+ ppTube(G,[-5.2,5.7,.5],[5.2,5.7,.5],.3,.3,12,[.35,.36,.38],PPK.metal);cg.box(0,5.7,.5,10.4,.65,.65,[.5,.5,.5],0);for(const s of [-1,1]){G.box(s*5.15,3,.4,.2,6,.3,[.4,.4,.42],0,PPK.metal);cg.box(s*5.15,3,.4,.25,6,.35,[.5,.5,.5],0)}
+ /* on the right: loaded pallets along the wall, drums, the office booth in the back corner */
+ for(let i=0;i<5;i++)put(ppLoad(Rp),17.6,-9-i*3.3,Math.PI/2+(Rp()-.5)*.1);for(let i=0;i<3;i++)put(ppLoad(Rp,{n:3}),15.4,-9.2-i*3.3,Math.PI/2+(Rp()-.5)*.1);
+ for(const [x,z,c] of [[18.4,-49.6,[.15,.3,.55]],[17.4,-50.9,[.55,.12,.1]],[18.6,-51.6,[.35,.37,.4]]])put(ppBarrel(Rp,c),x,z);put(ppOffice(Rp),16.7,-57.7,0);
+ /* on the left: a forklift in the free strip by the wall, extinguishers by the door */
+ put(ppForklift(Rp),-18.2,-22.5,Math.PI/2);for(const [x,z,ry] of [[-19.55,-4,Math.PI/2],[19.55,-4,-Math.PI/2]])put(ppExtinguisher(),x,z,ry);
+ /* outside: yellow bollards by the door, a couple of containers, a lamp mast and a parked car on the yard */
+ for(const s of [-1,1])for(const z of [1.8,4.2]){put(ppPost(),s*5.9,z,0,1,0);cg.cyl(s*5.9,z,.16,1,0,[.5,.5,.5],8)}
+ put(ppContainer(Rp),-17,13,.08);put(ppContainer(Rp),-17,13,.08,1,2.6);put(ppContainer(Rp),-17,18.2,-.05);put(ppContainer(Rp),17,15,-.1);put(ppLightMast(Rp,9),-11,7);put(ppLightMast(Rp,9),11,7);put(ppCar(Rp,{type:'van',col:[.88,.88,.86]}),12.5,5.5,1.3);
+ ppLine(G,[-13,2],[-13,20],.12,[.9,.9,.88],0,0,.02);ppLine(G,[13,2],[13,20],.12,[.9,.9,.88],0,0,.02)};
+SIMSCN.city.nofar=true;
+
 /* ---- night flight: LED strings on gates, route and obstacles, nav lights on the drone ---- */
 const NEON={gate:[.15,1,.95],cur:[1,.85,.2],route:[1,.55,.12],obst:[1,.22,.75]};
 function ledAt(G,p,z,col){G.box(p[0],p[1],p[2],z,z,z,col,0,5)}
@@ -11906,7 +12986,7 @@ class SimGL{
  mesh(g){const gl=this.gl,vao=gl.createVertexArray();gl.bindVertexArray(vao);const bufs=[];const put=(arr,loc,n)=>{const b=gl.createBuffer();bufs.push(b);gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(arr),gl.STATIC_DRAW);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,n,gl.FLOAT,false,0,0)};
   put(g.p,this.a.P,3);put(g.n,this.a.N,3);put(g.c,this.a.C,3);put(g.k,this.a.K,1);if(g.u&&g.u.length){g.padU();put(g.u,this.a.U,4)}gl.bindVertexArray(null);let lv=null,ln=0;
   if(g.L.length){lv=gl.createVertexArray();gl.bindVertexArray(lv);put(g.L,this.a.P,3);put(new Array(g.L.length).fill(0).map((_,i)=>i%3===1?1:0),this.a.N,3);put(g.LC,this.a.C,3);put(new Array(g.L.length/3).fill(5),this.a.K,1);gl.bindVertexArray(null);ln=g.L.length/3}
-  const M={vao,n:g.p.length/3,bufs,lv,ln};(this.res||(this.res=[])).push(M);return M}
+  const M={vao,n:g.p.length/3,bufs,lv,ln};if(g.pd)M.pd=g.pd;(this.res||(this.res=[])).push(M);return M}
  free(){const gl=this.gl;fxGLFree(this);(this.res||[]).forEach(m=>{m.bufs.forEach(b=>gl.deleteBuffer(b));gl.deleteVertexArray(m.vao);if(m.lv)gl.deleteVertexArray(m.lv)});this.res=[];if(this.post){try{this.post.free()}catch(e){}this.post=null}}
  draw(m,M,o={}){const gl=this.gl;gl.uniformMatrix4fv(this.u.uM,false,M);gl.uniform1f(this.u.uGlow,o.glow||0);gl.uniform3fv(this.u.uTint,o.tint||[1,1,1]);gl.uniform1f(this.u.uAlpha,o.alpha??1);gl.uniform1f(this.u.uGlass,o.glass?1:0);gl.bindVertexArray(m.vao);if(o.only!=='lines')gl.drawArrays(gl.TRIANGLES,0,m.n);if((this.tac||o.lines==='force')&&m.lv&&o.lines!==false){gl.bindVertexArray(m.lv);gl.drawArrays(gl.LINES,0,m.ln)}}
  drop(m){const gl=this.gl;m.bufs.forEach(b=>gl.deleteBuffer(b));gl.deleteVertexArray(m.vao);if(m.lv)gl.deleteVertexArray(m.lv);if(this.res)this.res=this.res.filter(x=>x!==m)}
@@ -12199,7 +13279,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)MOTOR.stop(
 function landmarks(g,seed=7,rim,flat,tw){const N=120,R0=290,R1=305,c=[.16,.22,.21],c2=[.12,.17,.16],hf=a=>14+9*Math.sin(a*3+seed)+7*Math.sin(a*7.3+seed*2.1)+5*Math.sin(a*13.1+1.7)+(Math.cos(a)>.92?16*Math.pow((Math.cos(a)-.92)/.08,2):0);
   if(!flat)vgTacOnly(g,()=>{for(let i=0;i<N;i++){const a0=i/N*Math.PI*2,a1=(i+1)/N*Math.PI*2,h0=Math.max(4,hf(a0)),h1=Math.max(4,hf(a1)),P=(a,r,y)=>[Math.sin(a)*r,y,-Math.cos(a)*r];
    g.quad(P(a0,R0,0),P(a1,R0,0),P(a1,R1,h1),P(a0,R1,h0),i%2?c:c2)}});
-  const twx=tw?tw[0]:0,twz=tw?tw[1]:-235;g.cyl(twx,twz,1.4,58,0,[.32,.36,.36],8,.5);g.cyl(twx,twz,2.6,3,58,[.85,.22,.16],8,0);
+  const twx=tw?tw[0]:0,twz=tw?tw[1]:-235;vgTacOnly(g,()=>{g.cyl(twx,twz,1.4,58,0,[.32,.36,.36],8,.5);g.cyl(twx,twz,2.6,3,58,[.85,.22,.16],8,0)});if(g.cgB)g.cgB.cyl(twx,twz,1.4,58,0,[.3,.3,.3],8,.5);if(g.cT)g.cT.push([twx,twz,0,61]);if(!g.nv)ppMast(g,twx,twz);
   if(!g.nv)vgHorizon(g,seed,rim,flat)}
 const MISK={1:2.6,2:2.3,3:2.0,4:1.55,5:1.2};
 /* difficulty shown to the learner: follows the course phase (basic drills = 1, final = 5) */
@@ -12448,16 +13528,16 @@ class FPVSim{
  load(k){if(!this.att&&!String(k).startsWith('mis:')&&S.role==='trainee'&&vehOf(curTrainee()?.course)==='plane')return this.loadPlaneFree();this.objs=null;this.plane=false;this.scnKey=typeof k==='string'&&!k.startsWith('mis:')?k:'free';if(typeof k==='string'&&k.startsWith('mis:')){return this.loadMis(k.slice(4))}this.wx=!this.att&&MODE==='free'?wxNorm(PREF.wx):null;this.fwind=wxWind(this.wx);this._wxW?.remove();this._wxW=null;if(!this.att)wxAudio(this.wx?.r||0);this.neon=null;this.lm=null;this.mis=null;this.col=null;this.cpath=null;this.mSolid=this.mGlass=this.route=null;const S0=SIMSCN[k]||SIMSCN.field,R=srnd(S0.seed||(k==='forest'?77:13)),gl=this.r;this.scn=S0;this.night=!!S0.night;gl.free();this.path=null;
   const g=new Geo(),sg=new Geo();for(let i=-20;i<20;i++)for(let j=-20;j<20;j++){const s=10,x=i*s+3.7,z=j*s-36.7,c=S0.gc||(k==='forest'?[.24,.33,.2]:[.3,.42,.24]);g.quad([x,0,z+s],[x+s,0,z+s],[x+s,0,z],[x,0,z],c,-1)}
   const gc0=S0.gc||(k==='forest'?[.24,.33,.2]:[.3,.42,.24]),VS0=VGSCN[k]||{};g.nv=!!this.att;g.lod=SIM.gfx==='high'?0:1;this.gLay=VS0.gt!=null?TXY[VS0.gt]:vgGroundLayer(gc0);this.homeZ=[S0.start[0],S0.start[2],S0.start[2],({field:.85,balloons:.85,precision:.85,forest:.12,race:.55,bridge:.8,bando:.9,bandoballoons:.9})[k]||0];this.padU=this.gLay===TXY.grass?[S0.start[0],S0.start[2],1.7]:null;
-   vgTacOnly(g,()=>g.cyl(S0.start[0],S0.start[2],.5,.004,0,[.55,.4,.18],20,.5));const cg=new Geo(),ocy=g.cyl;g.cyl=function(x,z,r,h,y0,col,seg,r2){if(h>.8&&this.kd!==7&&r>=.04)cg.cyl(x,z,r,h,y0,col,Math.min(seg||10,8),r2);return ocy.apply(this,arguments)};this.trees=S0.build.call(S0,g,R,sg)||[];delete g.cyl;this._cg=cg;{const OW=!this.att&&k!=='warehouse',LS=S0.seed?S0.seed/10:(k==='forest'?3:7);landmarks(g,LS,VS0.rim,OW);this.world=gl.mesh(g);if(OW)this.openWorld(gc0,LS,k==='canyon'?'dry':VS0.rim,S0.night)}this.grassM=null;
-   {const st=S0.start||[0,0,0];if(!this.att&&VS0.bio&&SIM.gfx==='high')vgDress(g,{bio:VS0.bio,cx:st[0],cz:st[2]-8,R:srnd((S0.seed||13)+5),base:gc0,pad:[st[0],st[2],2.6],skip:(x,z)=>(VS0.skip&&VS0.skip(x,z))||this.trees.some(t=>t&&Math.hypot((t.x??t[0])-x,(t.z??t[1])-z)<.7)});this.vg=this.att?null:vgMesh(gl,g)}
-  this._sg=sg;{const T=[];for(const Gq of [sg,this._cg||{p:[]}]){const P=Gq.p;for(let i=0;i+8<P.length;i+=9)T.push([[P[i],P[i+1],P[i+2]],[P[i+3],P[i+4],P[i+5]],[P[i+6],P[i+7],P[i+8]]])}if(T.length)this.col=colBuild(T,2);if(sg.p.length)this.mSolid=gl.mesh(sg)}
+   vgTacOnly(g,()=>g.cyl(S0.start[0],S0.start[2],.5,.004,0,[.55,.4,.18],20,.5));const cg=new Geo(),cgP=new Geo(),ocy=g.cyl;g.cgP=cgP;g.cgB=cg;g.cyl=function(x,z,r,h,y0,col,seg,r2){if(h>.8&&this.kd!==7&&r>=.04)cg.cyl(x,z,r,h,y0,col,Math.min(seg||10,8),r2);return ocy.apply(this,arguments)};this.trees=S0.build.call(S0,g,R,sg,cgP)||[];delete g.cyl;this._cg=cg;{const OW=!this.att&&k!=='warehouse',LS=S0.seed?S0.seed/10:(k==='forest'?3:7);landmarks(g,LS,VS0.rim,OW);this.world=gl.mesh(g);if(OW){this.noFar=!!S0.nofar;this.openWorld(gc0,LS,k==='canyon'?'dry':VS0.rim,S0.night);this.noFar=false}}this.grassM=null;
+   {const st=S0.start||[0,0,0];if(!this.att&&VS0.bio&&SIM.gfx==='high')vgDress(g,{bio:VS0.bio,cx:st[0],cz:st[2]-8,R:srnd((S0.seed||13)+5),base:gc0,pad:[st[0],st[2],2.6],skip:(x,z)=>(VS0.skip&&VS0.skip(x,z))||(g.pk&&g.pk(x,z))||this.trees.some(t=>t&&Math.hypot((t.x??t[0])-x,(t.z??t[1])-z)<.7)});this.vg=this.att?null:vgMesh(gl,g)}
+  this._sg=sg;{const T=[];for(const Gq of [sg,this._cg||{p:[]}]){const P=Gq.p;for(let i=0;i+8<P.length;i+=9)T.push([[P[i],P[i+1],P[i+2]],[P[i+3],P[i+4],P[i+5]],[P[i+6],P[i+7],P[i+8]]])}if(T.length)this.col=colBuild(T,2);this.pcol=null;{const P=cgP.p,tp=cgP.tr||[];if(P.length||tp.length){const T2=T.slice();for(let i=0;i+8<P.length;i+=9)T2.push([[P[i],P[i+1],P[i+2]],[P[i+3],P[i+4],P[i+5]],[P[i+6],P[i+7],P[i+8]]]);const cB=this.col,cP=T2.length?colBuild(T2,2):null,tB=this.trees,tP=(g.noT?tB.filter(q=>!g.noT.includes(q)):tB).concat(tp);this.pcol={cB,cP,tB,tP};const TA=SIM.look!=='real'&&!this.night;this.col=TA?cB:cP;this.trees=TA?tB:tP}}if(sg.p.length)this.mSolid=gl.mesh(sg)}
   const sky=new Geo();sky.sphere(380,[1,1,1],24);this.sky=gl.mesh(sky);
   const GS=S0.gates;GS.forEach((G,i)=>{const pv=i?GS[i-1]:[S0.start[0],0,S0.start[2]],nx=GS[i+1]||[G[0]+(G[0]-pv[0]),0,G[2]+(G[2]-pv[2])],dx=nx[0]-pv[0],dz=nx[2]-pv[2];G[3]=Math.atan2(-dx,-dz)});
   this.gates=S0.gates.map(G=>{const gg=new Geo();gateGeo(gg,G,2.6,2,[.98,.55,.12]);return {G,m:gl.mesh(gg)}});
   this.qk=quadKey();this.dm=gl.mesh(droneGeo(this.qk));this.pm=gl.mesh(propGeo(this.qk));this.bm=gl.mesh(bladeGeo(this.qk));const sh=new Geo();for(let i=0;i<16;i++){const a0=i/16*Math.PI*2,a1=(i+1)/16*Math.PI*2;sh.tri([0,0,0],[Math.cos(a1)*.22,0,Math.sin(a1)*.22],[Math.cos(a0)*.22,0,Math.sin(a0)*.22],[0,0,0],4)}this.shm=gl.mesh(sh);
   this.reset();this.camIntro=camIntroFor(this,MODE==='free'?'free:'+this.scnKey:null);this.chase=null}
 
- loadMis(lid){const l=typeof lid==='object'?lid:S.lessons.find(x=>x.id===lid),I=l&&INTRO3[l.ico];this.wx=l?.free?(this.att?null:wxNorm(PREF.wx)):wxOf(l);this.fwind=wxWind(this.wx);this._wxW?.remove();this._wxW=null;if(!this.att)wxAudio(this.wx?.r||0);if(!I)return this.load('field');if(l.ball){this.plane=false;return this.loadBall(l)}const gl=this.r;gl.free();this.neon=null;this.lm=null;this.night=l.ico==='night'||!!l.night;this.path=null;this.mis=l;this.plane=!!I.plane;const K=misScale(l);this.misK=K;{const cd=l.cx,J=cd&&cd.els&&cd.els.filter(e=>e.t==='jam'&&e.ch&&e.ch.length);if(J&&J.length&&!this.att)SIM.vch=cd.vch0!=null?cd.vch0:J[0].ch[0]}
+ loadMis(lid){this.pcol=null;const l=typeof lid==='object'?lid:S.lessons.find(x=>x.id===lid),I=l&&INTRO3[l.ico];this.wx=l?.free?(this.att?null:wxNorm(PREF.wx)):wxOf(l);this.fwind=wxWind(this.wx);this._wxW?.remove();this._wxW=null;if(!this.att)wxAudio(this.wx?.r||0);if(!I)return this.load('field');if(l.ball){this.plane=false;return this.loadBall(l)}const gl=this.r;gl.free();this.neon=null;this.lm=null;this.night=l.ico==='night'||!!l.night;this.path=null;this.mis=l;this.plane=!!I.plane;const K=misScale(l);this.misK=K;{const cd=l.cx,J=cd&&cd.els&&cd.els.filter(e=>e.t==='jam'&&e.ch&&e.ch.length);if(J&&J.length&&!this.att)SIM.vch=cd.vch0!=null?cd.vch0:J[0].ch[0]}
   const pts=I.path().map(p=>p.map(x=>x*K)),s0=pts[0];let j=1;while(j<pts.length-1&&Math.hypot(pts[j][0]-s0[0],pts[j][2]-s0[2])<.3)j++;const dx=pts[j][0]-s0[0],dz=pts[j][2]-s0[2];
   this.scn={n:l.name,d:l.task,start:[s0[0],0,s0[2]],yaw:(dx||dz)?Math.atan2(-dx,-dz):0,gates:[],mis:true};
   const M=misGeo(l,K,{realTrees:!this.att&&SIM.gfx==='high'&&!I.plane}),BG=l.cx&&SIMSCN[l.cx.bg],g=Object.assign(new Geo(),{nv:!!this.att,lod:SIM.gfx==='high'?0:1,cT:I.plane?[]:null}),fc=(I.plane&&I.free&&SIM.plArea==='ruins')?[.6,.53,.37]:BG?(BG.gc||[.3,.42,.24]):l.cx?(CX_GROUND[l.cx.ground]||CX_GROUND.grass).c:sceneFor(l)==='forest'?[.24,.33,.2]:[.3,.42,.24];const GN=I.plane?(I.free?22:14):16,GS=I.plane?20:10;if(I.plane){const oc=g.cyl;g.cyl=function(x,z,r,h,y0,...a){if(h>1&&this.kd!==7&&this.cT)this.cT.push([x,z,0,(y0||0)+h]);return oc.call(this,x,z,r,h,y0,...a)}}for(let i=-GN;i<GN;i++)for(let k=-GN;k<GN;k++){const sz=GS,x=i*sz+3.7,z=k*sz+3.3;g.quad([x,0,z+sz],[x+sz,0,z+sz],[x+sz,0,z],[x,0,z],fc,-1)}
@@ -12469,7 +13549,7 @@ class FPVSim{
     if(!this.att&&bio&&SIM.gfx==='high'&&!l.cx?.terrain?.img){const RW_=I.free?RWYF:RWY;vgDress(g,{bio,cx:I.plane?0:st[0],cz:I.plane?(I.free?-115:-10):st[2]-8,R:srnd((l.no||1)*3+5),base:fc,pad:I.plane?null:[st[0],st[2],2.6],skip:I.plane?(x,z)=>Math.abs(x-RW_.x)<RW_.w/2+.6&&z<RW_.z0+1&&z>RW_.z1-1:null})}
     if(!this.att&&SIM.gfx==='high'&&M.trees.length){const rt=srnd((l.no||1)*7+3);M.trees.forEach(([tx,tz,th])=>vgTree(g,tx,tz,th*1.175,rt,'fir',{w:.235,t0:.33}))}this.vg=this.att?null:vgMesh(gl,g)}const sky=new Geo();sky.sphere(380,[1,1,1],24);this.sky=gl.mesh(sky);
   /* open flying fields: the ground goes on for ever (one big sheet that travels with the camera) and the far hills travel with it too, so there is no edge of the world to fly off */
-  if(I.plane&&!this.att){const ap=new Geo();ap.quad([-1100,0,1100],[1100,0,1100],[1100,0,-1100],[-1100,0,-1100],fc,-1);this.world.aux={hz:gl.mesh(evTerrain((l.no||1)*1.7,I.free&&SIM.plArea==='ruins'?'dry':'temperate',fc)),apron:gl.mesh(ap)}}else if(OWM)this.openWorld(fc,(l.no||1)*1.7,l.cx&&l.cx.bg==='canyon'?'dry':(BG&&VGSCN[l.cx.bg]||{}).rim,this.night);
+  if(I.plane&&!this.att){const ap=new Geo();ap.quad([-1100,0,1100],[1100,0,1100],[1100,0,-1100],[-1100,0,-1100],fc,-1);this.world.aux={hz:gl.mesh(evTerrain((l.no||1)*1.7,I.free&&SIM.plArea==='ruins'?'dry':'temperate',fc)),apron:gl.mesh(ap)};try{farBuild(this,(l.no||1)*1.7,I.free&&SIM.plArea==='ruins'?'dry':'temperate')}catch(e){console.warn('far props',e)}}else if(OWM)this.openWorld(fc,(l.no||1)*1.7,l.cx&&l.cx.bg==='canyon'?'dry':(BG&&VGSCN[l.cx.bg]||{}).rim,this.night);
   if(bgS.p.length||bgS.L.length){bgS.padU();M.solid.padU();['p','n','c','k','u','L','LC'].forEach(f=>{for(const v of bgS[f])M.solid[f].push(v)})}this._sg=M.solid;this.mapObs={l,col:M.col};{let ct=M.col.length?colCarve(M.col,misPath(I,K),.38):[];if(bgS.p.length){const P=bgS.p;for(let i=0;i+8<P.length;i+=9)ct.push([[P[i],P[i+1],P[i+2]],[P[i+3],P[i+4],P[i+5]],[P[i+6],P[i+7],P[i+8]]])}this.col=ct.length?colBuild(ct,Math.max(1,K)):null}if(I.plane){this.col=null;delete g.cyl;this.trees=g.cT||[];M.solid=new Geo();M.glass=new Geo()}this.mSolid=M.solid.p.length||M.solid.L.length?gl.mesh(M.solid):null;this.mGlass=M.glass.p.length?gl.mesh(M.glass):null;
   const rg=new Geo(),cp=I.free?[]:misPath(I,K),ac=[.89,.64,.23];this.cpath=I.free?null:cp;this.cpi=0;this.route=null;
   this.gates=l.basic?[]:I.ck.filter(c=>c.i>0&&pts[c.i]).map(c=>{const p=pts[c.i],q=pts[Math.min(pts.length-1,c.i+1)],pr=pts[Math.max(0,c.i-1)];let N=[q[0]-pr[0],q[1]-pr[1],q[2]-pr[2]];if(V.len(N)<1e-3)N=[0,0,-1];N=V.norm(N);
@@ -12508,7 +13588,7 @@ class FPVSim{
  reset(){this.debFree();this.dfx=null;this.pd=null;const s=this.scn.start;this.p=[s[0],.06,s[2]];if(this.col){const f=colFloor(this.col,s[0],s[2],(s[1]||0)+1.5);if(f>0)this.p[1]=f+Math.max(.06,SIMQ().r)}this.gl=this.col?colFloor(this.col,s[0],s[2],this.p[1]):0;this.v=[0,0,0];this.q=Q.axis([0,1,0],this.scn.yaw);this.w=[0,0,0];this.armed=false;this.crash=0;this.lives=livesMax();this.hp=100;this.sring=[];this.inv=0;this.gi=0;this.ft=0;this.bat=100;this.bst=null;this.hd=this.scn.yaw||0;this.bvy=0;this.bvz=0;(this.gates||[]).forEach(g=>g.side=null);this.mt=0;this.rpm=0;this.mah=0;this.amp=0;this.volt=4.2*SIMQ().cells;this.nz=[0,0,0];this.wash=0;this.lap0=null;this.lapT=null;this.prevLocal=null;this.chase=null;this.airHold=false;this.stall=false;this.flash('');simMsg();
   if(this.plane){const I=INTRO3[this.mis.ico],A=I.air;const PP=this.PP||PLANE;this.p[1]=PP.gear;if(PP.tail&&!A)this.q=Q.mul(Q.axis([0,1,0],this.scn.yaw),Q.axis([1,0,0],PP.gp0));if(A){const P0=I.path()[0];this.p=[P0[0],A.alt,P0[2]];this.q=Q.mul(Q.axis([0,1,0],this.scn.yaw),Q.axis([1,0,0],.04));this.airHold=true;this.flash('הטיסן מוחזק באוויר · הזז סטיק או הוסף מצערת כדי להתחיל',2600)}this.armed=true;{const idl=PP.idl??(PP.jet?.3:.22);this.rpm=idl;this.mt=PP.jet?.04:idl*idl}/* v153: the engine is already running at idle when the plane appears */this.kthr=0;this.aux={gear:PP.rg&&A?0:1,flap:0};this.auxA={gear:this.aux.gear,flap:0};this.pstrike=false;this.dry=false;this.lowF=false;this.gwarn=false;this.gwT=0;this.refT=0;this.csd=null;this.gTouch=false;this.swp=null;const eT=PP.rg||PP.fl?`G · גלגלים${PP.fl?' · F / V · מדפים':''}`:'';if(eT&&!SIM.gfHint){SIM.gfHint=1;setTimeout(()=>{if(this.plane&&this.armed&&!this.crash)this.flash(eT,3200)},3400)}}}
  /* no edge of the world for the drones either: the ground goes on for ever (one big sheet that travels with the camera) and the far hills travel with it, as in the plane worlds. A closed hall keeps its floor. The hills are left out at night. */
- openWorld(fc,seed,rim,noHills){if(this.att||!this.world)return;const ap=new Geo();ap.quad([-1100,0,1100],[1100,0,1100],[1100,0,-1100],[-1100,0,-1100],fc,-1);this.world.aux={hz:noHills?null:this.r.mesh(evTerrain(seed,rim==='dry'||rim==='rock'?'dry':rim==='conifer'?'conifer':'temperate',fc)),apron:this.r.mesh(ap)}}
+ openWorld(fc,seed,rim,noHills){if(this.att||!this.world)return;const ap=new Geo();ap.quad([-1100,0,1100],[1100,0,1100],[1100,0,-1100],[-1100,0,-1100],fc,-1);this.world.aux={hz:noHills?null:this.r.mesh(evTerrain(seed,rim==='dry'||rim==='rock'?'dry':rim==='conifer'?'conifer':'temperate',fc)),apron:this.r.mesh(ap)};try{farBuild(this,seed,rim==='dry'||rim==='rock'?'dry':rim==='conifer'?'conifer':'temperate')}catch(e){console.warn('far props',e)}}
  loadPlaneFree(){return this.loadMis(this.plFree||(this.plFree={id:'__plfree',ico:'pl_free',name:'טיסה חופשית · טיסן',task:'המראה, טיסה ונחיתה חופשיות בשדה התעופה.',free:true,type:'flight',ph:1,no:0,target:300,pass:0}))}
  toggleArm(){if(this.crash)return;if(this.plane){this.flash('בטיסן אין חימוש · המצערת שולטת במנוע',1400);return}const thr=this.input().thr;if(!this.armed&&(this.ctlq??1)<.3){this.flash('NO RX LINK',1500);return}if(!this.armed&&thr>.15){this.flash(`הורד מצערת כדי לחמש · ${Math.round(thr*100)}%`);return}this.armed=!this.armed;if(this.plane&&this.armed&&this.airHold){this.airHold=false;const A=INTRO3[this.mis.ico].air;this.v=V.mul(Q.rot(this.q,[0,0,-1]),Math.max(A.sp,PLANES[this.PK]?.cr||A.sp));this.flash('שחרור · הוסף מצערת ושמור גובה',1600);return}this.flash(this.armed?'ARMED':this.plane&&this.p[1]>1?'מנוע כבוי · דאייה':'DISARMED',900)}
  pwr(){const I=this.plane?(this.PP?.idl??(this.PP?.jet?.3:.22)):0;return Math.max(0,((this.rpm||0)-I)/(1-I))}   /* engine power above idle, 0..1: what the sound and the dust follow */
@@ -12923,7 +14003,7 @@ class FPVSim{
    if(bs<.97)R.draw(this.bm,Rt,{alpha:1-bs,lines:false});
    gl.depthMask(false);R.draw(VM,d<0?M4.mul(Rt,[-1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]):Rt,{alpha:.06+.3*bs,tint:TV,glow:.9-.9*bs,lines:false});gl.depthMask(true)}});
   gl.disable(gl.BLEND)}
- render(t){const gl=this.r.gl,c=this.cv,NT=!this.att&&!!this.night,TAC=this.att||(SIM.look!=='real'&&!NT),cam=this.att?'cine':(this.mis&&this.mis.ball&&SIM.cam==='fpv'?'chase':SIM.cam);this.r.tac=TAC;gl.uniform1f(this.r.u.uTac,TAC?1:0);gl.uniform1f(this.r.u.uNight,NT?1:0);gl.uniform1f(this.r.u.uGfx,SIM.gfx==='high'&&!TAC?1:0);{const W=this.fwind,wk=W?Math.min(1.8,.4+W.base*.16+W.gust*.04):.45,wd=W?W.dir:[.7,0,.7];gl.uniform1f(this.r.u.uT,(t||0)/1000);gl.uniform3f(this.r.u.uWnd,wd[0],wd[2],wk);gl.uniform1f(this.r.u.uTexOn,this.r.texOK?1:0);gl.uniform1f(this.r.u.uMS,this.r.ms?1:0);gl.uniform1f(this.r.u.uGL,this.gLay||0);const pd=this.padU||[0,0,0];gl.uniform4f(this.r.u.uPad,pd[0],pd[1],pd[2],0);{const hm=this.homeZ||[0,0,0,0];gl.uniform4f(this.r.u.uHm,hm[0],hm[1],hm[2],hm[3])}}const WX=this.wx,ic=WX&&WX.ceil?Math.max(0,Math.min(1,(this.p[1]-(WX.ceil-.4))/.9)):0,FG=wxFog(NT,TAC,WX,ic);this.inCloud=ic;gl.uniform3fv(this.r.u.uFog,FG);gl.uniform1f(this.r.u.uFK,wxK(WX,this.plane)+ic*.14);gl.uniform4f(this.r.u.uWx,WX?WX.c/100:0,WX?WX.r/100:0,WX?WX.f/100:0,ic);const LK=this.linkQ();this.lq=LK.vid;this.ctlq=LK.ctl;this.jam=LK.jam||0;const PO=this.postBegin(cam,c,gl);gl.clearColor(FG[0],FG[1],FG[2],1);{const f0=Q.rot(this.q,[0,0,-1]),u0=Q.rot(this.q,[0,1,0]);gl.uniform3fv(this.r.u.uLp,V.add(this.p,V.mul(f0,.12)));gl.uniform3fv(this.r.u.uLd,V.norm(V.add(f0,V.mul(u0,-.28))))}gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+ render(t){const gl=this.r.gl,c=this.cv,NT=!this.att&&!!this.night,TAC=this.att||(SIM.look!=='real'&&!NT),cam=this.att?'cine':(this.mis&&this.mis.ball&&SIM.cam==='fpv'?'chase':SIM.cam);this.r.tac=TAC;if(this.pcol){const P=this.pcol;this.col=TAC?P.cB:P.cP;this.trees=TAC?P.tB:P.tP}gl.uniform1f(this.r.u.uTac,TAC?1:0);gl.uniform1f(this.r.u.uNight,NT?1:0);gl.uniform1f(this.r.u.uGfx,SIM.gfx==='high'&&!TAC?1:0);{const W=this.fwind,wk=W?Math.min(1.8,.4+W.base*.16+W.gust*.04):.45,wd=W?W.dir:[.7,0,.7];gl.uniform1f(this.r.u.uT,(t||0)/1000);gl.uniform3f(this.r.u.uWnd,wd[0],wd[2],wk);gl.uniform1f(this.r.u.uTexOn,this.r.texOK?1:0);gl.uniform1f(this.r.u.uMS,this.r.ms?1:0);gl.uniform1f(this.r.u.uGL,this.gLay||0);const pd=this.padU||[0,0,0];gl.uniform4f(this.r.u.uPad,pd[0],pd[1],pd[2],0);{const hm=this.homeZ||[0,0,0,0];gl.uniform4f(this.r.u.uHm,hm[0],hm[1],hm[2],hm[3])}}const WX=this.wx,ic=WX&&WX.ceil?Math.max(0,Math.min(1,(this.p[1]-(WX.ceil-.4))/.9)):0,FG=wxFog(NT,TAC,WX,ic);this.inCloud=ic;gl.uniform3fv(this.r.u.uFog,FG);gl.uniform1f(this.r.u.uFK,wxK(WX,this.plane)+ic*.14);gl.uniform4f(this.r.u.uWx,WX?WX.c/100:0,WX?WX.r/100:0,WX?WX.f/100:0,ic);const LK=this.linkQ();this.lq=LK.vid;this.ctlq=LK.ctl;this.jam=LK.jam||0;const PO=this.postBegin(cam,c,gl);gl.clearColor(FG[0],FG[1],FG[2],1);{const f0=Q.rot(this.q,[0,0,-1]),u0=Q.rot(this.q,[0,1,0]);gl.uniform3fv(this.r.u.uLp,V.add(this.p,V.mul(f0,.12)));gl.uniform3fv(this.r.u.uLd,V.norm(V.add(f0,V.mul(u0,-.28))))}gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
   let eye,cq,fov;const fwd=Q.rot(this.q,[0,0,-1]);
   /* v164: the cameras follow in real time (an exponential approach), not a fixed fraction per frame: with a fixed fraction the chase camera trailed the vehicle by (speed x frame time x 7), so every slow frame changed the distance by metres at full speed and the vehicle seemed to shake */
   const tNow=t??performance.now(),rdt=Math.min(.1,Math.max(0,(tNow-(this.rT??tNow))/1000));this.rT=tNow;
@@ -12951,11 +14031,11 @@ class FPVSim{
   gl.depthMask(false);R.draw(this.sky,[1,0,0,0,0,1,0,0,0,0,1,0,eye[0],eye[1],eye[2],1]);gl.depthMask(true);
   /* open flying fields: the far hills travel with the camera (lagging a little behind it near the field, for a touch of parallax) in a thinner haze than the ground; the ground sheet goes on for ever */
   const WA=this.world&&this.world.aux;
-  if(WA&&WA.hz&&!TAC){const ox=eye[0],oz=eye[2]+115,m=Math.hypot(ox,oz),k=m>1e-3?Math.min(60,m*.04)/m:0,FK0=wxK(this.wx,this.plane)+(this.inCloud||0)*.14;gl.uniform1f(R.u.uFK,(this.plane?FK0:wxK(this.wx,true)+(this.inCloud||0)*.14)*(this.plane?.35:.2)/(hs*hs));R.draw(WA.hz,[hs,0,0,0,0,hs,0,0,0,0,hs,0,eye[0]-ox*k,0,eye[2]-oz*k,1],{lines:false});gl.uniform1f(R.u.uFK,FK0)}
+  if(WA&&WA.hz&&!TAC){const ox=eye[0],oz=eye[2]+115,m=Math.hypot(ox,oz),k=m>1e-3?Math.min(60,m*.04)/m:0,FK0=wxK(this.wx,this.plane)+(this.inCloud||0)*.14;gl.uniform1f(R.u.uFK,(this.plane?FK0:wxK(this.wx,true)+(this.inCloud||0)*.14)*(this.plane?.35:.2)/(hs*hs));{const HM=[hs,0,0,0,0,hs,0,0,0,0,hs,0,eye[0]-ox*k,0,eye[2]-oz*k,1];R.draw(WA.hz,HM,{lines:false});if(WA.hzp)farDraw(this,R,gl,t,HM)}gl.uniform1f(R.u.uFK,FK0)}
   gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(2,4);if(WA&&WA.apron)R.draw(WA.apron,[1,0,0,0,0,1,0,0,0,0,1,0,eye[0],-.3,eye[2],1]);const XR=cam==='los'&&!this.att&&LD>3;if(XR)this.xrOn(gl,R,eye,LD);R.draw(this.world,I4);if(this.grassM&&SIM.gfx==='high'&&!this.r.tac)R.draw(this.grassM,I4,{lines:false});gl.disable(gl.POLYGON_OFFSET_FILL);if(this.mSolid)R.draw(this.mSolid,I4);
    if(!TAC&&this.vg&&this.r.texOK){const VG_=this.vg;if(VG_.R)R.draw(VG_.R,I4,{lines:false});
     if(VG_.S){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(-1,-2);R.draw(VG_.S,I4,{lines:false});gl.disable(gl.POLYGON_OFFSET_FILL);gl.depthMask(true);gl.disable(gl.BLEND)}
-    if(VG_.F){if(this.r.ms)gl.enable(gl.SAMPLE_ALPHA_TO_COVERAGE);R.draw(VG_.F,I4,{lines:false});if(this.r.ms)gl.disable(gl.SAMPLE_ALPHA_TO_COVERAGE)}}
+    if(VG_.F){if(this.r.ms)gl.enable(gl.SAMPLE_ALPHA_TO_COVERAGE);R.draw(VG_.F,I4,{lines:false});if(this.r.ms)gl.disable(gl.SAMPLE_ALPHA_TO_COVERAGE)}if(this.world&&this.world.pd)propsDraw(this,R,gl,t,I4,eye)}
    if(XR)gl.uniform4f(R.u.uXr,0,0,0,0);
    if(this.btg&&this.mis&&this.mis.ball){const st=this.bst||{},pl=.45+.35*Math.sin(t/160);this.btg.forEach(b=>{const cur=b.mk!=null?(st.k||0)===b.mk&&b.i===(st.i||0):b.i===(st.i||0),past=b.mk!=null?(st.k||0)>b.mk||(st.i||0)>0:b.i>=0&&b.i<(st.i||0);R.draw(b.m,I4,{lines:'force',glow:cur?pl:past?.6:0,tint:cur?[1,.95,.6]:[.25,.3,.28]})})}/* no route line: see route rings in guideTick */const pulse=.35+.25*Math.sin(t/180);this.gates.forEach((G,i)=>R.draw(G.m,I4,i===this.gi?{glow:TAC?.4+pulse:pulse,tint:[1,.95,.6],lines:G.wp?'force':undefined}:{lines:G.wp?'force':undefined,glow:G.wp&&i<this.gi?.0:0}));
    if(NT){if(!this.neon)this.neon=neonBuild(this);const N=this.neon,blink=.55+.45*Math.sin(t/140);if(N.m)R.draw(N.m,I4,{lines:false});
